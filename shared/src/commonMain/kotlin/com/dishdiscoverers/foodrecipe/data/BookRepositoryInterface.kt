@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.dongguo.data
+package com.dishdiscoverers.foodrecipe.data
 
 interface BookRepositoryInterface {
     fun getAll(): List<BookData>

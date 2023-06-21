@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.main.view.component
+package com.dishdiscoverers.foodrecipe.data
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable

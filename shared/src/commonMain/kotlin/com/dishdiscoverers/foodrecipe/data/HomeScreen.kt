@@ -1,6 +1,5 @@
 package com.lduboscq.appkickstarter.main.view
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,14 +12,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -44,19 +41,11 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.dishdiscoverers.foodrecipe.dongguo.data.BookData
-import com.dishdiscoverers.foodrecipe.dongguo.data.BookRepositoryLocalList
-import com.dishdiscoverers.foodrecipe.dongguo.data.CartLine
-import com.dishdiscoverers.foodrecipe.dongguo.data.CartLineData
-import com.dishdiscoverers.foodrecipe.dongguo.data.MockShoppingCartRepository
-import com.dishdiscoverers.foodrecipe.dongguo.layout.MyBottomBar
-import com.dishdiscoverers.foodrecipe.dongguo.layout.MyTopBar
+import com.dishdiscoverers.foodrecipe.data.BookData
+import com.dishdiscoverers.foodrecipe.data.BookRepositoryLocalList
+import com.dishdiscoverers.foodrecipe.data.Image
+import com.dishdiscoverers.foodrecipe.data.ShoppingCartScreenModel
 import com.dishdiscoverers.foodrecipe.dongguo.model.DongguoUser
-import com.lduboscq.appkickstarter.main.router.Route
-import com.lduboscq.appkickstarter.main.router.screenRouter
-import com.lduboscq.appkickstarter.main.screenModel.ShoppingCartScreenModel
-import com.lduboscq.appkickstarter.main.view.component.AddOrSubstrateQuantity
-import com.lduboscq.appkickstarter.main.view.component.Image
 
 internal class BookStoreHomeScreen(var user: DongguoUser? = null) : Screen {
 
@@ -67,7 +56,6 @@ internal class BookStoreHomeScreen(var user: DongguoUser? = null) : Screen {
         // Insert shopping cart repository
         val screenModel = rememberScreenModel() {
             ShoppingCartScreenModel(
-                shoppingCartRepository = MockShoppingCartRepository(),
                 bookRepository = BookRepositoryLocalList()
             )
         }
@@ -93,14 +81,10 @@ internal class BookStoreHomeScreen(var user: DongguoUser? = null) : Screen {
 
         // Load shopping cart data
         LaunchedEffect(true) {
-            screenModel.getCartLineByBookId("")
+            screenModel.getAllBook()
         }
 
-        var quantity by remember { mutableStateOf(0) }
-        if (state is ShoppingCartScreenModel.State.Result) {
-            quantity =
-                (state as ShoppingCartScreenModel.State.Result).cartLineList.sumOf { item -> item.quantity }
-        }
+
 
         if (user != null) {
             messageOnTopBar = "hi, ${user?.name}"
@@ -110,9 +94,7 @@ internal class BookStoreHomeScreen(var user: DongguoUser? = null) : Screen {
         // Layout - Scaffold
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
-            topBar = { MyTopBar(messageOnTopBar, scrollBehavior) },
 
-            bottomBar = { MyBottomBar(quantity = quantity, currentScreen = Route.Home(user)) },
 
             content = { paddingValues ->
                 Column(
@@ -157,16 +139,7 @@ internal class BookStoreHomeScreen(var user: DongguoUser? = null) : Screen {
                     LazyColumn {
                         for (book in bookListState) {
                             item {
-                                var cartLineList: List<CartLine>? = null
-                                if (state is ShoppingCartScreenModel.State.Result) {
-                                    cartLineList =
-                                        (state as ShoppingCartScreenModel.State.Result).cartLineList
-                                }
-                                BookCard(
-                                    book = book,
-                                    cartLine = cartLineList?.firstOrNull { it.bookId == book.id },
-                                    addToCartOrUpdate = { screenModel.addOrUpdateCartLine(it) },
-                                    removeFromCat = { screenModel.deleteCartLineByBookId(it) })
+                                BookCard(book = book)
                             }
                         }
                     }
@@ -188,9 +161,6 @@ picture and favorite icon button , add to shopping cart icon button.
 @Composable
 fun BookCard(
     book: BookData,
-    cartLine: CartLine?,
-    addToCartOrUpdate: (cartLineData: CartLineData) -> Unit,
-    removeFromCat: (cartLineId: String) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     Card(
@@ -200,9 +170,7 @@ fun BookCard(
             Image(
                 url = book.imagePath,
                 modifier = Modifier.size(width = 120.dp, height = 180.dp).padding(15.dp)
-                    .clickable(onClick = {
-                        navigator.push(screenRouter(Route.Detail(book)))
-                    })
+
             )
             Column(
                 modifier = Modifier.padding(9.dp, 15.dp, 9.dp, 9.dp),
@@ -234,27 +202,6 @@ fun BookCard(
                         }
                     }
 
-
-                    // add shopping icon
-                    if (cartLine != null) {
-                        AddOrSubstrateQuantity(cartLine = cartLine,
-                            update = { addToCartOrUpdate(it) },
-                            delete = { removeFromCat(it) })
-                    } else {
-
-
-                        SmallFloatingActionButton(
-                            onClick = {
-                                addToCartOrUpdate(CartLineData(bookId = book.id, quantity = 1))
-                            }
-                        ) {
-                            Icon(
-                                Icons.Outlined.ShoppingCart,
-                                contentDescription = "Localized description",
-                            )
-                        }
-
-                    }
 
                 }
             }
