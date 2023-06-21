@@ -26,12 +26,15 @@ data class RecipeIngredients(
 data class Recipe(
     val id: String,
     val title: String,
-    val servings: String,
+    val servings: Int,
     val instructions: String,
     val imageUrl: String
 )
 
 interface RecipeRepository {
+
+    //TODO: delete getAll, only for debugging
+    suspend fun getAllRecipe(): List<Recipe>
     suspend fun findRecipeById(id: String): Recipe?
     suspend fun findAddRecipesByIds(ids: List<String>): List<Recipe>
 
@@ -44,9 +47,7 @@ interface RecipeRepository {
     // Return List of Id
     suspend fun searchRecipesByIngredient(ingredientName: String): List<String>
     suspend fun searchIngredientsByRecipe(recipeName: String): List<String>
-}
 
-interface IngredientRepository {
     suspend fun findIngredientById(id: String): Ingredient?
     suspend fun findIngredientByName(name: String): List<Ingredient>
     suspend fun findIngredientByIds(ids: List<String>): List<Ingredient>
@@ -55,5 +56,7 @@ interface IngredientRepository {
     suspend fun updateIngredientById(id: String, ingredientToUpdate: Ingredient)
     // no delete function
 }
+
+
 
 
