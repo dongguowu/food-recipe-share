@@ -31,15 +31,6 @@ data class Recipe(
     val imageUrl: String
 )
 
-data class DongguoUser(
-    val name: String,
-)
-
-data class UserRecipe(
-    val userId: String,
-    val recipeId: String
-)
-
 interface RecipeRepository {
     suspend fun findRecipeById(id: String): Recipe?
     suspend fun findAddRecipesByIds(ids: List<String>): List<Recipe>
@@ -48,7 +39,7 @@ interface RecipeRepository {
 
     suspend fun addRecipe(recipe: Recipe): String?
     suspend fun deleteRecipeById(id: String)
-    suspend fun updateRecipeById(id: String, recipeToUpdate : Recipe)
+    suspend fun updateRecipeById(id: String, recipeToUpdate: Recipe)
 
     // Return List of Id
     suspend fun searchRecipesByIngredient(ingredientName: String): List<String>
@@ -65,18 +56,4 @@ interface IngredientRepository {
     // no delete function
 }
 
-interface UserRepository {
-    suspend fun findUserById(id: String): DongguoUser?
-    suspend fun findUserByEmail(email: String): DongguoUser?
 
-    suspend fun addUser(dongguoUser: DongguoUser): String?
-    suspend fun updateUserById(id: String, dongguoUserToUpdate: DongguoUser)
-    suspend fun deleteUserById(id: String)
-
-    // Return List of Id
-    suspend fun getFavoriteRecipesByUserId(userId: String): List<String>
-    suspend fun addFavoriteRecipesByUserId(userId: String, recipeId: String)
-    suspend fun addAllFavoriteRecipesByUserId(userId: String, recipeIds: List<String>)
-    suspend fun deleteFavoriteRecipeByUserId(userId: String, recipeId: String)
-    suspend fun deleteAllFavoriteRecipesByUserId(userId: String)
-}

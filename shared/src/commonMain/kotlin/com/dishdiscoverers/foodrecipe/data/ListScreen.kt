@@ -44,10 +44,9 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.dishdiscoverers.foodrecipe.data.BookData
 import com.dishdiscoverers.foodrecipe.data.BookRepositoryLocalList
 import com.dishdiscoverers.foodrecipe.data.Image
-import com.dishdiscoverers.foodrecipe.data.ShoppingCartScreenModel
-import com.dishdiscoverers.foodrecipe.dongguo.model.DongguoUser
+import com.dishdiscoverers.foodrecipe.data.DongguoScreenModel
 
-internal class BookStoreHomeScreen(var user: DongguoUser? = null) : Screen {
+internal class BookStoreHomeScreen() : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
@@ -55,7 +54,7 @@ internal class BookStoreHomeScreen(var user: DongguoUser? = null) : Screen {
 
         // Insert shopping cart repository
         val screenModel = rememberScreenModel() {
-            ShoppingCartScreenModel(
+            DongguoScreenModel(
                 bookRepository = BookRepositoryLocalList()
             )
         }
@@ -73,9 +72,9 @@ internal class BookStoreHomeScreen(var user: DongguoUser? = null) : Screen {
         // Message
         var messageOnTopBar by remember { mutableStateOf("") }
         when (val result = state) {
-            is ShoppingCartScreenModel.State.Init -> messageOnTopBar = "Just initialized"
-            is ShoppingCartScreenModel.State.Loading -> messageOnTopBar = "Loading"
-            is ShoppingCartScreenModel.State.Result -> messageOnTopBar = "Success"
+            is DongguoScreenModel.State.Init -> messageOnTopBar = "Just initialized"
+            is DongguoScreenModel.State.Loading -> messageOnTopBar = "Loading"
+            is DongguoScreenModel.State.Result -> messageOnTopBar = "Success"
             else -> {}
         }
 
@@ -86,9 +85,6 @@ internal class BookStoreHomeScreen(var user: DongguoUser? = null) : Screen {
 
 
 
-        if (user != null) {
-            messageOnTopBar = "hi, ${user?.name}"
-        }
 
 
         // Layout - Scaffold

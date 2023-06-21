@@ -4,10 +4,10 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
 import kotlinx.coroutines.launch
 
-class ShoppingCartScreenModel(
+class DongguoScreenModel(
     private val bookRepository: BookRepositoryInterface
 ) :
-    StateScreenModel<ShoppingCartScreenModel.State>(State.Init) {
+    StateScreenModel<DongguoScreenModel.State>(State.Init) {
 
     sealed class State {
         object Init : State()
