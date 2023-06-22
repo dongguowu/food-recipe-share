@@ -1,7 +1,7 @@
 package com.dishdiscoverers.foodrecipe.dongguo.model
 
 
-class MockRecipeRepositoryImpl : RecipeRepository {
+class RecipeRepositoryMock : RecipeRepository {
     private val recipes: MutableList<Recipe> = mutableListOf(
         Recipe(
             id = "1",
