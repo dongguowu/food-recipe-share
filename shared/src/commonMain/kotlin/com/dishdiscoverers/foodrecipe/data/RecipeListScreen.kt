@@ -118,7 +118,7 @@ fun BookCard(
         Row {
             Image(
                 url = book.imageUrl,
-                modifier = Modifier.size(width = 120.dp, height = 180.dp).padding(15.dp)
+                modifier = Modifier.size(width = 160.dp, height = 180.dp).padding(15.dp)
 
             )
             Column(
