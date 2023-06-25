@@ -1,6 +1,5 @@
-package com.dishdiscoverers.foodrecipe.data
+package com.dishdiscoverers.foodrecipe.dongguo.z_showList
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,11 +12,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -37,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import com.dishdiscoverers.foodrecipe.dongguo.model.Recipe
-import com.dishdiscoverers.foodrecipe.dongguo.model.RecipeRepositoryMock
+import com.dishdiscoverers.foodrecipe.dongguo.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryMock
 
 internal class BookStoreHomeScreen() : Screen {
 
@@ -80,7 +77,7 @@ internal class BookStoreHomeScreen() : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
-                    SearchBook()
+//                    SearchBook()
 
 
                     // list
@@ -98,6 +95,11 @@ internal class BookStoreHomeScreen() : Screen {
                 }
             },
         )
+    }
+
+    @Composable
+    fun SearchBook() {
+        TODO("Not yet implemented")
     }
 
 
@@ -161,31 +163,3 @@ fun BookCard(
     }
 }
 
-class User(val username: String)
-
-@Composable
-fun SearchBook() {
-    GreetingCard(User("Dongguo"))
-}
-
-@Composable
-fun GreetingCard(
-    user: User? = null,
-    backgroundColor: Color = MaterialTheme.colorScheme.primary,
-    textColor: Color = MaterialTheme.colorScheme.onPrimary,
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = backgroundColor),
-        content = {
-            Box(
-                modifier = Modifier.padding(8.dp),
-                content = {
-                    Text(
-                        text = "hi, ${user?.username ?: "guest"}!",
-                        color = textColor,
-                    )
-                }
-            )
-        }
-    )
-}

@@ -1,9 +1,9 @@
-package com.dishdiscoverers.foodrecipe.data
+package com.dishdiscoverers.foodrecipe.dongguo.z_showList
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
-import com.dishdiscoverers.foodrecipe.dongguo.model.Recipe
-import com.dishdiscoverers.foodrecipe.dongguo.model.RecipeRepository
+import com.dishdiscoverers.foodrecipe.dongguo.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepository
 import kotlinx.coroutines.launch
 
 class RecipeScreenModel(
