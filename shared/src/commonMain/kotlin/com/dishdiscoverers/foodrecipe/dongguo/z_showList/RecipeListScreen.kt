@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.data
+package com.dishdiscoverers.foodrecipe.dongguo.z_showList
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import com.dishdiscoverers.foodrecipe.dongguo.model.RecipeRepositoryMock
-import com.dishdiscoverers.foodrecipe.dongguo.model.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryMock
 
 internal class BookStoreHomeScreen() : Screen {
 
@@ -77,7 +77,7 @@ internal class BookStoreHomeScreen() : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
-                    SearchBook()
+//                    SearchBook()
 
 
                     // list
@@ -95,6 +95,11 @@ internal class BookStoreHomeScreen() : Screen {
                 }
             },
         )
+    }
+
+    @Composable
+    fun SearchBook() {
+        TODO("Not yet implemented")
     }
 
 
@@ -118,7 +123,7 @@ fun BookCard(
         Row {
             Image(
                 url = book.imageUrl,
-                modifier = Modifier.size(width = 120.dp, height = 180.dp).padding(15.dp)
+                modifier = Modifier.size(width = 160.dp, height = 180.dp).padding(15.dp)
 
             )
             Column(
@@ -158,9 +163,3 @@ fun BookCard(
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBook() {
-
-}

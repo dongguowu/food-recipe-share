@@ -1,4 +1,61 @@
-package com.dishdiscoverers.foodrecipe.dongguo.model
+package com.dishdiscoverers.foodrecipe.dongguo
+
+data class Nutrient(
+    val id: String,
+    val unit: String,
+    val calories: Int,
+    val protein: Int,
+    val fiber: Int
+)
+
+data class Ingredient(
+    val id: String,
+    val name: String,
+    val category: String,
+    val unit: String,
+    val imageUrl: String,
+    val nutrientId: String?
+)
+
+data class RecipeIngredients(
+    val recipeId: String,
+    val ingredientId: String,
+    val quantityOfIngredient: Int
+)
+
+data class Recipe(
+    val id: String,
+    val title: String,
+    val servings: Int,
+    val instructions: String,
+    val imageUrl: String
+)
+
+interface RecipeRepository {
+
+    //TODO: delete getAll, only for debugging
+    suspend fun getAllRecipe(): List<Recipe>
+    suspend fun findRecipeById(id: String): Recipe?
+    suspend fun findAddRecipesByIds(ids: List<String>): List<Recipe>
+
+    suspend fun searchRecipesByTitle(title: String): List<Recipe>
+
+    suspend fun addRecipe(recipe: Recipe): String?
+    suspend fun deleteRecipeById(id: String)
+    suspend fun updateRecipeById(id: String, recipeToUpdate: Recipe)
+
+    // Return List of Id
+    suspend fun searchRecipesByIngredient(ingredientName: String): List<String>
+    suspend fun searchIngredientsByRecipe(recipeName: String): List<String>
+
+    suspend fun findIngredientById(id: String): Ingredient?
+    suspend fun findIngredientByName(name: String): List<Ingredient>
+    suspend fun findIngredientByIds(ids: List<String>): List<Ingredient>
+
+    suspend fun addIngredient(ingredient: Ingredient): String?
+    suspend fun updateIngredientById(id: String, ingredientToUpdate: Ingredient)
+    // no delete function
+}
 
 
 class RecipeRepositoryMock : RecipeRepository {
@@ -9,6 +66,20 @@ class RecipeRepositoryMock : RecipeRepository {
             servings = 14,
             instructions = "Fry ground beef, drain, set aside for now. Heat wok, add oil, heat until hot, but not smoking, put celery, onions, bean sprouts and waterchestnuts. fry 2 minutes. Add salt, sugar, and soy sauce, cook 1 minute more. Add ground beef and mix well. Mix cornstarch and water well. Add to mixture in wok. set aside and cool. When cool add to egg roll wrappers, wrapping diagonaly then fry in deep fat for 3 to 5 minutes. Serve with a mixture of mustard and ketchup. Did egg rolls in this. Use 7 egg roll wrappers and cut in half and this will make 15 egg rolls. NOTES : Very good.",
             imageUrl = "https://www.alisonspantry.com/uploads/new-products/4078-2.jpg"
+        ),
+        Recipe(
+            id = "2",
+            title = "Emeril\'s Crab Meat Deviled Eggs",
+            servings = 1,
+            instructions = "Fry ground beef, drain, set aside for now. Heat wok, add oil, heat until hot, but not smoking, put celery, onions, bean sprouts and waterchestnuts. fry 2 minutes. Add salt, sugar, and soy sauce, cook 1 minute more. Add ground beef and mix well. Mix cornstarch and water well. Add to mixture in wok. set aside and cool. When cool add to egg roll wrappers, wrapping diagonaly then fry in deep fat for 3 to 5 minutes. Serve with a mixture of mustard and ketchup. Did egg rolls in this. Use 7 egg roll wrappers and cut in half and this will make 15 egg rolls. NOTES : Very good.",
+            imageUrl = "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimages.media-allrecipes.com%2Fuserphotos%2F8293743.jpg&q=60&c=sc&orient=true&poi=auto&h=512"
+        ),
+        Recipe(
+            id = "3",
+            title = "English Muffin W/ham Egg",
+            servings = 14,
+            instructions = "Fry ground beef, drain, set aside for now. Heat wok, add oil, heat until hot, but not smoking, put celery, onions, bean sprouts and waterchestnuts. fry 2 minutes. Add salt, sugar, and soy sauce, cook 1 minute more. Add ground beef and mix well. Mix cornstarch and water well. Add to mixture in wok. set aside and cool. When cool add to egg roll wrappers, wrapping diagonaly then fry in deep fat for 3 to 5 minutes. Serve with a mixture of mustard and ketchup. Did egg rolls in this. Use 7 egg roll wrappers and cut in half and this will make 15 egg rolls. NOTES : Very good.",
+            imageUrl = "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F43%2F2022%2F11%2F04%2FHam-Egg-and-Cheese-Breakfast-Sandwiches-France-C-2000.jpg&q=60&c=sc&orient=true&poi=auto&h=512"
         )
     )
     private val ingredients: MutableList<Ingredient> = mutableListOf()
@@ -85,5 +156,6 @@ class RecipeRepositoryMock : RecipeRepository {
         }
     }
 }
+
 
 
