@@ -11,10 +11,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -36,7 +38,6 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJson
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryMock
 
 internal class BookStoreHomeScreen() : Screen {
 
@@ -62,13 +63,6 @@ internal class BookStoreHomeScreen() : Screen {
                 (state as RecipeScreenModel.State.Result).list
         }
 
-
-        // Load shopping cart data
-        LaunchedEffect(true) {
-            screenModel.getAllRecipe()
-        }
-
-
         // Layout - Scaffold
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
@@ -78,7 +72,7 @@ internal class BookStoreHomeScreen() : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
-//                    SearchBook()
+                    SearchBook(screenModel)
 
 
                     // list
@@ -91,21 +85,44 @@ internal class BookStoreHomeScreen() : Screen {
                                     )
                                 }
                             }
+                            if ((state as RecipeScreenModel.State.Result).list.isEmpty()) {
+                                item {
+                                    BookCard(
+                                        book = null,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             },
         )
     }
-
-    @Composable
-    fun SearchBook() {
-        TODO("Not yet implemented")
-    }
-
-
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBook(screenModel: RecipeScreenModel) {
+    var text by remember { mutableStateOf("") }
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            text = it
+            if (it.length >= 3) {
+                screenModel.searchRecipe(it)
+            } else {
+                screenModel.getAllRecipe()
+            }
+
+        },
+        label = {
+            Icon(
+                Icons.Outlined.Search,
+                contentDescription = "Search",
+            )
+        }
+    )
+}
 
 /**
 
@@ -116,48 +133,55 @@ picture and favorite icon button , add to shopping cart icon button.
  */
 @Composable
 fun BookCard(
-    book: Recipe,
+    book: Recipe? = null,
 ) {
     Card(
         modifier = Modifier.size(width = 400.dp, height = 200.dp).padding(15.dp),
     ) {
-        Row {
-            Image(
-                url = book.imageUrl,
-                modifier = Modifier.size(width = 160.dp, height = 180.dp).padding(15.dp)
+        if (book == null) {
+            Row {
+                Text("Not Found!")
+            }
+        } else {
 
-            )
-            Column(
-                modifier = Modifier.padding(9.dp, 15.dp, 9.dp, 9.dp),
-            ) {
-                Text(
-                    text = book.title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    textAlign = TextAlign.Start,
+            Row {
+                Image(
+                    url = book.imageUrl,
+                    modifier = Modifier.size(width = 160.dp, height = 180.dp).padding(15.dp)
+
                 )
+                Column(
+                    modifier = Modifier.padding(9.dp, 15.dp, 9.dp, 9.dp),
+                ) {
+                    Text(
+                        text = book.title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        textAlign = TextAlign.Start,
+                    )
 
-                Spacer(modifier = Modifier.height(60.dp).width(60.dp))
+                    Spacer(modifier = Modifier.height(60.dp).width(60.dp))
 
-                Row {
-                    // Favorite icon
-                    var checked by remember { mutableStateOf(false) }
-                    IconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
-                        if (checked) {
-                            Icon(
-                                Icons.Filled.Favorite,
-                                contentDescription = "Localized description",
-                                tint = Color.Red
-                            )
-                        } else {
-                            Icon(
-                                Icons.Outlined.Favorite,
-                                contentDescription = "Localized description"
-                            )
+                    Row {
+                        // Favorite icon
+                        var checked by remember { mutableStateOf(false) }
+                        IconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
+                            if (checked) {
+                                Icon(
+                                    Icons.Filled.Favorite,
+                                    contentDescription = "Localized description",
+                                    tint = Color.Red
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Outlined.Favorite,
+                                    contentDescription = "Localized description"
+                                )
+                            }
                         }
+
+
                     }
-
-
                 }
             }
         }

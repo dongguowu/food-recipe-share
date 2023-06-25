@@ -17,7 +17,7 @@ class RecipeScreenModel(
         data class Result(val list: List<Recipe>) : State()
     }
 
-    suspend fun getAllRecipe() {
+    fun getAllRecipe() {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
@@ -25,7 +25,7 @@ class RecipeScreenModel(
         }
     }
 
-    suspend fun searchRecipe(title: String) {
+    fun searchRecipe(title: String) {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
