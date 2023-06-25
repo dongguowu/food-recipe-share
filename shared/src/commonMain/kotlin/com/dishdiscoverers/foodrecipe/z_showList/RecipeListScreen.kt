@@ -72,7 +72,9 @@ internal class BookStoreHomeScreen() : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
-                    SearchBook(screenModel)
+                    SearchBook(
+                        search = { screenModel.searchRecipe(it) },
+                        getAll = { screenModel.getAllRecipe() })
 
 
                     // list
@@ -102,16 +104,19 @@ internal class BookStoreHomeScreen() : Screen {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBook(screenModel: RecipeScreenModel) {
+fun SearchBook(
+    search: (title: String) -> Unit,
+    getAll: () -> Unit
+) {
     var text by remember { mutableStateOf("") }
     OutlinedTextField(
         value = text,
         onValueChange = {
             text = it
             if (it.length >= 3) {
-                screenModel.searchRecipe(it)
+                search(it)
             } else {
-                screenModel.getAllRecipe()
+                getAll()
             }
 
         },

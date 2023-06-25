@@ -33,5 +33,12 @@ class RecipeScreenModel(
         }
     }
 
+    fun searchRecipeByIngredient(title: String) {
+        coroutineScope.launch {
+            mutableState.value = State.Loading
+            mutableState.value =
+                State.Result(list = repository.searchRecipesByIngredient(title))
+        }
+    }
 
 }

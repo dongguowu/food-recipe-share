@@ -33,7 +33,8 @@ data class Recipe(
     val title: String,
     val servings: Int,
     val instructions: String,
-    val imageUrl: String
+    val imageUrl: String,
+    val ingredients: String? = null,
 )
 
 interface RecipeRepository {
@@ -50,7 +51,7 @@ interface RecipeRepository {
     suspend fun updateRecipeById(id: String, recipeToUpdate: Recipe)
 
     // Return List of Id
-    suspend fun searchRecipesByIngredient(ingredientName: String): List<String>
+    suspend fun searchRecipesByIngredient(ingredientName: String): List<Recipe>
     suspend fun searchIngredientsByRecipe(recipeName: String): List<String>
 
     suspend fun findIngredientById(id: String): Ingredient?
@@ -233,7 +234,8 @@ class RecipeRepositoryJson : RecipeRepository {
                     title = item.title,
                     servings = item.servings.substringBefore(" ").toIntOrNull() ?: 1,
                     instructions = item.instructions,
-                    imageUrl = ""
+                    imageUrl = "",
+                    ingredients = item.ingredients,
                 )
             )
         }
@@ -244,6 +246,12 @@ class RecipeRepositoryJson : RecipeRepository {
         return recipes.filter { it.title.contains(title, ignoreCase = true) }
     }
 
+    override suspend fun searchRecipesByIngredient(ingredientName: String): List<Recipe> {
+        return recipes.filter { recipe ->
+            recipe.ingredients?.contains(ingredientName, ignoreCase = true) ?: false
+        }
+    }
+
     override suspend fun findRecipeById(id: String): Recipe? {
         return recipes.find { it.id == id }
     }
@@ -251,7 +259,6 @@ class RecipeRepositoryJson : RecipeRepository {
     override suspend fun findAddRecipesByIds(ids: List<String>): List<Recipe> {
         return recipes.filter { it.id in ids }
     }
-
 
 
     override suspend fun addRecipe(recipe: Recipe): String? {
@@ -269,13 +276,6 @@ class RecipeRepositoryJson : RecipeRepository {
         if (index != -1) {
             recipes[index] = recipeToUpdate.copy(id = id)
         }
-    }
-
-    override suspend fun searchRecipesByIngredient(ingredientName: String): List<String> {
-
-        return recipes.filter { recipe ->
-            ingredients.any { it.name.contains(ingredientName, ignoreCase = true) }
-        }.map { it.id }
     }
 
     override suspend fun searchIngredientsByRecipe(recipeName: String): List<String> {
@@ -371,11 +371,8 @@ class RecipeRepositoryMock : RecipeRepository {
         }
     }
 
-    override suspend fun searchRecipesByIngredient(ingredientName: String): List<String> {
-
-        return recipes.filter { recipe ->
-            ingredients.any { it.name.contains(ingredientName, ignoreCase = true) }
-        }.map { it.id }
+    override suspend fun searchRecipesByIngredient(ingredientName: String): List<Recipe> {
+        return recipes
     }
 
     override suspend fun searchIngredientsByRecipe(recipeName: String): List<String> {
