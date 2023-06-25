@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.dongguo.z_showList
+package com.dishdiscoverers.foodrecipe.z_showList
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
@@ -17,7 +17,7 @@ class RecipeScreenModel(
         data class Result(val list: List<Recipe>) : State()
     }
 
-    suspend fun getAllRecipe() {
+    fun getAllRecipe() {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
@@ -25,7 +25,7 @@ class RecipeScreenModel(
         }
     }
 
-    suspend fun searchRecipe(title: String) {
+    fun searchRecipe(title: String) {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
@@ -33,5 +33,12 @@ class RecipeScreenModel(
         }
     }
 
+    fun searchRecipeByIngredient(title: String) {
+        coroutineScope.launch {
+            mutableState.value = State.Loading
+            mutableState.value =
+                State.Result(list = repository.searchRecipesByIngredient(title))
+        }
+    }
 
 }
