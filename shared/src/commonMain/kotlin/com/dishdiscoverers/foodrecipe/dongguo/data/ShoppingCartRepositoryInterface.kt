@@ -1,5 +1,6 @@
 package com.dishdiscoverers.foodrecipe.dongguo.data
 
+
 interface ShoppingCartRepositoryInterface {
 
     suspend fun getAll(): List<CartLine>
