@@ -73,10 +73,14 @@ internal class BookStoreHomeScreen() : Screen {
                     modifier = Modifier.padding(paddingValues),
                 ) {
                     SearchBook(
+                        description = "Search by recipe title",
                         search = { screenModel.searchRecipe(it) },
                         getAll = { screenModel.getAllRecipe() })
 
-
+                    SearchBook(
+                        description = "Search by ingredient name",
+                        search = { screenModel.searchRecipeByIngredient(it) },
+                        getAll = { screenModel.getAllRecipe() })
                     // list
                     if (state is RecipeScreenModel.State.Result) {
                         LazyColumn {
@@ -105,6 +109,7 @@ internal class BookStoreHomeScreen() : Screen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBook(
+    description: String,
     search: (title: String) -> Unit,
     getAll: () -> Unit
 ) {
@@ -123,7 +128,7 @@ fun SearchBook(
         label = {
             Icon(
                 Icons.Outlined.Search,
-                contentDescription = "Search",
+                contentDescription = description,
             )
         }
     )
