@@ -36,9 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import com.dishdiscoverers.foodrecipe.dongguo.Greeting
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJson
-import com.dishdiscoverers.foodrecipe.dongguo.daysUntilNewYear
 
 internal class BookStoreHomeScreen() : Screen {
 
@@ -114,12 +114,18 @@ fun SearchBook(
     search: (title: String) -> Unit,
     getAll: () -> Unit
 ) {
-    Text(text = "Guess what it is!  \n" +  "There are only ${daysUntilNewYear()} days left until New Year! \uD83C\uDF86")
-    var text by remember { mutableStateOf("") }
+    var text by remember { mutableStateOf("Loading") }
+    LaunchedEffect(true) {
+        text = try {
+            Greeting().greet("egg")
+        } catch (e: Exception) {
+            "error"
+        }
+    }
+    Text(text = text)
     OutlinedTextField(
-        value = text,
+        value = "",
         onValueChange = {
-            text = it
             if (it.length >= 3) {
                 search(it)
             } else {

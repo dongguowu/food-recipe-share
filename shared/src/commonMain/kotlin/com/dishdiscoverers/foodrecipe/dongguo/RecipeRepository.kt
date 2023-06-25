@@ -1,5 +1,6 @@
 package com.dishdiscoverers.foodrecipe.dongguo
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -79,9 +80,13 @@ class RecipeRepositoryAPI : RecipeRepository {
 
     @Serializable
     data class RecipeFromNinjas(
+        @SerialName("title")
         val title: String,
+        @SerialName("ingredients")
         var ingredients: String,
+        @SerialName("servings")
         val servings: String,
+        @SerialName("instructions")
         val instructions: String,
     )
 
