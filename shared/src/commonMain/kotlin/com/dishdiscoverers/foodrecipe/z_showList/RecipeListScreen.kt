@@ -38,6 +38,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJson
+import com.dishdiscoverers.foodrecipe.dongguo.daysUntilNewYear
 
 internal class BookStoreHomeScreen() : Screen {
 
@@ -113,6 +114,7 @@ fun SearchBook(
     search: (title: String) -> Unit,
     getAll: () -> Unit
 ) {
+    Text(text = "Guess what it is!  \n" +  "There are only ${daysUntilNewYear()} days left until New Year! \uD83C\uDF86")
     var text by remember { mutableStateOf("") }
     OutlinedTextField(
         value = text,
