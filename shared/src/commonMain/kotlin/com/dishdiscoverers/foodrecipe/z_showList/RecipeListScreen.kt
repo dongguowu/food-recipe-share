@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.dongguo.z_showList
+package com.dishdiscoverers.foodrecipe.z_showList
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

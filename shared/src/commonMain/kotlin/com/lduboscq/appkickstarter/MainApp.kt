@@ -4,7 +4,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
-import com.dishdiscoverers.foodrecipe.dongguo.z_showList.BookStoreHomeScreen
+import com.dishdiscoverers.foodrecipe.z_showList.BookStoreHomeScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.dongguo.z_showList
+package com.dishdiscoverers.foodrecipe.z_showList
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
