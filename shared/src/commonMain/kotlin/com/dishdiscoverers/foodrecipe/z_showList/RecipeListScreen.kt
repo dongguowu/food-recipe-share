@@ -36,10 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import com.dishdiscoverers.foodrecipe.dongguo.FetchRecipe
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJson
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
+import com.dishdiscoverers.foodrecipe.dongguo.Resource
+import com.dishdiscoverers.foodrecipe.dongguo.TheMealRepositoryImpl
+import com.dishdiscoverers.foodrecipe.dongguo.TheMealViewModel
 
 internal class BookStoreHomeScreen() : Screen {
 
@@ -55,6 +56,12 @@ internal class BookStoreHomeScreen() : Screen {
         }
         val state by screenModel.state.collectAsState()
 
+        val secondScreenModel = rememberScreenModel() {
+            TheMealViewModel(
+                repository = TheMealRepositoryImpl(),
+            )
+        }
+
         //
         var queryTitle by remember { mutableStateOf("fish") }
 
@@ -66,16 +73,47 @@ internal class BookStoreHomeScreen() : Screen {
 //            }
         }
 
-        var list: List<Recipe>? = null
+//        var list = MutableList(List<Recipe>)
+
+        var list: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
             list =
-                (state as RecipeScreenModel.State.Result).list
+                (state as RecipeScreenModel.State.Result).list as MutableList<Recipe>
         }
 
+        val recipes = secondScreenModel.list.collectAsState()
+        var message by remember { mutableStateOf("") }
+        recipes.value?.let {
+            when (it) {
+                is Resource.Failure -> {
+                    message = it.exception.message!!
+                }
+
+                is Resource.Loading -> {
+                    message = "loading"
+                }
+
+                is Resource.Success -> {
+                    list.clear()
+                    for (item in it.result) {
+                        val recipe = Recipe(
+                            id = item.idMeal,
+                            title = item.strMeal,
+                            servings = 1,
+                            instructions = item.strInstructions,
+                            imageUrl = item.strMealThumb,
+                            ingredients = "",
+                        )
+                        list.add(recipe)
+                    }
+                }
+            }
+        }
 
 
         // Layout - Scaffold
         Scaffold(
+            topBar = {Text(message)},
             content = { paddingValues ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

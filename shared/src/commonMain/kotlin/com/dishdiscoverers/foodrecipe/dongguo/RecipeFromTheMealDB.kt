@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class TheMealResponse(
+    @SerialName("meals")
+    val meals: List<RecipeFromTheMealDB>
+)
+
+@Serializable
 data class RecipeFromTheMealDB(
     @SerialName("dateModified")
     val dateModified: String? = null,
