@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.z_showList.Image
+import com.dishdiscoverers.foodrecipe.z_showList.SearchBook
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -62,9 +63,10 @@ class TestScreen() : Screen {
     @Composable
     override fun Content() {
         var message by remember { mutableStateOf("init") }
-        var list by remember { mutableStateOf<List<Recipe>?>(null) }
-        LaunchedEffect(true) {
-            list = getRecipeFromTheMealApi("egg")
+        var title by remember { mutableStateOf("egg") }
+        var list by remember { mutableStateOf(emptyList<Recipe>()) }
+        LaunchedEffect(Unit) {
+            list = getRefreshRecipeList(title)
         }
 
         Scaffold(
@@ -73,6 +75,14 @@ class TestScreen() : Screen {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    SearchBook(
+                        description = "search recipe on the meal",
+                        search = {
+                            title = it
+                            message = title
+                        },
+                        getAll = {}
+                    )
 
                     LazyColumn {
                         if (list == null || list!!.isEmpty()) {
@@ -97,30 +107,24 @@ class TestScreen() : Screen {
     }
 
 
+    private suspend fun getRefreshRecipeList(title: String): List<Recipe> {
+        return getRecipeFromTheMealApi(title) ?: emptyList()
 
-    private suspend fun getRecipeFromNinjasApi(title: String): List<RecipeFromNinjas>? {
-        val apiKey: String = "VNueMdiaDcaQ4gJtjvzcCA==zcDShReg3uMAqtAG"
-        val urlString = "https://api.api-ninjas.com/v1/recipe?query=$title"
-
-        val results: List<RecipeFromNinjas> =
-            ktorClient.get(urlString) {
-                header("X-Api-Key", apiKey)
-            }.body()
-        return results
     }
+
 
     private suspend fun getRecipeFromTheMealApi(title: String): List<Recipe>? {
         val urlString = "https://www.themealdb.com/api/json/v1/1/search.php?s=$title"
 
         val results: TheMealResponse = ktorClient.get(urlString).body()
         val recipes: MutableList<Recipe> = mutableListOf()
-        for (item in results.meals) {
+        for (item in results.meals ?: emptyList()) {
             val recipe = Recipe(
-                id = item.idMeal,
-                title = item.strMeal,
+                id = item.idMeal ?: "",
+                title = item.strMeal ?: "",
                 servings = 1,
                 instructions = item?.strInstructions ?: "",
-                imageUrl = item.strMealThumb,
+                imageUrl = item.strMealThumb ?: "",
                 ingredients = "",
             )
             recipes.add(recipe)
