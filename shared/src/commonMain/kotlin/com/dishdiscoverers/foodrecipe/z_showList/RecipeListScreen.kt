@@ -37,12 +37,10 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryAPI
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
-import com.dishdiscoverers.foodrecipe.dongguo.Resource
-import com.dishdiscoverers.foodrecipe.dongguo.TheMealRepositoryImpl
-import com.dishdiscoverers.foodrecipe.dongguo.TheMealViewModel
 
-internal class BookStoreHomeScreen() : Screen {
+internal class HomeScreen() : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
@@ -51,69 +49,36 @@ internal class BookStoreHomeScreen() : Screen {
         // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                repository = RecipeRepositoryJsonTheMeal(),
+                localRepository = RecipeRepositoryJsonTheMeal(),
+                apiRepository = RecipeRepositoryAPI(),
             )
         }
         val state by screenModel.state.collectAsState()
 
-        val secondScreenModel = rememberScreenModel() {
-            TheMealViewModel(
-                repository = TheMealRepositoryImpl(),
-            )
-        }
 
-        //
         var queryTitle by remember { mutableStateOf("fish") }
 
         // Load  data
         LaunchedEffect(true) {
             screenModel.getAllRecipe()
-//            if(queryTitle.length >= 3) {
-//                FetchRecipe().search(queryTitle)
-//            }
-        }
 
-//        var list = MutableList(List<Recipe>)
+        }
 
         var list: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
-            list =
-                (state as RecipeScreenModel.State.Result).list as MutableList<Recipe>
+            list = (state as RecipeScreenModel.State.Result).list as MutableList<Recipe>
         }
 
-        val recipes = secondScreenModel.list.collectAsState()
         var message by remember { mutableStateOf("") }
-        recipes.value?.let {
-            when (it) {
-                is Resource.Failure -> {
-                    message = it.exception.message!!
-                }
-
-                is Resource.Loading -> {
-                    message = "loading"
-                }
-
-                is Resource.Success -> {
-                    list.clear()
-                    for (item in it.result) {
-                        val recipe = Recipe(
-                            id = item.idMeal ?: "",
-                            title = item.strMeal ?: "",
-                            servings = 1,
-                            instructions = item?.strInstructions ?: "",
-                            imageUrl = item.strMealThumb ?: "",
-                            ingredients = "",
-                        )
-                        list.add(recipe)
-                    }
-                }
-            }
+        message = when (val result = state) {
+            is RecipeScreenModel.State.Init -> "Just initialized"
+            is RecipeScreenModel.State.Loading -> "Loading"
+            is RecipeScreenModel.State.Result -> "Success"
         }
-
 
         // Layout - Scaffold
         Scaffold(
-            topBar = {Text(message)},
+            topBar = { Text(message) },
             content = { paddingValues ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -272,8 +237,6 @@ fun BookCard(
                                 )
                             }
                         }
-
-
                     }
                 }
             }

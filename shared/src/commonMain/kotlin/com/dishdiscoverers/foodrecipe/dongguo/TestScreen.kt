@@ -45,18 +45,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 class TestScreen() : Screen {
-    private val ktorClient = HttpClient {
-        install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                isLenient = true
-                ignoreUnknownKeys = true
-            })
-        }
-        install(Logging) {
-            level = LogLevel.INFO
-        }
-    }
 
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -114,6 +102,20 @@ class TestScreen() : Screen {
 
 
     private suspend fun getRecipeFromTheMealApi(title: String): List<Recipe>? {
+
+        val ktorClient = HttpClient {
+            install(ContentNegotiation) {
+                json(Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                })
+            }
+            install(Logging) {
+                level = LogLevel.INFO
+            }
+        }
+        
         val urlString = "https://www.themealdb.com/api/json/v1/1/search.php?s=$title"
 
         val results: TheMealResponse = ktorClient.get(urlString).body()

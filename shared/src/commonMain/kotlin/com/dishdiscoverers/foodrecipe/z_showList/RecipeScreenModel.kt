@@ -7,7 +7,8 @@ import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepository
 import kotlinx.coroutines.launch
 
 class RecipeScreenModel(
-    private val repository: RecipeRepository,
+    private val localRepository: RecipeRepository,
+    private val apiRepository: RecipeRepository,
 ) :
     StateScreenModel<RecipeScreenModel.State>(State.Init) {
 
@@ -21,7 +22,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = repository.getAllRecipe())
+                State.Result(list = localRepository.getAllRecipe())
         }
     }
 
@@ -29,7 +30,15 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = repository.searchRecipesByTitle(title))
+                State.Result(list = localRepository.searchRecipesByTitle(title))
+        }
+    }
+
+    fun searchRecipeByApi(title: String) {
+        coroutineScope.launch {
+            mutableState.value = State.Loading
+            mutableState.value =
+                State.Result(list = apiRepository.searchRecipesByTitle(title))
         }
     }
 
@@ -37,7 +46,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = repository.searchRecipesByIngredient(title))
+                State.Result(list = localRepository.searchRecipesByIngredient(title))
         }
     }
 
