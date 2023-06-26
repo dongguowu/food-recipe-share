@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
@@ -19,7 +20,6 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,9 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import com.dishdiscoverers.foodrecipe.dongguo.Greeting
+import com.dishdiscoverers.foodrecipe.dongguo.FetchRecipe
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJson
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
 
 internal class BookStoreHomeScreen() : Screen {
 
@@ -49,25 +50,32 @@ internal class BookStoreHomeScreen() : Screen {
         // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                repository = RecipeRepositoryJson()
+                repository = RecipeRepositoryJsonTheMeal(),
             )
         }
         val state by screenModel.state.collectAsState()
 
+        //
+        var queryTitle by remember { mutableStateOf("fish") }
+
         // Load  data
         LaunchedEffect(true) {
             screenModel.getAllRecipe()
+//            if(queryTitle.length >= 3) {
+//                FetchRecipe().search(queryTitle)
+//            }
         }
+
         var list: List<Recipe>? = null
         if (state is RecipeScreenModel.State.Result) {
             list =
                 (state as RecipeScreenModel.State.Result).list
         }
 
-        // Layout - Scaffold
-        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-        Scaffold(
 
+
+        // Layout - Scaffold
+        Scaffold(
             content = { paddingValues ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,20 +90,25 @@ internal class BookStoreHomeScreen() : Screen {
                         description = "Search by ingredient name",
                         search = { screenModel.searchRecipeByIngredient(it) },
                         getAll = { screenModel.getAllRecipe() })
+
+                    SearchBookByInternet(
+                        description = "Search on internet",
+                        search = { queryTitle = it },
+                        getAll = { screenModel.getAllRecipe() })
                     // list
                     if (state is RecipeScreenModel.State.Result) {
                         LazyColumn {
-                            for (item in (state as RecipeScreenModel.State.Result).list) {
-                                item {
-                                    BookCard(
-                                        book = item,
-                                    )
-                                }
-                            }
-                            if ((state as RecipeScreenModel.State.Result).list.isEmpty()) {
+                            val list = (state as RecipeScreenModel.State.Result).list
+                            if (list.isEmpty()) {
                                 item {
                                     BookCard(
                                         book = null,
+                                    )
+                                }
+                            } else {
+                                items(list) { recipe ->
+                                    BookCard(
+                                        book = recipe
                                     )
                                 }
                             }
@@ -107,6 +120,7 @@ internal class BookStoreHomeScreen() : Screen {
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBook(
@@ -114,24 +128,47 @@ fun SearchBook(
     search: (title: String) -> Unit,
     getAll: () -> Unit
 ) {
-    var text by remember { mutableStateOf("Loading") }
-    LaunchedEffect(true) {
-        text = try {
-            Greeting().greet("egg")
-        } catch (e: Exception) {
-            "error"
-        }
-    }
-    Text(text = text)
+    Text(description)
+    var text by remember { mutableStateOf("") }
     OutlinedTextField(
-        value = "",
+        value = text,
         onValueChange = {
+            text = it
             if (it.length >= 3) {
                 search(it)
             } else {
                 getAll()
             }
 
+        },
+        label = {
+            Icon(
+                Icons.Outlined.Search,
+                contentDescription = description,
+            )
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBookByInternet(
+    description: String,
+    search: (title: String) -> Unit,
+    getAll: () -> Unit
+) {
+    Text(description)
+    var text by remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            text = it
+            if (text.length <= 2) {
+                getAll()
+            } else {
+                search(text)
+            }
         },
         label = {
             Icon(

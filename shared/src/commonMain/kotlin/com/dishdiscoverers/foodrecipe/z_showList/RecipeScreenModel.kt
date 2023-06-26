@@ -7,7 +7,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepository
 import kotlinx.coroutines.launch
 
 class RecipeScreenModel(
-    private val repository: RecipeRepository
+    private val repository: RecipeRepository,
 ) :
     StateScreenModel<RecipeScreenModel.State>(State.Init) {
 

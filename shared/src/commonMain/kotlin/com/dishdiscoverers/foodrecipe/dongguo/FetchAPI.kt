@@ -21,7 +21,7 @@ fun daysUntilNewYear(): Int {
     return today.daysUntil(closestNewYear)
 }
 
-class Greeting {
+class FetchRecipe {
 
     private val httpClient = HttpClient {
         install(ContentNegotiation) {
@@ -36,18 +36,27 @@ class Greeting {
     private val apiKey: String = "VNueMdiaDcaQ4gJtjvzcCA==zcDShReg3uMAqtAG"
 
     @Throws(Exception::class)
-    suspend fun greet(title: String): String {
+    suspend fun search(title: String): List<Recipe> {
         val urlString = "https://api.api-ninjas.com/v1/recipe?query=$title"
-        val headers = mapOf("X-Api-Key" to apiKey)
 
-        val list: List<RecipeRepositoryJson.RecipeFromNinjas> =
-            httpClient.get(urlString){
+        val results: List<RecipeFromNinjas> =
+            httpClient.get(urlString) {
                 header("X-Api-Key", apiKey)
             }.body()
-        for(item in list) {
-            println(item.title)
+        val recipes: MutableList<Recipe> = mutableListOf()
+        for (item in results) {
+            val recipe = Recipe(
+                id = "4",
+                title = item.title,
+                servings = item.servings.substringBefore(" ").toIntOrNull() ?: 1,
+                instructions = item.instructions,
+                imageUrl = "",
+                ingredients = item.ingredients,
+            )
+            println(recipe.toString())
+            recipes.add(recipe)
         }
-        return "Guess ${list[0].title}"
+        return recipes
     }
 }
 
