@@ -623,11 +623,11 @@ class RecipeRepositoryJsonTheMeal : RecipeRepository {
         recipes.clear()
         for (item in list) {
             val recipe = Recipe(
-                id = item.idMeal,
-                title = item.strMeal,
+                id = item?.idMeal ?: "",
+                title = item?.strMeal ?: "",
                 servings = 1,
                 instructions = item?.strInstructions ?: "",
-                imageUrl = item.strMealThumb,
+                imageUrl = item.strMealThumb ?: "",
                 ingredients = "",
             )
             recipes.add(recipe)

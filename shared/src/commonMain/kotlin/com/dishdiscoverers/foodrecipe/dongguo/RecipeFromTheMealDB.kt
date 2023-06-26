@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TheMealResponse(
     @SerialName("meals")
-    val meals: List<RecipeFromTheMealDB>
+    val meals: List<RecipeFromTheMealDB>? = null
 )
 
 @Serializable
@@ -14,11 +14,11 @@ data class RecipeFromTheMealDB(
     @SerialName("dateModified")
     val dateModified: String? = null,
     @SerialName("idMeal")
-    val idMeal: String,
+    val idMeal: String? = null,
     @SerialName("strArea")
-    val strArea: String,
+    val strArea: String? = null,
     @SerialName("strCategory")
-    val strCategory: String,
+    val strCategory: String? = null,
     @SerialName("strCreativeCommonsConfirmed")
     val strCreativeCommonsConfirmed: String? = null,
     @SerialName("strDrinkAlternate")
@@ -68,53 +68,53 @@ data class RecipeFromTheMealDB(
     @SerialName("strInstructions")
     val strInstructions: String? = null,
     @SerialName("strMeal")
-    val strMeal: String,
+    val strMeal: String? = null,
     @SerialName("strMealThumb")
-    val strMealThumb: String,
+    val strMealThumb: String? = null,
     @SerialName("strMeasure1")
-    val strMeasure1: String,
+    val strMeasure1: String? = null,
     @SerialName("strMeasure10")
-    val strMeasure10: String,
+    val strMeasure10: String? = null,
     @SerialName("strMeasure11")
-    val strMeasure11: String,
+    val strMeasure11: String? = null,
     @SerialName("strMeasure12")
-    val strMeasure12: String,
+    val strMeasure12: String? = null,
     @SerialName("strMeasure13")
-    val strMeasure13: String,
+    val strMeasure13: String? = null,
     @SerialName("strMeasure14")
-    val strMeasure14: String,
+    val strMeasure14: String? = null,
     @SerialName("strMeasure15")
-    val strMeasure15: String,
+    val strMeasure15: String? = null,
     @SerialName("strMeasure16")
-    val strMeasure16: String,
+    val strMeasure16: String? = null,
     @SerialName("strMeasure17")
-    val strMeasure17: String,
+    val strMeasure17: String? = null,
     @SerialName("strMeasure18")
-    val strMeasure18: String,
+    val strMeasure18: String? = null,
     @SerialName("strMeasure19")
-    val strMeasure19: String,
+    val strMeasure19: String? = null,
     @SerialName("strMeasure2")
-    val strMeasure2: String,
+    val strMeasure2: String? = null,
     @SerialName("strMeasure20")
-    val strMeasure20: String,
+    val strMeasure20: String? = null,
     @SerialName("strMeasure3")
-    val strMeasure3: String,
+    val strMeasure3: String? = null,
     @SerialName("strMeasure4")
-    val strMeasure4: String,
+    val strMeasure4: String? = null,
     @SerialName("strMeasure5")
-    val strMeasure5: String,
+    val strMeasure5: String? = null,
     @SerialName("strMeasure6")
-    val strMeasure6: String,
+    val strMeasure6: String? = null,
     @SerialName("strMeasure7")
-    val strMeasure7: String,
+    val strMeasure7: String? = null,
     @SerialName("strMeasure8")
-    val strMeasure8: String,
+    val strMeasure8: String? = null,
     @SerialName("strMeasure9")
-    val strMeasure9: String,
+    val strMeasure9: String? = null,
     @SerialName("strSource")
-    val strSource: String,
+    val strSource: String? = null,
     @SerialName("strTags")
     val strTags: String? = null,
     @SerialName("strYoutube")
-    val strYoutube: String
+    val strYoutube: String? = null
 )

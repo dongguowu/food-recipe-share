@@ -23,7 +23,7 @@ class TheMealRepositoryImpl() : TheMealRepository {
         val urlString = "https://www.themealdb.com/api/json/v1/1/search.php?s=$title"
         return try {
             Resource.Success(
-                (httpClient.get(urlString).body() as TheMealResponse).meals
+                (httpClient.get(urlString).body() as TheMealResponse).meals ?: emptyList()
             )
 
         } catch (e: Exception) {

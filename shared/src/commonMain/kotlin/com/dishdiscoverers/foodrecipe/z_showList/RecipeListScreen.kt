@@ -97,11 +97,11 @@ internal class BookStoreHomeScreen() : Screen {
                     list.clear()
                     for (item in it.result) {
                         val recipe = Recipe(
-                            id = item.idMeal,
-                            title = item.strMeal,
+                            id = item.idMeal ?: "",
+                            title = item.strMeal ?: "",
                             servings = 1,
                             instructions = item?.strInstructions ?: "",
-                            imageUrl = item.strMealThumb,
+                            imageUrl = item.strMealThumb ?: "",
                             ingredients = "",
                         )
                         list.add(recipe)
