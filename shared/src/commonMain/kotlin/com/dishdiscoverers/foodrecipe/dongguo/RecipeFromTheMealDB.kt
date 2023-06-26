@@ -26,47 +26,47 @@ data class RecipeFromTheMealDB(
     @SerialName("strImageSource")
     val strImageSource: String? = null,
     @SerialName("strIngredient1")
-    val strIngredient1: String,
+    val strIngredient1: String? = null,
     @SerialName("strIngredient10")
-    val strIngredient10: String,
+    val strIngredient10: String? = null,
     @SerialName("strIngredient11")
-    val strIngredient11: String,
+    val strIngredient11: String? = null,
     @SerialName("strIngredient12")
-    val strIngredient12: String,
+    val strIngredient12: String? = null,
     @SerialName("strIngredient13")
-    val strIngredient13: String,
+    val strIngredient13: String? = null,
     @SerialName("strIngredient14")
-    val strIngredient14: String,
+    val strIngredient14: String? = null,
     @SerialName("strIngredient15")
-    val strIngredient15: String,
+    val strIngredient15: String? = null,
     @SerialName("strIngredient16")
-    val strIngredient16: String,
+    val strIngredient16: String? = null,
     @SerialName("strIngredient17")
-    val strIngredient17: String,
+    val strIngredient17: String? = null,
     @SerialName("strIngredient18")
-    val strIngredient18: String,
+    val strIngredient18: String? = null,
     @SerialName("strIngredient19")
-    val strIngredient19: String,
+    val strIngredient19: String? = null,
     @SerialName("strIngredient2")
-    val strIngredient2: String,
+    val strIngredient2: String? = null,
     @SerialName("strIngredient20")
-    val strIngredient20: String,
+    val strIngredient20: String? = null,
     @SerialName("strIngredient3")
-    val strIngredient3: String,
+    val strIngredient3: String? = null,
     @SerialName("strIngredient4")
-    val strIngredient4: String,
+    val strIngredient4: String? = null,
     @SerialName("strIngredient5")
-    val strIngredient5: String,
+    val strIngredient5: String? = null,
     @SerialName("strIngredient6")
-    val strIngredient6: String,
+    val strIngredient6: String? = null,
     @SerialName("strIngredient7")
-    val strIngredient7: String,
+    val strIngredient7: String? = null,
     @SerialName("strIngredient8")
-    val strIngredient8: String,
+    val strIngredient8: String? = null,
     @SerialName("strIngredient9")
-    val strIngredient9: String,
+    val strIngredient9: String? = null,
     @SerialName("strInstructions")
-    val strInstructions: String,
+    val strInstructions: String? = null,
     @SerialName("strMeal")
     val strMeal: String,
     @SerialName("strMealThumb")

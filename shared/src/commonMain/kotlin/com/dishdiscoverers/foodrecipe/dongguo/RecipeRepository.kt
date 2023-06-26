@@ -626,7 +626,7 @@ class RecipeRepositoryJsonTheMeal : RecipeRepository {
                 id = item.idMeal,
                 title = item.strMeal,
                 servings = 1,
-                instructions = item.strInstructions,
+                instructions = item?.strInstructions ?: "",
                 imageUrl = item.strMealThumb,
                 ingredients = "",
             )
