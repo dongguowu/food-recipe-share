@@ -4,13 +4,14 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
+import com.dishdiscoverers.foodrecipe.dongguo.TestScreen
 import com.dishdiscoverers.foodrecipe.z_showList.BookStoreHomeScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 public fun MainApp() {
 //    Navigator(PersonsListScreen()) { navigator ->
-        Navigator(BookStoreHomeScreen()) { navigator ->
+        Navigator(TestScreen()) { navigator ->
         SlideTransition(navigator)
     }
 }

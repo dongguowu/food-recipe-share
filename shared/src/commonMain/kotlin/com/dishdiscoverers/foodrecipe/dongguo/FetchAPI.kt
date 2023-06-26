@@ -1,25 +1,18 @@
 package com.dishdiscoverers.foodrecipe.dongguo
 
-import io.ktor.client.HttpClient
+import io.ktor.client.*
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.get
-import io.ktor.client.request.header
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.daysUntil
-import kotlinx.datetime.todayIn
+import io.ktor.util.date.*
+import kotlinx.coroutines.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-
-fun daysUntilNewYear(): Int {
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    val closestNewYear = LocalDate(today.year + 1, 1, 1)
-    return today.daysUntil(closestNewYear)
-}
 
 class FetchRecipe {
 
@@ -30,6 +23,9 @@ class FetchRecipe {
                 isLenient = true
                 ignoreUnknownKeys = true
             })
+        }
+        install(Logging) {
+            level = LogLevel.INFO
         }
     }
 
