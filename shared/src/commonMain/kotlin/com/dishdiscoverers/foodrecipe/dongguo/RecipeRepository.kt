@@ -622,16 +622,15 @@ class RecipeRepositoryJsonTheMeal : RecipeRepository {
         val list = Json.decodeFromString<List<RecipeFromTheMealDB>>(jsonString)
         recipes.clear()
         for (item in list) {
-            recipes.add(
-                Recipe(
-                    id = item.idMeal,
-                    title = item.strMeal,
-                    servings = 1,
-                    instructions = item.strInstructions,
-                    imageUrl = item.strMealThumb,
-                    ingredients = "",
-                )
+            val recipe = Recipe(
+                id = item.idMeal,
+                title = item.strMeal,
+                servings = 1,
+                instructions = item.strInstructions,
+                imageUrl = item.strMealThumb,
+                ingredients = "",
             )
+            recipes.add(recipe)
         }
         return recipes
     }
