@@ -52,8 +52,6 @@ class HomeScreen() : Screen {
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
                 localRepository = RecipeRepositoryJsonTheMeal(),
-                secondLocalRepository = RecipeRepositoryNinjasJson(),
-                apiRepository = RecipeRepositoryTheMealAPI(),
             )
         }
         val state by screenModel.state.collectAsState()

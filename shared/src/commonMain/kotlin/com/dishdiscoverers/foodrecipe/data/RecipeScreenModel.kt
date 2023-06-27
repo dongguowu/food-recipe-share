@@ -9,8 +9,6 @@ import kotlinx.coroutines.launch
 
 class RecipeScreenModel(
     private val localRepository: RecipeRepository,
-    private val secondLocalRepository: RecipeRepository,
-    private val apiRepository: RecipeRepository,
 ) :
     StateScreenModel<RecipeScreenModel.State>(State.Init) {
 
@@ -40,7 +38,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = apiRepository.searchRecipesByTitle(title))
+                State.Result(list = localRepository.searchRecipesByTitle(title))
         }
     }
 
@@ -48,7 +46,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = secondLocalRepository.searchRecipesByIngredient(title))
+                State.Result(list = localRepository.searchRecipesByIngredient(title))
         }
     }
 
