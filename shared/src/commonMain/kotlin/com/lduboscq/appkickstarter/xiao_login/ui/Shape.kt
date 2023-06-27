@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.main.ui.theme
+package com.lduboscq.appkickstarter.xiao_login.ui
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape

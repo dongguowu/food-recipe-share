@@ -1,4 +1,4 @@
-package xiao_login
+package com.lduboscq.appkickstarter.xiao_login
 
 import Image
 import androidx.compose.animation.Crossfade
