@@ -1,45 +1,33 @@
-# Welcome to KMPStarterOS, a minimalist but yet useful open source version of [AppKickstarter](https://appkickstarter.com)
+## please FORK this repository
 
-If you just need to support android and ios with no backend requirement 
-(just offline data) and no need for in app purchases or fancy features 
-like auth and onboarding then you are on the right place and this open source template is good for you.
+## Git Summary from Dongguo
 
-Otherwise, if you need more capabilities please check out our premium template [AppKickstarter](https://appkickstarter.com) which is on the same stack but with a lot more of content.
+### 0 clone repository
 
-![gif](kmp.gif)
+```
+git clone your-forked-repository
+cd your-forked-repository
+git switch your-branch
+```
 
-## Platform supported for KMPStarterOS
+### update your repository from pulling dongguo repository
 
-- Android
-- iOS 
+go to the GitHub Website use Pull requests pull dongguo repository into your repository
 
-## Architecture 
+```
+git pull origin dongguo
+git switch your-branch
+git merge --no-ff dongguo
+```
 
-- Shared KMM library
-- Android app
-- iOS app
+### commit and push code into your repository
 
-## Libraries already configured
+```
+git add -A
+git commit -m 'your commit'
+git push origin yourBranch
+```
 
-### IOS
+### push your repository into dongguo repository
 
-- SwiftUI for iOS UI
-
-### Android
-
-- Jetpack Compose for Android UI
-- Android workmanager
-- Android Compose navigation
-- Accompanist (systemuicontroller, permissions)
-
-### Multiplatform
- 
-- Compose multiplatform for shared UI
-- Multiplatform localization (Moko resources)
-- Multiplatform logging (Napier)
-- Multiplatform dependency injection (Koin)
-- Multiplatform database (SqlDelight)
-- Multiplatform key-value storage (russhwolf:multiplatform-settings)
-- Multiplatform dates (Kotlinx-datetime)
-- Multiplatform http client (Ktor)
-- Multiplatform navigation (Voyager)
+go to ge GitHub Website use Pull requests
