@@ -91,7 +91,7 @@ class PreLoginScreen : Screen {
                 ) {
                     Button(
                         onClick = {
-//                            navigator.push(ScreenRouter(AllScreens.Login))
+                            navigator.push(ScreenRouter(AllScreens.Login))
                         },
                         modifier = Modifier.padding(10.dp),
                         shape = RoundedCornerShape(50.dp),
