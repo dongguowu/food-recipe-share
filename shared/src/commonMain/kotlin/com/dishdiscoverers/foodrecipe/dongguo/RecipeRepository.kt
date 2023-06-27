@@ -86,6 +86,12 @@ interface RecipeRepository {
 class RecipeRepositoryTheMealAPI : RecipeRepositoryNinjasJson() {
     private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
 
+    override suspend fun searchRecipesByTitle(title: String): List<Recipe> {
+        _recipes.clear()
+        _recipes.addAll(getRecipeFromTheMealApi(title) ?: emptyList())
+        return _recipes
+    }
+
     override suspend fun getAllRecipe(): List<Recipe> {
         _recipes.clear()
         _recipes.addAll(getRecipeFromTheMealApi("fish") ?: emptyList())
@@ -103,7 +109,7 @@ class RecipeRepositoryTheMealAPI : RecipeRepositoryNinjasJson() {
                 })
             }
             install(Logging) {
-                level = LogLevel.INFO
+                level = LogLevel.ALL
             }
         }
 
@@ -115,6 +121,7 @@ class RecipeRepositoryTheMealAPI : RecipeRepositoryNinjasJson() {
         }
         return recipes
     }
+
 }
 
 class RecipeRepositoryJsonTheMeal : RecipeRepository {

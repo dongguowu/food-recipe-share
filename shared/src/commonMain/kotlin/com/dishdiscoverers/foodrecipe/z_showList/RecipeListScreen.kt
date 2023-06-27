@@ -37,10 +37,10 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
 
-internal class HomeScreen() : Screen {
+class HomeScreen() : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
@@ -67,15 +67,12 @@ internal class HomeScreen() : Screen {
 
         var list: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
-            list = (state as RecipeScreenModel.State.Result).list as MutableList<Recipe>
+            list =
+                (state as? RecipeScreenModel.State.Result)?.list?.toMutableList() ?: mutableListOf()
         }
 
         var message by remember { mutableStateOf("") }
-        message = when (val result = state) {
-            is RecipeScreenModel.State.Init -> "Just initialized"
-            is RecipeScreenModel.State.Loading -> "Loading"
-            is RecipeScreenModel.State.Result -> "Success"
-        }
+
 
         // Layout - Scaffold
         Scaffold(
@@ -85,6 +82,11 @@ internal class HomeScreen() : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
+                    message = when (val result = state) {
+                        is RecipeScreenModel.State.Init -> "Just initialized"
+                        is RecipeScreenModel.State.Loading -> "Loading"
+                        is RecipeScreenModel.State.Result -> "Success"
+                    }
                     SearchRecipe(
                         description = "Search by recipe title",
                         search = { screenModel.searchRecipe(it) },
@@ -97,12 +99,20 @@ internal class HomeScreen() : Screen {
 
                     SearchRecipeByInternet(
                         description = "Search on internet",
-                        search = { queryTitle = it },
-                        getAll = { screenModel.getAllRecipe() })
+                        search = {
+                            queryTitle = it
+                            screenModel.searchRecipeInternet(it)
+                        },
+                        getAll = {
+                            screenModel.getAllRecipe()
+                        })
                     // list
                     if (state is RecipeScreenModel.State.Result) {
                         LazyColumn {
-                            val list = (state as RecipeScreenModel.State.Result).list
+                            val list =
+                                (state as? RecipeScreenModel.State.Result)?.list?.toMutableList()
+                                    ?: mutableListOf()
+
                             if (list.isEmpty()) {
                                 item {
                                     RecipeCard(

@@ -34,7 +34,7 @@ class RecipeScreenModel(
         }
     }
 
-    fun searchRecipeByApi(title: String) {
+    fun searchRecipeInternet(title: String) {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
