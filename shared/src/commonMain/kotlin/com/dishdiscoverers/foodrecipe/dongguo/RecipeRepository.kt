@@ -238,7 +238,7 @@ class RecipeRepositoryJsonTheMeal : RecipeRepository {
     }
 }
 
-class RecipeRepositoryJson : RecipeRepository {
+class RecipeRepositoryNinjasJson : RecipeRepository {
     private val recipes: MutableList<Recipe> = mutableListOf(
         Recipe(
             id = "1",

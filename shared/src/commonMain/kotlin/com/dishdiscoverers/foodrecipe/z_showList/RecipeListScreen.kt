@@ -192,7 +192,7 @@ fun RecipeCard(
     ) {
         if (recipe == null) {
             Row {
-                Text("Not Found!")
+                Text("No related recipe found. ")
             }
         } else {
 
