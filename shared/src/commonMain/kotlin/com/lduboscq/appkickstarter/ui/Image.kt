@@ -15,7 +15,7 @@ internal fun Image(url: String, modifier: Modifier = Modifier) {
         Image(
             painter = rememberAsyncImagePainter(url),
             contentDescription = null,
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }
