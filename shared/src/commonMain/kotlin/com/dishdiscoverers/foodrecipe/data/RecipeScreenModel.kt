@@ -4,10 +4,13 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
 import com.dishdiscoverers.foodrecipe.dongguo.model.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.model.RecipeRepository
+
 import kotlinx.coroutines.launch
 
 class RecipeScreenModel(
-    private val repository: RecipeRepository
+    private val localRepository: RecipeRepository,
+    private val secondLocalRepository: RecipeRepository,
+    private val apiRepository: RecipeRepository,
 ) :
     StateScreenModel<RecipeScreenModel.State>(State.Init) {
 
@@ -17,21 +20,36 @@ class RecipeScreenModel(
         data class Result(val list: List<Recipe>) : State()
     }
 
-    suspend fun getAllRecipe() {
+    fun getAllRecipe() {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = repository.getAllRecipe())
+                State.Result(list = localRepository.getAllRecipe())
         }
     }
 
-    suspend fun searchRecipe(title: String) {
+    fun searchRecipe(title: String) {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = repository.searchRecipesByTitle(title))
+                State.Result(list = localRepository.searchRecipesByTitle(title))
         }
     }
 
+    fun searchRecipeInternet(title: String) {
+        coroutineScope.launch {
+            mutableState.value = State.Loading
+            mutableState.value =
+                State.Result(list = apiRepository.searchRecipesByTitle(title))
+        }
+    }
+
+    fun searchRecipeByIngredient(title: String) {
+        coroutineScope.launch {
+            mutableState.value = State.Loading
+            mutableState.value =
+                State.Result(list = secondLocalRepository.searchRecipesByIngredient(title))
+        }
+    }
 
 }

@@ -8,16 +8,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,8 +38,11 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.model.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.model.RecipeRepositoryJsonTheMeal
+import com.dishdiscoverers.foodrecipe.dongguo.model.RecipeRepositoryNinjasJson
+import com.dishdiscoverers.foodrecipe.dongguo.model.RecipeRepositoryTheMealAPI
 
-internal class BookStoreHomeScreen() : Screen {
+
+class HomeScreen() : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
@@ -46,47 +51,80 @@ internal class BookStoreHomeScreen() : Screen {
         // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                repository = RecipeRepositoryJsonTheMeal()
+                localRepository = RecipeRepositoryJsonTheMeal(),
+                secondLocalRepository = RecipeRepositoryNinjasJson(),
+                apiRepository = RecipeRepositoryTheMealAPI(),
             )
         }
         val state by screenModel.state.collectAsState()
 
+
+        var queryTitle by remember { mutableStateOf("fish") }
+
         // Load  data
         LaunchedEffect(true) {
             screenModel.getAllRecipe()
+
         }
-        var list: List<Recipe>? = null
+
+        var list: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
             list =
-                (state as RecipeScreenModel.State.Result).list
+                (state as? RecipeScreenModel.State.Result)?.list?.toMutableList() ?: mutableListOf()
         }
 
-
-        // Load shopping cart data
-        LaunchedEffect(true) {
-            screenModel.getAllRecipe()
-        }
+        var message by remember { mutableStateOf("") }
 
 
         // Layout - Scaffold
-        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
-
+            topBar = { Text(message) },
             content = { paddingValues ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
-                    SearchBook()
+                    message = when (val result = state) {
+                        is RecipeScreenModel.State.Init -> "Just initialized"
+                        is RecipeScreenModel.State.Loading -> "Loading"
+                        is RecipeScreenModel.State.Result -> "Success"
+                    }
+                    SearchRecipe(
+                        description = "Search by recipe title",
+                        search = { screenModel.searchRecipe(it) },
+                        getAll = { screenModel.getAllRecipe() })
 
+                    SearchRecipe(
+                        description = "Search by ingredient name",
+                        search = { screenModel.searchRecipeByIngredient(it) },
+                        getAll = { screenModel.getAllRecipe() })
 
+                    SearchRecipeByInternet(
+                        description = "Search on internet",
+                        search = {
+                            queryTitle = it
+                            screenModel.searchRecipeInternet(it)
+                        },
+                        getAll = {
+                            screenModel.getAllRecipe()
+                        })
                     // list
                     if (state is RecipeScreenModel.State.Result) {
                         LazyColumn {
-                            for (item in (state as RecipeScreenModel.State.Result).list) {
+                            val list =
+                                (state as? RecipeScreenModel.State.Result)?.list?.toMutableList()
+                                    ?: mutableListOf()
+
+                            if (list.isEmpty()) {
                                 item {
-                                    BookCard(
-                                        book = item,
+                                    RecipeCard(
+                                        recipe = null,
+                                    )
+                                }
+                            } else {
+                                items(list) { recipe ->
+                                    RecipeCard(
+                                        recipe = recipe
                                     )
                                 }
                             }
@@ -96,71 +134,119 @@ internal class BookStoreHomeScreen() : Screen {
             },
         )
     }
-
-
-}
-
-
-/**
-
-Represents a card component for displaying book information including title,
-picture and favorite icon button , add to shopping cart icon button.
-@param book The book object to display.
-@param addToCart A callback function to handle adding the book to the shopping cart.
- */
-@Composable
-fun BookCard(
-    book: Recipe,
-) {
-    Card(
-        modifier = Modifier.size(width = 400.dp, height = 200.dp).padding(15.dp),
-    ) {
-        Row {
-            Image(
-                url = book.imageUrl,
-                modifier = Modifier.size(width = 120.dp, height = 180.dp).padding(15.dp)
-
-            )
-            Column(
-                modifier = Modifier.padding(9.dp, 15.dp, 9.dp, 9.dp),
-            ) {
-                Text(
-                    text = book.title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    textAlign = TextAlign.Start,
-                )
-
-                Spacer(modifier = Modifier.height(60.dp).width(60.dp))
-
-                Row {
-                    // Favorite icon
-                    var checked by remember { mutableStateOf(false) }
-                    IconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
-                        if (checked) {
-                            Icon(
-                                Icons.Filled.Favorite,
-                                contentDescription = "Localized description",
-                                tint = Color.Red
-                            )
-                        } else {
-                            Icon(
-                                Icons.Outlined.Favorite,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    }
-
-
-                }
-            }
-        }
-    }
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBook() {
+fun SearchRecipe(
+    description: String,
+    search: (title: String) -> Unit,
+    getAll: () -> Unit
+) {
+    Text(description)
+    var text by remember { mutableStateOf("") }
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            text = it
+            if (it.length >= 3) {
+                search(it)
+            } else {
+                getAll()
+            }
 
+        },
+        label = {
+            Icon(
+                Icons.Outlined.Search,
+                contentDescription = description,
+            )
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchRecipeByInternet(
+    description: String,
+    search: (title: String) -> Unit,
+    getAll: () -> Unit
+) {
+    Text(description)
+    var text by remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            text = it
+            if (text.length <= 2) {
+                getAll()
+            } else {
+                search(text)
+            }
+        },
+        label = {
+            Icon(
+                Icons.Outlined.Search,
+                contentDescription = description,
+            )
+        }
+    )
+}
+
+
+@Composable
+fun RecipeCard(
+    recipe: Recipe? = null,
+) {
+    Card(
+        modifier = Modifier.size(width = 400.dp, height = 200.dp).padding(15.dp),
+    ) {
+        if (recipe == null) {
+            Row {
+                Text("No related recipe found. ")
+            }
+        } else {
+
+            Row {
+                Image(
+                    url = recipe.imageUrl,
+                    modifier = Modifier.size(width = 160.dp, height = 180.dp).padding(15.dp)
+
+                )
+                Column(
+                    modifier = Modifier.padding(9.dp, 15.dp, 9.dp, 9.dp),
+                ) {
+                    Text(
+                        text = recipe.title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        textAlign = TextAlign.Start,
+                    )
+
+                    Spacer(modifier = Modifier.height(60.dp).width(60.dp))
+
+                    Row {
+                        // Favorite icon
+                        var checked by remember { mutableStateOf(false) }
+                        IconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
+                            if (checked) {
+                                Icon(
+                                    Icons.Filled.Favorite,
+                                    contentDescription = "Localized description",
+                                    tint = Color.Red
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Outlined.Favorite,
+                                    contentDescription = "Localized description"
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
