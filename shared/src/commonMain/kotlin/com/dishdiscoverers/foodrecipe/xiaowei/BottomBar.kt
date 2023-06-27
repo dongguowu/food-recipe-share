@@ -1,24 +1,20 @@
-package com.lduboscq.appkickstarter.xiao_login
+package com.dishdiscoverers.foodrecipe.xiaowei
 
 import Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.lduboscq.appkickstarter.xiao_login.ui.md_theme_dark_primary
+import com.dishdiscoverers.foodrecipe.xiaowei.ui.md_theme_dark_primary
 
 
 @Composable
@@ -26,7 +22,10 @@ fun MyBottomBar() {
     val navigator = LocalNavigator.currentOrThrow
     BottomAppBar(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = md_theme_dark_primary
+        backgroundColor = Color.White,
+        elevation = 10.dp, // Add elevation to the BottomAppBar for a raised appearance
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp), // Adjust the padding as per your needs
+
     ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -72,7 +71,7 @@ fun MyBottomBar() {
                     navigator.push(ScreenRouter(AllScreens.PreLogin))
                 }) {
                     Image(
-                        url = "https://static.vecteezy.com/system/resources/previews/010/056/184/original/people-icon-sign-symbol-design-free-png.png",
+                        url = "https://cdn.iconscout.com/icon/free/png-256/free-profile-417-1163876.png",
                         contentDescription = null,
                         modifier = Modifier.size(40.dp)
                     )

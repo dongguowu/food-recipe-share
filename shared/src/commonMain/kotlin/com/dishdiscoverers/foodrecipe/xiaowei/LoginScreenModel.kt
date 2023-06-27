@@ -1,10 +1,8 @@
-package com.lduboscq.appkickstarter.xiao_login
+package com.dishdiscoverers.foodrecipe.xiaowei
 
-import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+
 /**
  * Represents the model for the login screen.
  *
@@ -37,7 +35,7 @@ StateScreenModel<LoginScreenModel.State>(State.Init)
      * @param email The email address.
      * @param password The password.
      */
-    suspend fun login(email: String, password: String):LoginResult {
+    suspend fun login(email: String, password: String): LoginResult {
         return if (isValidCredentials(email, password)) {
             LoginResult.Success
         } else {

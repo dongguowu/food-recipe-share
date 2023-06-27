@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.xiao_login
+package com.dishdiscoverers.foodrecipe.xiaowei
 
 import cafe.adriel.voyager.core.screen.Screen
 

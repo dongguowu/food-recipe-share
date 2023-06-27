@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.xiao_login.ui
+package com.dishdiscoverers.foodrecipe.xiaowei.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

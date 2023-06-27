@@ -1,4 +1,7 @@
-package com.lduboscq.appkickstarter.xiao_login
+package com.dishdiscoverers.foodrecipe.xiaowei
+
+import com.dishdiscoverers.foodrecipe.xiaowei.LoginUserData
+import com.dishdiscoverers.foodrecipe.xiaowei.UserData
 
 interface UserRepository {
     suspend fun getUser(

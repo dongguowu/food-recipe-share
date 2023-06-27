@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.xiao_login
+package com.dishdiscoverers.foodrecipe.xiaowei
 
 import Image
 import androidx.compose.animation.animateColorAsState
@@ -51,8 +51,8 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.lduboscq.appkickstarter.xiao_login.ui.md_theme_dark_primary
-import com.lduboscq.appkickstarter.xiao_login.ui.md_theme_light_secondary
+import com.dishdiscoverers.foodrecipe.xiaowei.ui.md_theme_dark_primary
+import com.dishdiscoverers.foodrecipe.xiaowei.ui.md_theme_light_secondary
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking

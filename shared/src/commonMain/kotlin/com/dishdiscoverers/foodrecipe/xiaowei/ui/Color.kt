@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.xiao_login.ui
+package com.dishdiscoverers.foodrecipe.xiaowei.ui
 import androidx.compose.ui.graphics.Color
 
 val md_theme_light_primary = Color(0xFF136D34)
