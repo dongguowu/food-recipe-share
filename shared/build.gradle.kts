@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.compose")
     kotlin("plugin.serialization")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("io.realm.kotlin") version "1.9.1"
 }
 
 version = "1.0-SNAPSHOT"
@@ -68,6 +69,7 @@ kotlin {
                 api("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
                 api("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
                 implementation("cafe.adriel.voyager:voyager-koin:$voyagerVersion")
+                implementation("io.realm.kotlin:library-sync:1.9.1")
             }
         }
         val androidMain by getting {
