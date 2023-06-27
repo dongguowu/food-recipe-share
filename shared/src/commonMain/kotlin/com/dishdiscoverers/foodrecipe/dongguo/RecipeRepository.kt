@@ -1,5 +1,12 @@
 package com.dishdiscoverers.foodrecipe.dongguo
 
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.get
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -76,86 +83,45 @@ interface RecipeRepository {
     // no delete function
 }
 
-class RecipeRepositoryAPI : RecipeRepository {
-    private val recipes: MutableList<Recipe> = mutableListOf(
-    )
-    private val ingredients: MutableList<Ingredient> = mutableListOf()
-    private val recipeIngredients: MutableList<RecipeIngredients> = mutableListOf()
-
-
-    override suspend fun getAllRecipe(): List<Recipe> {
-        return recipes
-    }
+class RecipeRepositoryTheMealAPI : RecipeRepositoryNinjasJson() {
+    private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
 
     override suspend fun searchRecipesByTitle(title: String): List<Recipe> {
-        FetchRecipe().search(title)
+        _recipes.clear()
+        _recipes.addAll(getRecipeFromTheMealApi(title) ?: emptyList())
+        return _recipes
+    }
 
+    override suspend fun getAllRecipe(): List<Recipe> {
+        _recipes.clear()
+        _recipes.addAll(getRecipeFromTheMealApi("fish") ?: emptyList())
+        return _recipes
+    }
+
+
+    private suspend fun getRecipeFromTheMealApi(title: String): List<Recipe>? {
+        val ktorClient = HttpClient {
+            install(ContentNegotiation) {
+                json(Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                })
+            }
+            install(Logging) {
+                level = LogLevel.ALL
+            }
+        }
+
+        val urlString = "https://www.themealdb.com/api/json/v1/1/search.php?s=$title"
+        val results: TheMealResponse = ktorClient.get(urlString).body()
+        val recipes: MutableList<Recipe> = mutableListOf()
+        for (item in results.meals ?: emptyList()) {
+            convertMealRecipe(item)?.let { recipes.add(it) }
+        }
         return recipes
     }
 
-    override suspend fun searchRecipesByIngredient(ingredientName: String): List<Recipe> {
-        return recipes.filter { recipe ->
-            recipe.ingredients?.contains(ingredientName, ignoreCase = true) ?: false
-        }
-    }
-
-    override suspend fun findRecipeById(id: String): Recipe? {
-        return recipes.find { it.id == id }
-    }
-
-    override suspend fun findAddRecipesByIds(ids: List<String>): List<Recipe> {
-        return recipes.filter { it.id in ids }
-    }
-
-
-    override suspend fun addRecipe(recipe: Recipe): String? {
-        recipes.add(recipe)
-        return recipe.id
-    }
-
-    override suspend fun deleteRecipeById(id: String) {
-        val recipe = recipes.find { it.id == id }
-        recipes.remove(recipe)
-    }
-
-    override suspend fun updateRecipeById(id: String, recipeToUpdate: Recipe) {
-        val index = recipes.indexOfFirst { it.id == id }
-        if (index != -1) {
-            recipes[index] = recipeToUpdate.copy(id = id)
-        }
-    }
-
-    override suspend fun searchIngredientsByRecipe(recipeName: String): List<String> {
-        val recipe = recipes.firstOrNull() { it.title == recipeName } ?: return emptyList()
-        val filteredIngredients: List<RecipeIngredients> =
-            recipeIngredients.filter { it.recipeId == recipe.id }
-        return filteredIngredients.map { it.ingredientId }
-    }
-
-
-    override suspend fun findIngredientById(id: String): Ingredient? {
-        return ingredients.find { it.id == id }
-    }
-
-    override suspend fun findIngredientByName(name: String): List<Ingredient> {
-        return ingredients.filter { it.name.contains(name, ignoreCase = true) }
-    }
-
-    override suspend fun findIngredientByIds(ids: List<String>): List<Ingredient> {
-        return ingredients.filter { it.id in ids }
-    }
-
-    override suspend fun addIngredient(ingredient: Ingredient): String? {
-        ingredients.add(ingredient)
-        return ingredient.id
-    }
-
-    override suspend fun updateIngredientById(id: String, ingredientToUpdate: Ingredient) {
-        val index = ingredients.indexOfFirst { it.id == id }
-        if (index != -1) {
-            ingredients[index] = ingredientToUpdate.copy(id = id)
-        }
-    }
 }
 
 class RecipeRepositoryJsonTheMeal : RecipeRepository {
@@ -238,7 +204,7 @@ class RecipeRepositoryJsonTheMeal : RecipeRepository {
     }
 }
 
-class RecipeRepositoryNinjasJson : RecipeRepository {
+open class RecipeRepositoryNinjasJson : RecipeRepository {
     private val recipes: MutableList<Recipe> = mutableListOf(
         Recipe(
             id = "1",
@@ -1037,6 +1003,120 @@ val jsonStringNinjas = """
     "instructions": "1. In a sauce pan, melt Brummel and Brown. 2. Add flour and salt. Stirring continually, heat until bubbly. 3. Slowly add milk. Continue stirring over medium heat until mixture has thickened. 4. Add cheese and mustard. Stir until cheese is melted. 5. Serve warm. Serving Size (1/4 recipe) Per MC Nutritional Analysis: Per Serving: 110.4 Calories, 4.7g Fat, 0.2g Fiber Weight Watcher Points: 3"
   }
 ]
- 
 """.trimIndent()
 
+@Serializable
+data class TheMealResponse(
+    @SerialName("meals")
+    val meals: List<RecipeFromTheMealDB>? = null
+)
+
+@Serializable
+data class RecipeFromTheMealDB(
+    @SerialName("dateModified")
+    val dateModified: String? = null,
+    @SerialName("idMeal")
+    val idMeal: String? = null,
+    @SerialName("strArea")
+    val strArea: String? = null,
+    @SerialName("strCategory")
+    val strCategory: String? = null,
+    @SerialName("strCreativeCommonsConfirmed")
+    val strCreativeCommonsConfirmed: String? = null,
+    @SerialName("strDrinkAlternate")
+    val strDrinkAlternate: String? = null,
+    @SerialName("strImageSource")
+    val strImageSource: String? = null,
+    @SerialName("strIngredient1")
+    val strIngredient1: String? = null,
+    @SerialName("strIngredient10")
+    val strIngredient10: String? = null,
+    @SerialName("strIngredient11")
+    val strIngredient11: String? = null,
+    @SerialName("strIngredient12")
+    val strIngredient12: String? = null,
+    @SerialName("strIngredient13")
+    val strIngredient13: String? = null,
+    @SerialName("strIngredient14")
+    val strIngredient14: String? = null,
+    @SerialName("strIngredient15")
+    val strIngredient15: String? = null,
+    @SerialName("strIngredient16")
+    val strIngredient16: String? = null,
+    @SerialName("strIngredient17")
+    val strIngredient17: String? = null,
+    @SerialName("strIngredient18")
+    val strIngredient18: String? = null,
+    @SerialName("strIngredient19")
+    val strIngredient19: String? = null,
+    @SerialName("strIngredient2")
+    val strIngredient2: String? = null,
+    @SerialName("strIngredient20")
+    val strIngredient20: String? = null,
+    @SerialName("strIngredient3")
+    val strIngredient3: String? = null,
+    @SerialName("strIngredient4")
+    val strIngredient4: String? = null,
+    @SerialName("strIngredient5")
+    val strIngredient5: String? = null,
+    @SerialName("strIngredient6")
+    val strIngredient6: String? = null,
+    @SerialName("strIngredient7")
+    val strIngredient7: String? = null,
+    @SerialName("strIngredient8")
+    val strIngredient8: String? = null,
+    @SerialName("strIngredient9")
+    val strIngredient9: String? = null,
+    @SerialName("strInstructions")
+    val strInstructions: String? = null,
+    @SerialName("strMeal")
+    val strMeal: String? = null,
+    @SerialName("strMealThumb")
+    val strMealThumb: String? = null,
+    @SerialName("strMeasure1")
+    val strMeasure1: String? = null,
+    @SerialName("strMeasure10")
+    val strMeasure10: String? = null,
+    @SerialName("strMeasure11")
+    val strMeasure11: String? = null,
+    @SerialName("strMeasure12")
+    val strMeasure12: String? = null,
+    @SerialName("strMeasure13")
+    val strMeasure13: String? = null,
+    @SerialName("strMeasure14")
+    val strMeasure14: String? = null,
+    @SerialName("strMeasure15")
+    val strMeasure15: String? = null,
+    @SerialName("strMeasure16")
+    val strMeasure16: String? = null,
+    @SerialName("strMeasure17")
+    val strMeasure17: String? = null,
+    @SerialName("strMeasure18")
+    val strMeasure18: String? = null,
+    @SerialName("strMeasure19")
+    val strMeasure19: String? = null,
+    @SerialName("strMeasure2")
+    val strMeasure2: String? = null,
+    @SerialName("strMeasure20")
+    val strMeasure20: String? = null,
+    @SerialName("strMeasure3")
+    val strMeasure3: String? = null,
+    @SerialName("strMeasure4")
+    val strMeasure4: String? = null,
+    @SerialName("strMeasure5")
+    val strMeasure5: String? = null,
+    @SerialName("strMeasure6")
+    val strMeasure6: String? = null,
+    @SerialName("strMeasure7")
+    val strMeasure7: String? = null,
+    @SerialName("strMeasure8")
+    val strMeasure8: String? = null,
+    @SerialName("strMeasure9")
+    val strMeasure9: String? = null,
+    @SerialName("strSource")
+    val strSource: String? = null,
+    @SerialName("strTags")
+    val strTags: String? = null,
+    @SerialName("strYoutube")
+    val strYoutube: String? = null
+)
