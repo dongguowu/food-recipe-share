@@ -405,6 +405,17 @@ fun convertMealRecipe(item: RecipeFromTheMealDB): Recipe? {
     }
 }
 
+fun popularIngredients(item: RecipeFromTheMealDB): Unit {
+    item?.let {
+        if (it.strMeal == null || it.idMeal == null) {
+            return
+        }
+        if (item.strIngredient1 != null) {
+        }
+
+    }
+}
+
 val ingredients: List<Ingredient> = emptyList()
 
 val recipeIngredients: List<RecipeIngredients> = emptyList()
