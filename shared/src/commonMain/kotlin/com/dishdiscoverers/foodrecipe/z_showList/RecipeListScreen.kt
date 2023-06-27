@@ -84,17 +84,17 @@ internal class HomeScreen() : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
-                    SearchBook(
+                    SearchRecipe(
                         description = "Search by recipe title",
                         search = { screenModel.searchRecipe(it) },
                         getAll = { screenModel.getAllRecipe() })
 
-                    SearchBook(
+                    SearchRecipe(
                         description = "Search by ingredient name",
                         search = { screenModel.searchRecipeByIngredient(it) },
                         getAll = { screenModel.getAllRecipe() })
 
-                    SearchBookByInternet(
+                    SearchRecipeByInternet(
                         description = "Search on internet",
                         search = { queryTitle = it },
                         getAll = { screenModel.getAllRecipe() })
@@ -104,14 +104,14 @@ internal class HomeScreen() : Screen {
                             val list = (state as RecipeScreenModel.State.Result).list
                             if (list.isEmpty()) {
                                 item {
-                                    BookCard(
-                                        book = null,
+                                    RecipeCard(
+                                        recipe = null,
                                     )
                                 }
                             } else {
                                 items(list) { recipe ->
-                                    BookCard(
-                                        book = recipe
+                                    RecipeCard(
+                                        recipe = recipe
                                     )
                                 }
                             }
@@ -126,7 +126,7 @@ internal class HomeScreen() : Screen {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBook(
+fun SearchRecipe(
     description: String,
     search: (title: String) -> Unit,
     getAll: () -> Unit
@@ -155,7 +155,7 @@ fun SearchBook(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBookByInternet(
+fun SearchRecipeByInternet(
     description: String,
     search: (title: String) -> Unit,
     getAll: () -> Unit
@@ -182,21 +182,15 @@ fun SearchBookByInternet(
     )
 }
 
-/**
 
-Represents a card component for displaying book information including title,
-picture and favorite icon button , add to shopping cart icon button.
-@param book The book object to display.
-@param addToCart A callback function to handle adding the book to the shopping cart.
- */
 @Composable
-fun BookCard(
-    book: Recipe? = null,
+fun RecipeCard(
+    recipe: Recipe? = null,
 ) {
     Card(
         modifier = Modifier.size(width = 400.dp, height = 200.dp).padding(15.dp),
     ) {
-        if (book == null) {
+        if (recipe == null) {
             Row {
                 Text("Not Found!")
             }
@@ -204,7 +198,7 @@ fun BookCard(
 
             Row {
                 Image(
-                    url = book.imageUrl,
+                    url = recipe.imageUrl,
                     modifier = Modifier.size(width = 160.dp, height = 180.dp).padding(15.dp)
 
                 )
@@ -212,7 +206,7 @@ fun BookCard(
                     modifier = Modifier.padding(9.dp, 15.dp, 9.dp, 9.dp),
                 ) {
                     Text(
-                        text = book.title,
+                        text = recipe.title,
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp,
                         textAlign = TextAlign.Start,

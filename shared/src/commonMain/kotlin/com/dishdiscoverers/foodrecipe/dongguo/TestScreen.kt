@@ -33,14 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.z_showList.Image
-import com.dishdiscoverers.foodrecipe.z_showList.SearchBook
+import com.dishdiscoverers.foodrecipe.z_showList.SearchRecipe
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -63,7 +62,7 @@ class TestScreen() : Screen {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    SearchBook(
+                    SearchRecipe(
                         description = "search recipe on the meal",
                         search = {
                             title = it
@@ -115,7 +114,7 @@ class TestScreen() : Screen {
                 level = LogLevel.INFO
             }
         }
-        
+
         val urlString = "https://www.themealdb.com/api/json/v1/1/search.php?s=$title"
 
         val results: TheMealResponse = ktorClient.get(urlString).body()
