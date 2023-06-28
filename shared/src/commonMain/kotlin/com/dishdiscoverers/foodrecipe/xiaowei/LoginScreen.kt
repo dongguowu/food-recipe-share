@@ -202,9 +202,9 @@ class LoginScreen : Screen {
                                             is LoginScreenModel.LoginResult.Success -> {
                                                 // Navigate to profile screen
 //                                                navigator.push(ScreenRouter(AllScreens.Profile(email)))
-                                                print("_____________________________")
-                                                print("login successfully")
-                                                print("_____________________________")
+                                                println("_____________________________")
+                                                println("login successfully")
+                                                println("_____________________________")
                                             }
 
                                             is LoginScreenModel.LoginResult.Error -> {
