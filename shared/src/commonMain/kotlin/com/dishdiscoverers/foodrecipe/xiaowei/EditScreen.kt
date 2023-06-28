@@ -145,10 +145,10 @@ class EditScreen(private val email: String): Screen {
                                         modifier = Modifier.padding(10.dp),
                                         shape = RoundedCornerShape(50.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            backgroundColor = Color.Transparent,
+                                            backgroundColor = Color.White,
                                             contentColor = MaterialTheme.colors.onBackground
                                         ),
-                                        border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary),
+                                        border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
                                     ) {
                                         Text(
                                             "Save",
@@ -176,10 +176,11 @@ class EditScreen(private val email: String): Screen {
                                         modifier = Modifier.padding(10.dp),
                                         shape = RoundedCornerShape(50.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            backgroundColor = Color.Transparent,
+                                            backgroundColor = Color.White,
+
                                             contentColor = MaterialTheme.colors.onBackground
                                         ),
-                                        border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary),
+                                        border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
                                     ) {
                                         Text(
                                             "Cancel",
