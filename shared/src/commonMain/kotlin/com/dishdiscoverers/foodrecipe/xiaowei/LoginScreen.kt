@@ -51,8 +51,8 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.dishdiscoverers.foodrecipe.xiaowei.ui.md_theme_dark_primary
-import com.dishdiscoverers.foodrecipe.xiaowei.ui.md_theme_light_secondary
+import com.dishdiscoverers.foodrecipe.garett.theme.ui.md_theme_dark_primary
+import com.dishdiscoverers.foodrecipe.garett.theme.ui.md_theme_light_secondary
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
