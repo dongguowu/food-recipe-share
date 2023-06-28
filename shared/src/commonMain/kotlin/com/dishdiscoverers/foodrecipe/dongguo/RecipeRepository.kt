@@ -59,13 +59,13 @@ data class Category(
 interface RecipeRepository {
 
     suspend fun getAllCategory(): Resource<List<Category>>
-    suspend fun filterByCategory(category: String): List<Recipe>
-    suspend fun filterByMainIngredient(ingredient: String): List<Recipe>
-    suspend fun findRecipeById(id: String): Recipe?
+    suspend fun filterByCategory(category: String): Resource<List<Recipe>>
+    suspend fun filterByMainIngredient(ingredient: String): Resource<List<Recipe>>
+    suspend fun findRecipeById(id: String): Resource<Recipe>
 
     //TODO: delete getAll, only for debugging
     suspend fun getAllRecipe(): List<Recipe>
-    suspend fun findAddRecipesByIds(ids: List<String>): List<Recipe>
+    suspend fun findAllRecipesByIds(ids: List<String>): List<Recipe>
 
     suspend fun searchRecipesByTitle(title: String): List<Recipe>
 
@@ -247,19 +247,24 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
         return Resource.Success(_categories)
     }
 
-    override suspend fun filterByCategory(category: String): List<Recipe> {
-        return _recipes
+    override suspend fun filterByCategory(category: String): Resource<List<Recipe>> {
+        return Resource.Success(_recipes)
     }
 
-    override suspend fun filterByMainIngredient(ingredient: String): List<Recipe> {
-        return _recipes
+    override suspend fun filterByMainIngredient(ingredient: String): Resource<List<Recipe>> {
+        return Resource.Success(_recipes)
     }
 
-    override suspend fun findRecipeById(id: String): Recipe? {
-        return _recipes.find { it.id == id }
+    override suspend fun findRecipeById(id: String): Resource<Recipe> {
+        var recipe = _recipes.firstOrNull() { it.id == id }
+
+        if (recipe == null) {
+            return Resource.Failure(Exception("Not Found"))
+        }
+        return Resource.Success(recipe)
     }
 
-    override suspend fun findAddRecipesByIds(ids: List<String>): List<Recipe> {
+    override suspend fun findAllRecipesByIds(ids: List<String>): List<Recipe> {
         return _recipes.filter { it.id in ids }
     }
 
@@ -327,22 +332,22 @@ class RecipeRepositoryListMock : RecipeRepository {
     }
 
     override suspend fun getAllCategory(): Resource<List<Category>> {
-        TODO("Not yet implemented")
+        return Resource.Failure(Exception("Not yet implemented"))
     }
 
-    override suspend fun filterByCategory(category: String): List<Recipe> {
-        TODO("Not yet implemented")
+    override suspend fun filterByCategory(category: String): Resource<List<Recipe>> {
+        return Resource.Failure(Exception("Not yet implemented"))
     }
 
-    override suspend fun filterByMainIngredient(ingredient: String): List<Recipe> {
-        TODO("Not yet implemented")
+    override suspend fun filterByMainIngredient(ingredient: String): Resource<List<Recipe>> {
+        return Resource.Failure(Exception("Not yet implemented"))
     }
 
-    override suspend fun findRecipeById(id: String): Recipe? {
-        return _recipes.find { it.id == id }
+    override suspend fun findRecipeById(id: String): Resource<Recipe> {
+        return Resource.Failure(Exception("Not yet implemented"))
     }
 
-    override suspend fun findAddRecipesByIds(ids: List<String>): List<Recipe> {
+    override suspend fun findAllRecipesByIds(ids: List<String>): List<Recipe> {
         return _recipes.filter { it.id in ids }
     }
 
