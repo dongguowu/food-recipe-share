@@ -76,8 +76,8 @@ class LoginScreen : Screen {
         val screenModel =
             rememberScreenModel() { LoginScreenModel(LoginRepositoryRealmLocal()) }
         val state by screenModel.state.collectAsState()
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("dongguo@wu.com") }
+        var password by remember { mutableStateOf("dongguo") }
         var isClicked by remember { mutableStateOf(true) }
         val navigator = LocalNavigator.currentOrThrow
         var errorMessage by remember { mutableStateOf("") }
@@ -202,6 +202,9 @@ class LoginScreen : Screen {
                                             is LoginScreenModel.LoginResult.Success -> {
                                                 // Navigate to profile screen
 //                                                navigator.push(ScreenRouter(AllScreens.Profile(email)))
+                                                println("_____________________________")
+                                                println("login successfully")
+                                                println("_____________________________")
                                             }
 
                                             is LoginScreenModel.LoginResult.Error -> {

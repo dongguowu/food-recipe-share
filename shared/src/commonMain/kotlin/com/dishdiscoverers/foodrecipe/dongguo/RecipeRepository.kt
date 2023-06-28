@@ -23,10 +23,10 @@ data class Nutrient(
 data class Ingredient(
     val id: String,
     val name: String,
-    val category: String,
+    val category: String? = null,
     val unit: String,
-    val imageUrl: String,
-    val nutrientId: String?
+    val imageUrl: String? = null,
+    val nutrientId: String? = null
 )
 
 data class RecipeIngredients(
@@ -83,14 +83,8 @@ interface RecipeRepository {
     // no delete function
 }
 
-class RecipeRepositoryTheMealAPI : RecipeRepositoryNinjasJson() {
+class RecipeRepositoryTheMealAPI : RecipeRepositoryJsonTheMeal() {
     private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
-
-    override suspend fun searchRecipesByTitle(title: String): List<Recipe> {
-        _recipes.clear()
-        _recipes.addAll(getRecipeFromTheMealApi(title) ?: emptyList())
-        return _recipes
-    }
 
     override suspend fun getAllRecipe(): List<Recipe> {
         _recipes.clear()
@@ -98,6 +92,11 @@ class RecipeRepositoryTheMealAPI : RecipeRepositoryNinjasJson() {
         return _recipes
     }
 
+    override suspend fun searchRecipesByTitle(title: String): List<Recipe> {
+        _recipes.clear()
+        _recipes.addAll(getRecipeFromTheMealApi(title) ?: emptyList())
+        return _recipes
+    }
 
     private suspend fun getRecipeFromTheMealApi(title: String): List<Recipe>? {
         val ktorClient = HttpClient {
@@ -115,16 +114,25 @@ class RecipeRepositoryTheMealAPI : RecipeRepositoryNinjasJson() {
 
         val urlString = "https://www.themealdb.com/api/json/v1/1/search.php?s=$title"
         val results: TheMealResponse = ktorClient.get(urlString).body()
-        val recipes: MutableList<Recipe> = mutableListOf()
+        val mutableList: MutableList<Recipe> = mutableListOf()
         for (item in results.meals ?: emptyList()) {
-            convertMealRecipe(item)?.let { recipes.add(it) }
+
+            val ingredients: StringBuilder = StringBuilder()
+            for (i in 1..20) {
+                val ingredientField = getIngredientField(item, i)
+                val measureField = getMeasureField(item, i)
+                if (ingredientField?.isNotEmpty() == true && measureField?.isNotEmpty() == true) {
+                    ingredients.append("$measureField $ingredientField; ")
+                }
+            }
+            convertMealRecipe(item, ingredients.toString())?.let { mutableList.add(it) }
         }
-        return recipes
+        return mutableList
     }
 
 }
 
-class RecipeRepositoryJsonTheMeal : RecipeRepository {
+open class RecipeRepositoryJsonTheMeal : RecipeRepository {
     private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
     private val _ingredients: MutableList<Ingredient> = mutableListOf()
     private val _recipeIngredients: MutableList<RecipeIngredients> = mutableListOf()
@@ -133,6 +141,75 @@ class RecipeRepositoryJsonTheMeal : RecipeRepository {
         _recipes.clear()
         _recipes.addAll(getRecipesFromTheMealJson(jsonStringTheMeal))
         return _recipes
+    }
+
+    private fun getRecipesFromTheMealJson(json: String): List<Recipe> {
+        val list = Json.decodeFromString<List<RecipeFromTheMealDB>>(json)
+        var mutableList: MutableList<Recipe> = mutableListOf()
+        for (item in list) {
+            val ingredients: StringBuilder = StringBuilder()
+            for (i in 1..20) {
+                val ingredientField = getIngredientField(item, i)
+                val measureField = getMeasureField(item, i)
+                if (ingredientField?.isNotEmpty() == true && measureField?.isNotEmpty() == true) {
+                    ingredients.append("$measureField $ingredientField; ")
+                }
+            }
+            convertMealRecipe(item, ingredients.toString())?.let { mutableList.add(it) }
+        }
+        return mutableList.toList()
+    }
+
+    internal fun getIngredientField(item: RecipeFromTheMealDB, index: Int): String? {
+        return when (index) {
+            1 -> item.strIngredient1
+            2 -> item.strIngredient2
+            3 -> item.strIngredient3
+            4 -> item.strIngredient4
+            5 -> item.strIngredient5
+            6 -> item.strIngredient6
+            7 -> item.strIngredient7
+            8 -> item.strIngredient8
+            9 -> item.strIngredient9
+            10 -> item.strIngredient10
+            11 -> item.strIngredient11
+            12 -> item.strIngredient12
+            13 -> item.strIngredient13
+            14 -> item.strIngredient14
+            15 -> item.strIngredient15
+            16 -> item.strIngredient16
+            17 -> item.strIngredient17
+            18 -> item.strIngredient18
+            19 -> item.strIngredient19
+            20 -> item.strIngredient20
+            else -> null
+        }
+    }
+
+    internal fun getMeasureField(item: RecipeFromTheMealDB, index: Int): String? {
+        return when (index) {
+            1 -> item.strMeasure1
+            2 -> item.strMeasure2
+            3 -> item.strMeasure3
+            4 -> item.strMeasure4
+            5 -> item.strMeasure5
+            6 -> item.strMeasure6
+            7 -> item.strMeasure7
+            8 -> item.strMeasure8
+            9 -> item.strMeasure9
+            10 -> item.strMeasure10
+            11 -> item.strMeasure11
+            12 -> item.strMeasure12
+            13 -> item.strMeasure13
+            14 -> item.strMeasure14
+            15 -> item.strMeasure15
+            16 -> item.strMeasure16
+            17 -> item.strMeasure17
+            18 -> item.strMeasure18
+            19 -> item.strMeasure19
+            20 -> item.strMeasure20
+            else -> null
+        }
     }
 
     override suspend fun searchRecipesByTitle(title: String): List<Recipe> {
@@ -204,7 +281,7 @@ class RecipeRepositoryJsonTheMeal : RecipeRepository {
     }
 }
 
-open class RecipeRepositoryNinjasJson : RecipeRepository {
+class RecipeRepositoryNinjasJson : RecipeRepository {
     private val _recipes: MutableList<Recipe> = mutableListOf()
     private val _ingredients: MutableList<Ingredient> = mutableListOf()
     private val _recipeIngredients: MutableList<RecipeIngredients> = mutableListOf()
@@ -380,16 +457,8 @@ class RecipeRepositoryListMock : RecipeRepository {
     }
 }
 
-fun getRecipesFromTheMealJson(json: String): List<Recipe> {
-    val list = Json.decodeFromString<List<RecipeFromTheMealDB>>(json)
-    var mutableList: MutableList<Recipe> = mutableListOf()
-    for (item in list) {
-        convertMealRecipe(item)?.let { mutableList.add(it) }
-    }
-    return mutableList.toList()
-}
 
-fun convertMealRecipe(item: RecipeFromTheMealDB): Recipe? {
+fun convertMealRecipe(item: RecipeFromTheMealDB, ingredients: String = ""): Recipe? {
     return item?.let {
         if (it.strMeal == null || it.idMeal == null) {
             return null
@@ -400,8 +469,19 @@ fun convertMealRecipe(item: RecipeFromTheMealDB): Recipe? {
             servings = 1,
             instructions = it.strInstructions ?: "",
             imageUrl = it.strMealThumb ?: "",
-            ingredients = ""
+            ingredients = ingredients
         )
+    }
+}
+
+fun popularIngredients(item: RecipeFromTheMealDB): Unit {
+    item?.let {
+        if (it.strMeal == null || it.idMeal == null) {
+            return
+        }
+        if (item.strIngredient1 != null) {
+        }
+
     }
 }
 
