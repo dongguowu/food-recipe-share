@@ -200,7 +200,7 @@ fun RecipeCard(
     recipe: Recipe? = null,
 ) {
     Card(
-        modifier = Modifier.size(width = 400.dp, height = 200.dp).padding(15.dp),
+        modifier = Modifier.size(width = 400.dp, height = 800.dp).padding(15.dp),
     ) {
         if (recipe == null) {
             Row {
@@ -225,7 +225,19 @@ fun RecipeCard(
                     )
 
                     Spacer(modifier = Modifier.height(60.dp).width(60.dp))
-
+                    Text(
+                        text = recipe.ingredients ?: "",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Start,
+                    )
+                    Spacer(modifier = Modifier.height(60.dp).width(60.dp))
+                    Text(
+                        text = recipe.instructions ?: "",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Start,
+                    )
                     Row {
                         // Favorite icon
                         var checked by remember { mutableStateOf(false) }
