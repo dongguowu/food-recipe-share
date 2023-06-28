@@ -73,7 +73,6 @@ class LoginScreen : Screen {
     override fun Content() {
 
 
-
         val screenModel =
             rememberScreenModel() { LoginScreenModel(LoginRepositoryRealmLocal()) }
         val state by screenModel.state.collectAsState()
@@ -95,35 +94,35 @@ class LoginScreen : Screen {
 
             )
 
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .align(Alignment.Center)
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.Center)
+            ) {
+                Card(
+                    shape = RoundedCornerShape(10.dp),
+                    elevation = 8.dp,
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    backgroundColor = Color.White,
                 ) {
-                    Card(
-                        shape = RoundedCornerShape(10.dp),
-                        elevation = 8.dp,
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        backgroundColor = Color.White,
-                    ) {
 
-                        Column(
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 40.dp)
-                                .wrapContentHeight(Alignment.CenterVertically),
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 40.dp)
+                            .wrapContentHeight(Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally,
 
-                            content = {
-                                when (val result = state) {
-                                    is LoginScreenModel.State.Init -> Text("...")
-                                    is LoginScreenModel.State.Loading -> Text("Loading")
-                                    is LoginScreenModel.State.Result -> {
-                                        Text("Success")
-                                    }
-
-                                    else -> {
-                                        Text("Invalid email or password", color = Color.Red)
-                                    }
+                        content = {
+                            when (val result = state) {
+                                is LoginScreenModel.State.Init -> Text("...")
+                                is LoginScreenModel.State.Loading -> Text("Loading")
+                                is LoginScreenModel.State.Result -> {
+                                    Text("Success")
                                 }
+
+                                else -> {
+                                    Text("Invalid email or password", color = Color.Red)
+                                }
+                            }
 //                                ShinyText(
 //                                    text = "LoginMe",
 //                                    modifier = Modifier.padding(vertical = 50.dp)
@@ -140,120 +139,122 @@ class LoginScreen : Screen {
                             )
 
 
-                                OutlinedTextField(
-                                    value = email,
-                                    onValueChange = { email = it },
-                                    textStyle = TextStyle(textAlign = TextAlign.Center),
-                                    label = { Text("Enter email address") },
-                                    leadingIcon = {
-                                        Icon(Icons.Filled.Email, contentDescription = "email icon")
-                                    },
-                                    singleLine = true,
-                                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                                        textColor = MaterialTheme.colors.onSurface,
-                                        focusedBorderColor = MaterialTheme.colors.primary,
-                                        unfocusedBorderColor = MaterialTheme.colors.onSurface
-                                    )
+                            OutlinedTextField(
+                                value = email,
+                                onValueChange = { email = it },
+                                textStyle = TextStyle(textAlign = TextAlign.Center),
+                                label = { Text("Enter email address") },
+                                leadingIcon = {
+                                    Icon(Icons.Filled.Email, contentDescription = "email icon")
+                                },
+                                singleLine = true,
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    textColor = MaterialTheme.colors.onSurface,
+                                    focusedBorderColor = MaterialTheme.colors.primary,
+                                    unfocusedBorderColor = MaterialTheme.colors.onSurface
                                 )
+                            )
 
-                                Spacer(modifier = Modifier.height(15.dp))
-                                OutlinedTextField(
-                                    value = password,
-                                    onValueChange = { password = it },
-                                    textStyle = TextStyle(textAlign = TextAlign.Center),
-                                    label = { Text("Enter password") },
-                                    leadingIcon = {
-                                        Icon(
-                                            Icons.Filled.Lock,
-                                            contentDescription = "password icon"
-                                        )
-                                    },
-                                    visualTransformation = PasswordVisualTransformation(),
-                                    singleLine = true,
-                                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                                        textColor = MaterialTheme.colors.onSurface,
-                                        focusedBorderColor = MaterialTheme.colors.primary,
-                                        unfocusedBorderColor = MaterialTheme.colors.onSurface
+                            Spacer(modifier = Modifier.height(15.dp))
+                            OutlinedTextField(
+                                value = password,
+                                onValueChange = { password = it },
+                                textStyle = TextStyle(textAlign = TextAlign.Center),
+                                label = { Text("Enter password") },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Filled.Lock,
+                                        contentDescription = "password icon"
                                     )
+                                },
+                                visualTransformation = PasswordVisualTransformation(),
+                                singleLine = true,
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    textColor = MaterialTheme.colors.onSurface,
+                                    focusedBorderColor = MaterialTheme.colors.primary,
+                                    unfocusedBorderColor = MaterialTheme.colors.onSurface
                                 )
-                                Spacer(modifier = Modifier.height(15.dp))
+                            )
+                            Spacer(modifier = Modifier.height(15.dp))
+
+                            Text(
+                                "New user? Click here",
+                                modifier = Modifier.padding(10.dp)
+                                    .clickable(onClick = {
+                                        navigator.push(
+                                            ScreenRouter(
+                                                AllScreens.Register
+                                            )
+                                        )
+                                    }),
+                                color = md_theme_light_secondary,
+                                textDecoration = TextDecoration.Underline,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+
+                            Button(
+                                onClick = {
+                                    val result = runBlocking {
+                                        screenModel.login(email, password)
+                                    }
+                                    when (result) {
+                                        is LoginScreenModel.LoginResult.Success -> {
+
+                                            navigator.push(ScreenRouter(AllScreens.Profile(email)))
+
+                                        }
+
+                                        is LoginScreenModel.LoginResult.Error -> {
+                                            // Show error message
+                                            errorMessage = "Invalid credentials"
+                                        }
+                                    }
+
+                                }, modifier = Modifier.padding(10.dp),
+                                shape = RoundedCornerShape(50.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color.White,
+                                    contentColor = MaterialTheme.colors.onBackground
+                                ),
+                                border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
+
+                                enabled = !email.isEmpty() && !password.isEmpty()
+                            ) {
 
                                 Text(
-                                    "New user? Click here",
-                                    modifier = Modifier.padding(10.dp)
-                                        .clickable(onClick = {
-                                            navigator.push(
-                                                ScreenRouter(
-                                                    AllScreens.Register
-                                                )
-                                            )
-                                        }),
-                                    color = md_theme_light_secondary,
-                                    textDecoration = TextDecoration.Underline,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = TextAlign.Center
+                                    "Login",
+                                    style = MaterialTheme.typography.button,
+                                    modifier = Modifier.padding(
+                                        top = 8.dp,
+                                        start = 30.dp,
+                                        end = 30.dp,
+                                        bottom = 8.dp
+                                    )
                                 )
-
-                                Button(
-                                    onClick = {
-                                        val result = runBlocking {
-                                            screenModel.login(email, password)
-                                        }
-                                        when (result) {
-                                            is LoginScreenModel.LoginResult.Success -> {
-
-                                                navigator.push(ScreenRouter(AllScreens.Profile(email)))
-
-                                            }
-
-                                            is LoginScreenModel.LoginResult.Error -> {
-                                                // Show error message
-                                                errorMessage = "Invalid credentials"
-                                            }
-                                        }
-
-                                    }, modifier = Modifier.padding(10.dp),
-                                    shape = RoundedCornerShape(50.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        backgroundColor = Color.White,
-                                        contentColor = MaterialTheme.colors.onBackground
-                                    ),
-                                    border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
-
-                                    enabled = !email.isEmpty() && !password.isEmpty()
-                                ) {
-
-                                    Text("Login",
-                                        style = MaterialTheme.typography.button,
-                                        modifier = Modifier.padding(
-                                            top = 8.dp,
-                                            start = 30.dp,
-                                            end = 30.dp,
-                                            bottom = 8.dp
-                                        ))
-                                }
-
-
-                                Text("or sign in with")
-                                Spacer(modifier = Modifier.height(15.dp))
-                                Image(
-                                    url = "https://cdn-icons-png.flaticon.com/512/281/281764.png", // Replace with the URL of the Google logo image
-                                    modifier = Modifier
-                                        .height(40.dp)
-                                        .width(40.dp)
-                                        .clickable(onClick = {})
-                                )
-
                             }
-                        )
-                    }
-                }
 
+
+                            Text("or sign in with")
+                            Spacer(modifier = Modifier.height(15.dp))
+                            Image(
+                                url = "https://cdn-icons-png.flaticon.com/512/281/281764.png", // Replace with the URL of the Google logo image
+                                modifier = Modifier
+                                    .height(40.dp)
+                                    .width(40.dp)
+                                    .clickable(onClick = {})
+                            )
+
+                        }
+                    )
+                }
             }
 
-
         }
+
+
+    }
 //    private fun signInWithGoogle() {
 //        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //            .requestIdToken(getString(R.string.default_web_client_id))
@@ -266,9 +267,6 @@ class LoginScreen : Screen {
 //    }
 
 }
-
-
-
 
 
 /**
@@ -286,6 +284,7 @@ fun colorChangeByClick(isClicked: Boolean): Color {
         MaterialTheme.colors.error
     }
 }
+
 @Composable
 fun ShinyText(text: String, modifier: Modifier = Modifier) {
     var isShowing by remember { mutableStateOf(true) }

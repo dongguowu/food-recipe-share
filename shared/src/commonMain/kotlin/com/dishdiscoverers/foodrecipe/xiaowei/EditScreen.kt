@@ -107,7 +107,10 @@ class EditScreen(private val email: String): Screen {
 
                     Spacer(modifier = Modifier.height(20.dp))
                     Box(modifier = Modifier.padding(16.dp)) {
-                        Card(modifier = Modifier.fillMaxWidth(), elevation = 8.dp) {
+                        Card( shape = RoundedCornerShape(10.dp),
+                            elevation = 8.dp,
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            backgroundColor = Color.White,) {
                             Column(
                                 modifier = Modifier.padding(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -155,8 +158,8 @@ class EditScreen(private val email: String): Screen {
                                             style = MaterialTheme.typography.button,
                                             modifier = Modifier.padding(
                                                 top = 8.dp,
-                                                start = 30.dp,
-                                                end = 30.dp,
+                                                start = 20.dp,
+                                                end = 20.dp,
                                                 bottom = 8.dp
                                             )
                                         )
@@ -187,8 +190,8 @@ class EditScreen(private val email: String): Screen {
                                             style = MaterialTheme.typography.button,
                                             modifier = Modifier.padding(
                                                 top = 8.dp,
-                                                start = 30.dp,
-                                                end = 30.dp,
+                                                start = 20.dp,
+                                                end = 20.dp,
                                                 bottom = 8.dp
                                             )
                                         )
