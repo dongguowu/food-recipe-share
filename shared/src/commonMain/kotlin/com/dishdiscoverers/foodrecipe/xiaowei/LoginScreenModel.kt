@@ -10,6 +10,8 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.InternalAPI
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
@@ -83,8 +85,7 @@ class LoginScreenModel(private val repository: LoginRepositoryRealm) :
 
         var urlString = "https://map07-group03-test.vercel.app/api/users/login"
         runBlocking {
-
-            var response: HttpResponse = ktorClient.post(urlString) {
+            val firstRequest: Deferred<String> = async { ktorClient.post(urlString) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     UserLogin(
@@ -92,25 +93,29 @@ class LoginScreenModel(private val repository: LoginRepositoryRealm) :
                         password = password,
                     )
                 )
-            }
-            println("*********************************************")
-            println(response.bodyAsText())
-            println("*********************************************")
-
+            }.bodyAsText() }
 
             // get user favorite recipes
             var userId = "649b38a5fb7d74de088b7c1b"
             var urlString = "https://map07-group03-test.vercel.app/api/userrecipes"
-            response = ktorClient.post(urlString) {
+            val secondRequest: Deferred<String> = async { ktorClient.post(urlString) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     UserId(
                         userId = userId,
                     )
                 )
-            }
+            }.bodyAsText() }
+
+
             println("*********************************************")
-            println(response.bodyAsText())
+            println(firstRequest.await())
+            println("*********************************************")
+
+
+
+            println("*********************************************")
+            println(secondRequest.await())
             println("*********************************************")
         }
         return true
