@@ -1,35 +1,52 @@
 package com.dishdiscoverers.foodrecipe.xiaowei
+
+import Image
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 
 @OptIn(ExperimentalMaterial3Api::class)
-class EditScreen : Screen {
+class EditScreen(private val email: String): Screen {
     var oldPasswordState by mutableStateOf("")
     var newPasswordState by mutableStateOf("")
     var confirmNewPasswordState by mutableStateOf("")
@@ -37,68 +54,154 @@ class EditScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        Scaffold(
-            topBar = { EditTopBar() },
-            bottomBar = { MyBottomBar() }
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+        val screenModel =
+            rememberScreenModel() { ProfileScreenModel(LoginRepositoryRealmLocal()) }
+        val state by screenModel.state.collectAsState()
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            Scaffold(
+                topBar = { EditTopBar() },
+                bottomBar = { MyBottomBar() }
             ) {
-                Box(modifier = Modifier.padding(16.dp)) {
-                    Card(modifier = Modifier.fillMaxWidth(), elevation = 8.dp) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text("Change Password", fontSize = 24.sp)
-                            Spacer(modifier = Modifier.height(15.dp))
-                            PasswordTextField(
-                                value = oldPasswordState,
-                                onValueChange = { oldPasswordState = it },
-                                label = "Old Password"
-                            )
+                Image(
+                    url = "https://i.pinimg.com/564x/9d/36/fd/9d36fd94e51bdb73759070905718e669.jpg",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.fillMaxSize()
+                )
 
-                            PasswordTextField(
-                                value = newPasswordState,
-                                onValueChange = { newPasswordState = it },
-                                label = "New Password"
-                            )
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
 
-                            PasswordTextField(
-                                value = confirmNewPasswordState,
-                                onValueChange = { confirmNewPasswordState = it },
-                                label = "Confirm New Password"
-                            )
+                ) {
+                    when (val result = state) {
+                        is ProfileScreenModel.State.Init -> Text("")
+                        is ProfileScreenModel.State.Loading -> Text("")
+                        is ProfileScreenModel.State.Result -> {
+                            Text("")
+                        }
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
+                        else -> {}
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                            .aspectRatio(1f)
+                            .border(1.5.dp, MaterialTheme.colors.secondary, CircleShape)
+
+                    ) {
+                        Image(
+                            url = "https://i.pinimg.com/564x/40/9b/94/409b94c14fe4214b5b6397e637c331b9.jpg",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+
+                    Text(
+                        text = "$email",
+                        modifier = Modifier.padding(top = 20.dp),
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Black
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Box(modifier = Modifier.padding(16.dp)) {
+                        Card(modifier = Modifier.fillMaxWidth(), elevation = 8.dp) {
+                            Column(
+                                modifier = Modifier.padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Button(
-                                    onClick = { saveChanges() },
-                                ) {
-                                    Text("Save")
-                                }
+                                Text("Change Password", fontSize = 24.sp)
+                                Spacer(modifier = Modifier.height(15.dp))
+                                PasswordTextField(
+                                    value = oldPasswordState,
+                                    onValueChange = { oldPasswordState = it },
+                                    label = "Old Password"
+                                )
 
-                                Spacer(modifier = Modifier.width(15.dp))
+                                PasswordTextField(
+                                    value = newPasswordState,
+                                    onValueChange = { newPasswordState = it },
+                                    label = "New Password"
+                                )
 
-                                Button(
-                                    onClick = {
-                                        navigator.push(ScreenRouter(AllScreens.Edit))
-                                    },
+                                PasswordTextField(
+                                    value = confirmNewPasswordState,
+                                    onValueChange = { confirmNewPasswordState = it },
+                                    label = "Confirm New Password"
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("Cancel")
+
+                                    Button(
+                                        onClick = {
+                                            saveChanges()
+                                        },
+                                        modifier = Modifier.padding(10.dp),
+                                        shape = RoundedCornerShape(50.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            backgroundColor = Color.Transparent,
+                                            contentColor = MaterialTheme.colors.onBackground
+                                        ),
+                                        border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary),
+                                    ) {
+                                        Text(
+                                            "Save",
+                                            style = MaterialTheme.typography.button,
+                                            modifier = Modifier.padding(
+                                                top = 8.dp,
+                                                start = 30.dp,
+                                                end = 30.dp,
+                                                bottom = 8.dp
+                                            )
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(15.dp))
+                                    Button(
+                                        onClick = {
+                                            val localEmail = email
+                                            navigator.push(
+                                                ScreenRouter(
+                                                    AllScreens.Profile(
+                                                        localEmail
+                                                    )
+                                                )
+                                            )
+                                        },
+                                        modifier = Modifier.padding(10.dp),
+                                        shape = RoundedCornerShape(50.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            contentColor = MaterialTheme.colors.onPrimary
+                                        ),
+                                        border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary),
+                                    ) {
+                                        Text(
+                                            "Cancel",
+                                            style = MaterialTheme.typography.button,
+                                            modifier = Modifier.padding(
+                                                top = 8.dp,
+                                                start = 30.dp,
+                                                end = 30.dp,
+                                                bottom = 8.dp
+                                            )
+                                        )
+                                    }
                                 }
                             }
                         }
+
+                    }
                     }
                 }
             }
         }
-    }
+
+
 
     @Composable
     private fun PasswordTextField(

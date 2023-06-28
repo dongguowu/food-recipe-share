@@ -38,7 +38,7 @@ import dev.icerock.moko.resources.compose.stringResource
 
 
 @Composable
-fun TopBar(){
+fun TopBar( email: String){
     val navigator = LocalNavigator.currentOrThrow
     TopAppBar(
         modifier = Modifier.fillMaxWidth(),
@@ -66,7 +66,7 @@ fun TopBar(){
                     icon = Icons.Default.Edit,
                     tint = Color.Black,
                     onClick = {
-                    navigator.push(ScreenRouter(AllScreens.Edit))
+                    navigator.push(ScreenRouter(AllScreens.Edit(email)))
                 })
             }
         }

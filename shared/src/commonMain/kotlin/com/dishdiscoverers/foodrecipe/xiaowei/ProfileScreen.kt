@@ -66,7 +66,7 @@ class ProfileScreen(private val email: String) : Screen {
 
         Box(modifier = Modifier.fillMaxSize()) {
             Scaffold(
-                topBar = { TopBar() },
+                topBar = { TopBar(email) },
                 bottomBar = { MyBottomBar() }
             ) {
                 Image(

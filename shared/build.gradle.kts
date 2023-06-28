@@ -122,6 +122,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
+dependencies {
+    implementation("androidx.media3:media3-common:1.0.2")
+}
 
 multiplatformResources {
     multiplatformResourcesPackage = "com.appkickstarter.shared" // required

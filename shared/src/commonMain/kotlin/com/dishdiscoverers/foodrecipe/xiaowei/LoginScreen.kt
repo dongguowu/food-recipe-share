@@ -181,11 +181,11 @@ class LoginScreen : Screen {
                                     "New user? Click here",
                                     modifier = Modifier.padding(10.dp)
                                         .clickable(onClick = {
-//                                            navigator.push(
-//                                                ScreenRouter(
-//                                                    AllScreens.Register
-//                                                )
-//                                            )
+                                            navigator.push(
+                                                ScreenRouter(
+                                                    AllScreens.Register
+                                                )
+                                            )
                                         }),
                                     color = md_theme_light_secondary,
                                     textDecoration = TextDecoration.Underline,
@@ -201,7 +201,7 @@ class LoginScreen : Screen {
                                         }
                                         when (result) {
                                             is LoginScreenModel.LoginResult.Success -> {
-//                                                 Navigate to profile screen
+
                                                 navigator.push(ScreenRouter(AllScreens.Profile(email)))
 
                                             }
