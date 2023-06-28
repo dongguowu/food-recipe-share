@@ -40,6 +40,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.Resource
 
 class HomeScreen() : Screen {
 
@@ -59,6 +60,7 @@ class HomeScreen() : Screen {
         // State
         var message by remember { mutableStateOf("") }
         val state by screenModel.state.collectAsState()
+        var categories = screenModel.categories.collectAsState()
         message = when (val result = state) {
             is RecipeScreenModel.State.Init -> "Just initialized"
             is RecipeScreenModel.State.Loading -> "Loading"
@@ -85,6 +87,30 @@ class HomeScreen() : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
+                    categories.value?.let {
+                        when (it) {
+                            is Resource.Failure -> {
+                                Text(it.exception.message!!)
+                            }
+
+                            Resource.Loading -> {
+                                Text("loading....")
+                            }
+
+                            is Resource.Success -> {
+                                var str = StringBuilder()
+                                for (item in it.result) {
+                                    str.append(item.title)
+                                    str.append("; ")
+                                }
+                                Text(str.toString())
+                            }
+
+                            else -> {
+                                Text("some error happens")
+                            }
+                        }
+                    }
 
                     SearchRecipe(
                         description = "Search by recipe title",

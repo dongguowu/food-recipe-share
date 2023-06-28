@@ -12,6 +12,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
+const val MEAL_URL = "https://www.themealdb.com/api/json/v1/1/"
+
 data class Nutrient(
     val id: String,
     val unit: String,
@@ -53,9 +55,10 @@ data class Category(
     val description: String,
 )
 
+
 interface RecipeRepository {
 
-    suspend fun getAllCategory(): List<Category>
+    suspend fun getAllCategory(): Resource<List<Category>>
     suspend fun filterByCategory(category: String): List<Recipe>
     suspend fun filterByMainIngredient(ingredient: String): List<Recipe>
     suspend fun findRecipeById(id: String): Recipe?
@@ -85,6 +88,35 @@ interface RecipeRepository {
 
 class RecipeRepositoryTheMealAPI : RecipeRepositoryJsonTheMeal() {
     private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
+    private val _categories: MutableList<Category> = mutableListOf()
+    private val ktorClient = HttpClient {
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
+        }
+        install(Logging) {
+            level = LogLevel.ALL
+        }
+    }
+
+    override suspend fun getAllCategory(): Resource<List<Category>> {
+        try {
+            val urlString = MEAL_URL + "categories.php"
+            val response: CategoriesResponse =
+                ktorClient.get(urlString).body() as CategoriesResponse
+            _categories.clear()
+            for (item in response.categories ?: emptyList()) {
+                convertMealCategory(item)?.let { _categories.add(it) }
+            }
+            return Resource.Success(_categories)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return Resource.Failure(e)
+        }
+    }
 
     override suspend fun getAllRecipe(): List<Recipe> {
         _recipes.clear()
@@ -99,18 +131,6 @@ class RecipeRepositoryTheMealAPI : RecipeRepositoryJsonTheMeal() {
     }
 
     private suspend fun getRecipeFromTheMealApi(title: String): List<Recipe>? {
-        val ktorClient = HttpClient {
-            install(ContentNegotiation) {
-                json(Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                })
-            }
-            install(Logging) {
-                level = LogLevel.ALL
-            }
-        }
 
         val urlString = "https://www.themealdb.com/api/json/v1/1/search.php?s=$title"
         val results: MealsResponse = ktorClient.get(urlString).body()
@@ -136,6 +156,7 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
     private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
     private val _ingredients: MutableList<Ingredient> = mutableListOf()
     private val _recipeIngredients: MutableList<RecipeIngredients> = mutableListOf()
+    private val _categories: MutableList<Category> = mutableListOf()
 
     override suspend fun getAllRecipe(): List<Recipe> {
         _recipes.clear()
@@ -222,16 +243,16 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
         }
     }
 
-    override suspend fun getAllCategory(): List<Category> {
-        TODO("Not yet implemented")
+    override suspend fun getAllCategory(): Resource<List<Category>> {
+        return Resource.Success(_categories)
     }
 
     override suspend fun filterByCategory(category: String): List<Recipe> {
-        TODO("Not yet implemented")
+        return _recipes
     }
 
     override suspend fun filterByMainIngredient(ingredient: String): List<Recipe> {
-        TODO("Not yet implemented")
+        return _recipes
     }
 
     override suspend fun findRecipeById(id: String): Recipe? {
@@ -305,7 +326,7 @@ class RecipeRepositoryListMock : RecipeRepository {
         return recipesMock
     }
 
-    override suspend fun getAllCategory(): List<Category> {
+    override suspend fun getAllCategory(): Resource<List<Category>> {
         TODO("Not yet implemented")
     }
 
@@ -395,6 +416,20 @@ fun convertMealRecipe(item: RecipeTheMeal, ingredients: String = ""): Recipe? {
             instructions = it.strInstructions ?: "",
             imageUrl = it.strMealThumb ?: "",
             ingredients = ingredients
+        )
+    }
+}
+
+fun convertMealCategory(item: CategoryTheMeal): Category? {
+    return item?.let {
+        if (it.idCategory == null || it.strCategory == null) {
+            return null
+        }
+        Category(
+            id = it.idCategory,
+            title = it.strCategory,
+            imageUrl = it.strCategoryThumb ?: "",
+            description = it.strCategoryDescription ?: ""
         )
     }
 }
@@ -993,7 +1028,7 @@ data class RecipeTheMeal(
 @Serializable
 data class CategoriesResponse(
     @SerialName("categories")
-    val meals: List<CategoryTheMeal>? = null
+    val categories: List<CategoryTheMeal>? = null
 )
 
 @Serializable
