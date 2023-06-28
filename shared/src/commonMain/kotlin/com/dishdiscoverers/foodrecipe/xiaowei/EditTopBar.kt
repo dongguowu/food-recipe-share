@@ -7,6 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.appkickstarter.shared.SharedRes
 
 @Composable
 fun EditTopBar(){
@@ -62,35 +64,14 @@ fun getShinyAppName2(): AnnotatedString {
             style = SpanStyle(
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
-
+              color = Color.Black,
                 letterSpacing = 0.05.em,
                 fontStyle = FontStyle.Italic
             )
         ) {
-            append("Food ")
+            append("Food Recipe Share")
         }
-        withStyle(
-            style = SpanStyle(
-                fontWeight = FontWeight.Bold,
 
-                fontSize = 24.sp,
-                letterSpacing = 0.05.em,
-                fontStyle = FontStyle.Italic
-            )
-        ) {
-            append("Recipe")
-        }
-        withStyle(
-            style = SpanStyle(
-                fontWeight = FontWeight.Bold,
-
-                fontSize = 24.sp,
-                letterSpacing = 0.05.em,
-                fontStyle = FontStyle.Italic
-            )
-        ) {
-            append(" Share")
-        }
     }
     return shinyAppName
 }

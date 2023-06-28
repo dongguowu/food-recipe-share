@@ -176,7 +176,8 @@ class EditScreen(private val email: String): Screen {
                                         modifier = Modifier.padding(10.dp),
                                         shape = RoundedCornerShape(50.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            contentColor = MaterialTheme.colors.onPrimary
+                                            backgroundColor = Color.Transparent,
+                                            contentColor = MaterialTheme.colors.onBackground
                                         ),
                                         border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary),
                                     ) {

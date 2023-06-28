@@ -87,34 +87,12 @@ fun getShinyAppName(): AnnotatedString {
             style = SpanStyle(
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
-
+                color = Color.Black,
                 letterSpacing = 0.05.em,
                 fontStyle = FontStyle.Italic
             )
         ) {
-            append("Food ")
-        }
-        withStyle(
-            style = SpanStyle(
-                fontWeight = FontWeight.Bold,
-
-                fontSize = 24.sp,
-                letterSpacing = 0.05.em,
-                fontStyle = FontStyle.Italic
-            )
-        ) {
-            append("Recipe")
-        }
-        withStyle(
-            style = SpanStyle(
-                fontWeight = FontWeight.Bold,
-
-                fontSize = 24.sp,
-                letterSpacing = 0.05.em,
-                fontStyle = FontStyle.Italic
-            )
-        ) {
-            append(" Share")
+            append("Food Recipe Share ")
         }
     }
     return shinyAppName

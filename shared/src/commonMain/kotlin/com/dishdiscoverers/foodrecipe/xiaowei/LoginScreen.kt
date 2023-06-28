@@ -4,6 +4,7 @@ import Image
 import androidx.compose.animation.animateColorAsState
 
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 
 import androidx.compose.foundation.layout.Box
@@ -123,20 +124,20 @@ class LoginScreen : Screen {
                                         Text("Invalid email or password", color = Color.Red)
                                     }
                                 }
-                                ShinyText(
-                                    text = "LoginMe",
-                                    modifier = Modifier.padding(vertical = 50.dp)
-                                        .align(Alignment.CenterHorizontally)
-                                )
-//                            Text(
-//                                "LoginMe",
-//                                color = MaterialTheme.colors.onSecondary,
-//                                fontSize = 30.sp,
-//                                style = MaterialTheme.typography.h3,
-//                                fontWeight = FontWeight.Bold,
-//                                modifier = Modifier.padding(vertical = 50.dp),
-//                                textAlign = TextAlign.Center
-//                            )
+//                                ShinyText(
+//                                    text = "LoginMe",
+//                                    modifier = Modifier.padding(vertical = 50.dp)
+//                                        .align(Alignment.CenterHorizontally)
+//                                )
+                            Text(
+                                "LoginMe",
+                                color = MaterialTheme.colors.onSecondary,
+                                fontSize = 30.sp,
+                                style = MaterialTheme.typography.h3,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(vertical = 50.dp),
+                                textAlign = TextAlign.Center
+                            )
 
 
                                 OutlinedTextField(
@@ -212,16 +213,28 @@ class LoginScreen : Screen {
                                             }
                                         }
 
-                                    }, modifier = Modifier.padding(20.dp),
+                                    }, modifier = Modifier.padding(10.dp),
+                                    shape = RoundedCornerShape(50.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        md_theme_dark_primary
+                                        backgroundColor = Color.White,
+                                        contentColor = MaterialTheme.colors.onBackground
                                     ),
+                                    border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
 
                                     enabled = !email.isEmpty() && !password.isEmpty()
                                 ) {
 
-                                    Text("Login")
+                                    Text("Login",
+                                        style = MaterialTheme.typography.button,
+                                        modifier = Modifier.padding(
+                                            top = 8.dp,
+                                            start = 30.dp,
+                                            end = 30.dp,
+                                            bottom = 8.dp
+                                        ))
                                 }
+
+
                                 Text("or sign in with")
                                 Spacer(modifier = Modifier.height(15.dp))
                                 Image(
