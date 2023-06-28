@@ -19,11 +19,11 @@ class TheMealRepositoryImpl() : TheMealRepository {
         }
     }
 
-    override suspend fun getRecipes(title: String): Resource<List<RecipeFromTheMealDB>> {
+    override suspend fun getRecipes(title: String): Resource<List<RecipeTheMeal>> {
         val urlString = "https://www.themealdb.com/api/json/v1/1/search.php?s=$title"
         return try {
             Resource.Success(
-                (httpClient.get(urlString).body() as TheMealResponse).meals ?: emptyList()
+                (httpClient.get(urlString).body() as MealsResponse).meals ?: emptyList()
             )
 
         } catch (e: Exception) {

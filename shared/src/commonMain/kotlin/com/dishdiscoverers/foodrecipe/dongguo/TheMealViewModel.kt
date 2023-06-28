@@ -8,13 +8,13 @@ import kotlinx.coroutines.launch
 
 class TheMealViewModel(private val repository: TheMealRepository) :
     StateScreenModel<TheMealViewModel.State>(State.Init) {
-    private val _list = MutableStateFlow<Resource<List<RecipeFromTheMealDB>>?>(null)
-    val list: StateFlow<Resource<List<RecipeFromTheMealDB>>?> = _list
+    private val _list = MutableStateFlow<Resource<List<RecipeTheMeal>>?>(null)
+    val list: StateFlow<Resource<List<RecipeTheMeal>>?> = _list
 
     sealed class State {
         object Init : State()
         object Loading : State()
-        data class Result(val list: List<RecipeFromTheMealDB>) : State()
+        data class Result(val list: List<RecipeTheMeal>) : State()
     }
 
     init {
