@@ -23,8 +23,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TextField
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -126,7 +128,7 @@ class EditScreen(private val email: String): Screen {
                                 PasswordTextField(
                                     value = newPasswordState,
                                     onValueChange = { newPasswordState = it },
-                                    label = "New Password"
+                                    label = "New Password",
                                 )
 
                                 PasswordTextField(
@@ -214,12 +216,22 @@ class EditScreen(private val email: String): Screen {
         onValueChange: (String) -> Unit,
         label: String
     ) {
+        val roundedCornerShape: Shape = RoundedCornerShape(30.dp)
+        val textFieldColors = TextFieldDefaults.textFieldColors(
+            backgroundColor = Color.White,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        )
         TextField(
             value = value,
             onValueChange = onValueChange,
             label = { Text(label) },
+            shape = roundedCornerShape,
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            colors = textFieldColors,
+            modifier = Modifier
+                .padding(8.dp)
+                .border(1.dp, Color.Black, roundedCornerShape)
         )
     }
 
