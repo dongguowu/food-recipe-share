@@ -51,4 +51,7 @@ class RecipeScreenModel(
         }
     }
 
+    override fun onDispose() {
+        println("ScreenModel: dispose ")
+    }
 }
