@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,8 +39,8 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryNinjasJson
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.Resource
 
 class HomeScreen() : Screen {
 
@@ -51,28 +52,31 @@ class HomeScreen() : Screen {
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
                 localRepository = RecipeRepositoryJsonTheMeal(),
-                secondLocalRepository = RecipeRepositoryNinjasJson(),
+                secondLocalRepository = RecipeRepositoryJsonTheMeal(),
                 apiRepository = RecipeRepositoryTheMealAPI(),
             )
         }
+
+        // State
+        var message by remember { mutableStateOf("") }
         val state by screenModel.state.collectAsState()
-
-
-        var queryTitle by remember { mutableStateOf("fish") }
-
-        // Load  data
-        LaunchedEffect(true) {
-            screenModel.getAllRecipe()
-
+        var categories = screenModel.categories.collectAsState()
+        message = when (val result = state) {
+            is RecipeScreenModel.State.Init -> "Just initialized"
+            is RecipeScreenModel.State.Loading -> "Loading"
+            is RecipeScreenModel.State.Result -> "Success"
         }
 
+        var queryTitle by remember { mutableStateOf("fish") }
+        // Load  data
+        LaunchedEffect(currentCompositeKeyHash) {
+            screenModel.getAllRecipe()
+        }
         var list: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
             list =
                 (state as? RecipeScreenModel.State.Result)?.list?.toMutableList() ?: mutableListOf()
         }
-
-        var message by remember { mutableStateOf("") }
 
 
         // Layout - Scaffold
@@ -83,11 +87,31 @@ class HomeScreen() : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
-                    message = when (val result = state) {
-                        is RecipeScreenModel.State.Init -> "Just initialized"
-                        is RecipeScreenModel.State.Loading -> "Loading"
-                        is RecipeScreenModel.State.Result -> "Success"
+                    categories.value?.let {
+                        when (it) {
+                            is Resource.Failure -> {
+                                Text(it.exception.message!!)
+                            }
+
+                            Resource.Loading -> {
+                                Text("loading....")
+                            }
+
+                            is Resource.Success -> {
+                                var str = StringBuilder()
+                                for (item in it.result) {
+                                    str.append(item.title)
+                                    str.append("; ")
+                                }
+                                Text(str.toString())
+                            }
+
+                            else -> {
+                                Text("some error happens")
+                            }
+                        }
                     }
+
                     SearchRecipe(
                         description = "Search by recipe title",
                         search = { screenModel.searchRecipe(it) },
