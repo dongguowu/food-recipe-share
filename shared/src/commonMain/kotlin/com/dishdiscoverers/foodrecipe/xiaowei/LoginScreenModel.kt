@@ -78,7 +78,10 @@ class LoginScreenModel(private val repository: LoginRepositoryRealm) :
         @Serializable
         data class UserLogin(val email: String, val password: String)
 
-        val urlString = "https://map07-group03-test.vercel.app/api/users/login"
+        @Serializable
+        data class UserId(val userId: String)
+
+        var urlString = "https://map07-group03-test.vercel.app/api/users/login"
         runBlocking {
 
             var response: HttpResponse = ktorClient.post(urlString) {
@@ -87,6 +90,22 @@ class LoginScreenModel(private val repository: LoginRepositoryRealm) :
                     UserLogin(
                         email = email,
                         password = password,
+                    )
+                )
+            }
+            println("*********************************************")
+            println(response.bodyAsText())
+            println("*********************************************")
+
+
+            // get user favorite recipes
+            var userId = "649b38a5fb7d74de088b7c1b"
+            var urlString = "https://map07-group03-test.vercel.app/api/userrecipes"
+            response = ktorClient.post(urlString) {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    UserId(
+                        userId = userId,
                     )
                 )
             }
