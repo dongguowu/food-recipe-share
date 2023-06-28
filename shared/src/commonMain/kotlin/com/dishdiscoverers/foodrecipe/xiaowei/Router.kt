@@ -10,9 +10,9 @@ sealed class AllScreens {
     object PreLogin : AllScreens()
 //    object Administrator : AllScreens()
 
-//    data class Profile(val email: String?) : AllScreens()
+    data class Profile(val email: String?) : AllScreens()
 //
-//    object AboutUs : AllScreens()
+object Edit : AllScreens()
 
 
 }
@@ -23,7 +23,8 @@ fun ScreenRouter(screen: AllScreens): Screen {
         is AllScreens.Login ->
             LoginScreen()
 
-//
+        is AllScreens.Edit ->
+            EditScreen()
 //        is AllScreens.Register ->
 //            RegisterScreen()
         is AllScreens.PreLogin ->
@@ -31,8 +32,8 @@ fun ScreenRouter(screen: AllScreens): Screen {
 //        is AllScreens.Administrator ->
 //            AdministratorScreen()
 //
-//        is AllScreens.Profile ->
-//            ProfileScreen(screen.email?:"")
+        is AllScreens.Profile ->
+            ProfileScreen(screen.email?:"")
 //
 //        is AllScreens.AboutUs->
 //           AboutUsScreen()

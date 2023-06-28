@@ -71,11 +71,12 @@ class LoginScreen : Screen {
     @Composable
     override fun Content() {
 
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
         val screenModel =
             rememberScreenModel() { LoginScreenModel(LoginRepositoryRealmLocal()) }
         val state by screenModel.state.collectAsState()
+        //Todo: delete dongguo password
         var email by remember { mutableStateOf("dongguo@wu.com") }
         var password by remember { mutableStateOf("dongguo") }
         var isClicked by remember { mutableStateOf(true) }
@@ -200,11 +201,9 @@ class LoginScreen : Screen {
                                         }
                                         when (result) {
                                             is LoginScreenModel.LoginResult.Success -> {
-                                                // Navigate to profile screen
-//                                                navigator.push(ScreenRouter(AllScreens.Profile(email)))
-                                                println("_____________________________")
-                                                println("login successfully")
-                                                println("_____________________________")
+//                                                 Navigate to profile screen
+                                                navigator.push(ScreenRouter(AllScreens.Profile(email)))
+
                                             }
 
                                             is LoginScreenModel.LoginResult.Error -> {
