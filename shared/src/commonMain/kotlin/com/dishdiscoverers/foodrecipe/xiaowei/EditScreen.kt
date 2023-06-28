@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.Card
+import androidx.compose.material.Scaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -36,57 +37,61 @@ class EditScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Scaffold(
+            topBar = { EditTopBar() },
+            bottomBar = { MyBottomBar() }
         ) {
-            Box(modifier = Modifier.padding(16.dp)) {
-                Card(modifier = Modifier.fillMaxWidth(), elevation = 8.dp) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text("Change Password", fontSize = 24.sp)
-                        Spacer(modifier = Modifier.height(15.dp))
-                        PasswordTextField(
-                            value = oldPasswordState,
-                            onValueChange = { oldPasswordState = it },
-                            label = "Old Password"
-                        )
-
-                        PasswordTextField(
-                            value = newPasswordState,
-                            onValueChange = { newPasswordState = it },
-                            label = "New Password"
-                        )
-
-                        PasswordTextField(
-                            value = confirmNewPasswordState,
-                            onValueChange = { confirmNewPasswordState = it },
-                            label = "Confirm New Password"
-                        )
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(modifier = Modifier.padding(16.dp)) {
+                    Card(modifier = Modifier.fillMaxWidth(), elevation = 8.dp) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Button(
-                                onClick = { saveChanges() },
-                            ) {
-                                Text("Save")
-                            }
+                            Text("Change Password", fontSize = 24.sp)
+                            Spacer(modifier = Modifier.height(15.dp))
+                            PasswordTextField(
+                                value = oldPasswordState,
+                                onValueChange = { oldPasswordState = it },
+                                label = "Old Password"
+                            )
 
-                            Spacer(modifier = Modifier.width(15.dp))
+                            PasswordTextField(
+                                value = newPasswordState,
+                                onValueChange = { newPasswordState = it },
+                                label = "New Password"
+                            )
 
-                            Button(
-                                onClick = {
-                                    navigator.push(ScreenRouter(AllScreens.Edit))
-                                },
+                            PasswordTextField(
+                                value = confirmNewPasswordState,
+                                onValueChange = { confirmNewPasswordState = it },
+                                label = "Confirm New Password"
+                            )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("Cancel")
+                                Button(
+                                    onClick = { saveChanges() },
+                                ) {
+                                    Text("Save")
+                                }
+
+                                Spacer(modifier = Modifier.width(15.dp))
+
+                                Button(
+                                    onClick = {
+                                        navigator.push(ScreenRouter(AllScreens.Edit))
+                                    },
+                                ) {
+                                    Text("Cancel")
+                                }
                             }
                         }
                     }
