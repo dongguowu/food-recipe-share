@@ -1,9 +1,8 @@
 package com.dishdiscoverers.foodrecipe.xiaowei
 
 import io.realm.kotlin.Realm
-import io.realm.kotlin.ext.query
-import io.realm.kotlin.query.RealmResults
 import io.realm.kotlin.types.RealmUUID
+
 /**
  * Abstract class representing a repository for user registration using Realm database.
  *
@@ -23,7 +22,7 @@ abstract class RegisterRepositoryRealm : UserRepository {
      * @param user The User object to be converted.
      * @return The corresponding UserData object.
      */
-    suspend fun convertToUserData(user: User?): UserData? {
+    private suspend fun convertToUserData(user: User?): UserData? {
         // Check if Realm is initialized and set up synchronization if not
         if (!this::realm.isInitialized) {
             setupRealmSync()
@@ -48,6 +47,14 @@ abstract class RegisterRepositoryRealm : UserRepository {
 
     private fun closeRealmSync() {
         realm.close()
+    }
+
+    override suspend fun getUserByUsername(username: String): UserData? {
+        if (!this::realm.isInitialized) {
+            setupRealmSync()
+        }
+        val user: User? = realm.query<User>(User::class, "username = \"$username\"").first().find()
+        return convertToUserData(user)
     }
 
     override suspend fun getUser(
@@ -148,6 +155,7 @@ abstract class RegisterRepositoryRealm : UserRepository {
 
         return realm.query<User>(User::class).find().mapNotNull { convertToUserData(it) }
     }
+
 
 
 }

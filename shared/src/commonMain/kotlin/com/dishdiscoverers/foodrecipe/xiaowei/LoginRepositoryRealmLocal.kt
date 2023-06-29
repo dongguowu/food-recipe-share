@@ -22,4 +22,8 @@ class LoginRepositoryRealmLocal: LoginRepositoryRealm() {
     ): UserData? {
         TODO("Not yet implemented")
     }
+
+    override suspend fun getUserByUsername(username: String): UserData? {
+        TODO("Not yet implemented")
+    }
 }

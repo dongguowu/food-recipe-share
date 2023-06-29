@@ -1,5 +1,8 @@
 package com.dishdiscoverers.foodrecipe.xiaowei
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +16,10 @@ class RegistrationScreenModel(private val repository: RegisterRepositoryRealm) :
 
     StateScreenModel<RegistrationScreenModel.State>(State.Init)
     {
-
+        var userName by mutableStateOf("")
+        var email by mutableStateOf("")
+        var password by mutableStateOf("")
+        var confirmPassword by mutableStateOf("")
         /**
          * Sealed class representing the different states of the screen model.
          */
@@ -23,9 +29,56 @@ class RegistrationScreenModel(private val repository: RegisterRepositoryRealm) :
             sealed class Result : State() {
                 class SingleResult(val userData: UserData?) : Result()
                 class MultipleResult(val userDatas: Flow<UserData>?) : Result()
+                object InvalidUserName : Result()
+                object InvalidEmail : Result()
+                object InvalidPassword : Result()
+                object PasswordMismatch: Result()
             }
         }
 
+          suspend fun isUsernameUnique(username: String): Boolean {
+            // Implement the logic to check if the username is unique
+            // You can query your data source (e.g., database) to check if the username exists
+            // Return true if the username is unique, false otherwise
+
+            val existingUser = repository.getUserByUsername(username)
+            return existingUser == null
+        }
+
+//        private fun isEmailUnique(email: String): Boolean {
+//            // Implement the logic to check if the email is unique
+//            // You can query your data source (e.g., database) to check if the email exists
+//            // Return true if the email is unique, false otherwise
+//
+//            val existingUser = repository.getUserByEmail(email)
+//            return existingUser == null
+//        }
+
+        fun isEmailValid(email: String): Boolean {
+            // Implement the logic to check if the email is valid
+            // You can use regular expressions or other validation techniques to validate the email format
+            // Return true if the email is valid, false otherwise
+
+            val emailRegex = Regex("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            return email.matches(emailRegex)
+        }
+
+         fun isPasswordValid(password: String): Boolean {
+            // Implement the logic to check if the password is valid
+            // You can define your password validation rules (e.g., minimum length)
+            // Return true if the password is valid, false otherwise
+
+            val minLength = 6
+            return password.length >= minLength
+        }
+
+        fun doPasswordsMatch(password: String, confirmPassword: String): Boolean {
+            // Implement the logic to check if the password and confirm password match
+            // Compare the password and confirmPassword values
+            // Return true if they match, false otherwise
+
+            return password == confirmPassword
+        }
         /**
          * Function to retrieve user data based on the provided parameters.
          *
@@ -47,6 +100,7 @@ class RegistrationScreenModel(private val repository: RegisterRepositoryRealm) :
                 )
             }
         }
+
         /**
          * Function to add a new user.
          *
@@ -56,7 +110,27 @@ class RegistrationScreenModel(private val repository: RegisterRepositoryRealm) :
          * @param confirmPassword The confirmed password of the user.
          */
 
-        fun addUser(userName: String, email: String, password: String, confirmPassword: String) {
+        suspend fun addUser(userName: String, email: String, password: String, confirmPassword: String) {
+            if (!isUsernameUnique(userName)) {
+                mutableState.value = State.Result.InvalidUserName
+                return
+            }
+
+            if (!isEmailValid(email)) {
+                mutableState.value = State.Result.InvalidEmail
+                return
+            }
+
+            if (!isPasswordValid(password)) {
+                mutableState.value = State.Result.InvalidPassword
+                return
+            }
+
+            if (!doPasswordsMatch(password, confirmPassword)) {
+                mutableState.value = State.Result.PasswordMismatch
+                return
+            }
+
             coroutineScope.launch {
                 mutableState.value = State.Loading
                 val newUser = UserData(

@@ -38,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -46,12 +45,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.model.coroutineScope
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * Screen class representing the user registration screen.
@@ -62,6 +64,7 @@ class RegisterScreen : Screen {
      * It includes input fields for username, email, password, and confirm password,
      * along with buttons for submitting the registration, canceling, and navigating to the administrator screen.
      */
+
     @Composable
     override fun Content() {
         val screenModel =
@@ -72,9 +75,22 @@ class RegisterScreen : Screen {
         var password by remember { mutableStateOf("") }
         var confirmPassword by remember { mutableStateOf("") }
         val navigator = LocalNavigator.currentOrThrow
-        val siteKey = "6LeNbMgmAAAAADfFl8Oq8FB-FerIsp32EHiLijy2" // Replace with your reCAPTCHA site key
-        var isNotRobotChecked by remember { mutableStateOf(false) }
+        val siteKey =
+            "6LeNbMgmAAAAADfFl8Oq8FB-FerIsp32EHiLijy2" // Replace with your reCAPTCHA site key
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
 
+
+        suspend fun runValidation(): Boolean {
+            val userName = userName
+            val email = email
+            val password = password
+            val confirmPassword = confirmPassword
+
+            return screenModel.isUsernameUnique(userName) &&
+                    screenModel.isEmailValid(email) &&
+                    screenModel.isPasswordValid(password) &&
+                    screenModel.doPasswordsMatch(password, confirmPassword)
+        }
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
                 url = "https://i.pinimg.com/564x/9d/36/fd/9d36fd94e51bdb73759070905718e669.jpg",
@@ -103,109 +119,122 @@ class RegisterScreen : Screen {
                     modifier = Modifier.padding(top = 35.dp, bottom = 10.dp)
                 )
                 Spacer(modifier = Modifier.height(15.dp))
-                    OutlinedTextField(
-                        value = userName,
-                        onValueChange = { userName = it },
-                        textStyle = TextStyle(textAlign = TextAlign.Center),
-                        label = { Text("Enter username") },
-                        leadingIcon = {
-                            Icon(Icons.Filled.Face, contentDescription = "username icon")
-                        },
-                        singleLine = true,
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = MaterialTheme.colors.onSurface,
+                OutlinedTextField(
+                    value = userName,
+                    onValueChange = { userName = it },
+                    textStyle = TextStyle(textAlign = TextAlign.Center),
+                    label = { Text("Enter username") },
+                    leadingIcon = {
+                        Icon(Icons.Filled.Face, contentDescription = "username icon")
+                    },
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = MaterialTheme.colors.onSurface,
                         focusedBorderColor = MaterialTheme.colors.primary,
                         unfocusedBorderColor = MaterialTheme.colors.onSurface,
-                                    backgroundColor = Color.Transparent
-                                )
+                        backgroundColor = Color.Transparent
                     )
+                )
                 Spacer(modifier = Modifier.height(15.dp))
 
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        textStyle = TextStyle(textAlign = TextAlign.Center),
-                        label = { Text("Enter email address") },
-                        leadingIcon = {
-                            Icon(Icons.Filled.Email, contentDescription = "email icon")
-                        },
-                        singleLine = true,
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            textColor = MaterialTheme.colors.onSurface,
-                            focusedBorderColor = MaterialTheme.colors.primary,
-                            unfocusedBorderColor = MaterialTheme.colors.onSurface
-                        )
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    textStyle = TextStyle(textAlign = TextAlign.Center),
+                    label = { Text("Enter email address") },
+                    leadingIcon = {
+                        Icon(Icons.Filled.Email, contentDescription = "email icon")
+                    },
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = MaterialTheme.colors.onSurface,
+                        focusedBorderColor = MaterialTheme.colors.primary,
+                        unfocusedBorderColor = MaterialTheme.colors.onSurface
                     )
+                )
 
                 Spacer(modifier = Modifier.height(15.dp))
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        textStyle = TextStyle(textAlign = TextAlign.Center),
-                        label = { Text("Enter password") },
-                        leadingIcon = {
-                            Icon(Icons.Filled.Lock, contentDescription = "password icon")
-                        },
-                        visualTransformation = PasswordVisualTransformation(),
-                        singleLine = true,
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            textColor = MaterialTheme.colors.onSurface,
-                            focusedBorderColor = MaterialTheme.colors.primary,
-                            unfocusedBorderColor = MaterialTheme.colors.onSurface
-                        )
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    textStyle = TextStyle(textAlign = TextAlign.Center),
+                    label = { Text("Enter password") },
+                    leadingIcon = {
+                        Icon(Icons.Filled.Lock, contentDescription = "password icon")
+                    },
+                    visualTransformation = PasswordVisualTransformation(),
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = MaterialTheme.colors.onSurface,
+                        focusedBorderColor = MaterialTheme.colors.primary,
+                        unfocusedBorderColor = MaterialTheme.colors.onSurface
                     )
-Spacer(modifier = Modifier.height(15.dp))
+                )
+                Spacer(modifier = Modifier.height(15.dp))
 
-                    OutlinedTextField(
-                        value = confirmPassword,
-                        onValueChange = { confirmPassword = it },
-                        textStyle = TextStyle(textAlign = TextAlign.Center),
-                        label = { Text("Enter confirm password") },
-                        leadingIcon = {
-                            Icon(Icons.Filled.Lock, contentDescription = "password icon")
-                        },
-                        visualTransformation = PasswordVisualTransformation(),
-                        singleLine = true,
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            textColor = MaterialTheme.colors.onSurface,
-                            focusedBorderColor = MaterialTheme.colors.primary,
-                            unfocusedBorderColor = MaterialTheme.colors.onSurface
-                        )
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    textStyle = TextStyle(textAlign = TextAlign.Center),
+                    label = { Text("Enter confirm password") },
+                    leadingIcon = {
+                        Icon(Icons.Filled.Lock, contentDescription = "password icon")
+                    },
+                    visualTransformation = PasswordVisualTransformation(),
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = MaterialTheme.colors.onSurface,
+                        focusedBorderColor = MaterialTheme.colors.primary,
+                        unfocusedBorderColor = MaterialTheme.colors.onSurface
                     )
+                )
                 Spacer(modifier = Modifier.height(15.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-
+                    val isEnabled = runBlocking { runValidation() }
                     Button(
                         onClick = {
-                            screenModel.addUser(
-                                userName,
-                                email,
-                                password,
-                                confirmPassword
-                            )
-                            navigator.push(ScreenRouter(AllScreens.Login))
-                        }, modifier = Modifier.padding(10.dp),
+                            // Run the click logic inside a coroutine
+                            coroutineScope.launch {
+                                if (runValidation()) {
+                                    screenModel.addUser(
+                                        userName,
+                                        email,
+                                        password,
+                                        confirmPassword
+                                    )
+                                    navigator.push(ScreenRouter(AllScreens.Login))
+                                }
+                            }
+                        },
+                        modifier = Modifier.padding(10.dp),
                         shape = RoundedCornerShape(50.dp),
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.primary,
                             contentColor = MaterialTheme.colors.onPrimary
                         ),
-                        enabled = !userName.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()
+                        enabled = isEnabled
                     ) {
 
-                        Text("Submit",
+                        Text(
+                            "Submit",
                             style = MaterialTheme.typography.button,
-                            modifier = Modifier.padding(top=8.dp, start = 30.dp,end=30.dp, bottom = 8.dp))
+                            modifier = Modifier.padding(
+                                top = 8.dp,
+                                start = 30.dp,
+                                end = 30.dp,
+                                bottom = 8.dp
+                            )
+                        )
                     }
 
                 }
 
-
             }
+
         }
 
     }
