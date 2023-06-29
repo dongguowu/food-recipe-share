@@ -48,11 +48,17 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+<<<<<<< HEAD
 import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.dongguo.Resource
 import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
+=======
+import com.dishdiscoverers.foodrecipe.garett.theme.ui.md_theme_dark_primary
+import com.dishdiscoverers.foodrecipe.garett.theme.ui.md_theme_light_secondary
+
+>>>>>>> 98751e64c2b7879518628e8d09b577c67a2bd0cf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
