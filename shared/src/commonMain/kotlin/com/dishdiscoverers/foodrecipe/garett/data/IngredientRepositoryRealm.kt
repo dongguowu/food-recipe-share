@@ -1,9 +1,9 @@
 //package com.lduboscq.appkickstarter.main.data
 //import androidx.compose.runtime.MutableState
 //import androidx.compose.runtime.mutableStateOf
-//import com.lduboscq.appkickstarter.main.model.IngredientData
+//import com.dishdiscoverers.foodrecipe.garett.model.IngredientData
 //import com.lduboscq.appkickstarter.mains.data.IngredientRepository
-//import com.lduboscq.appkickstarter.mains.model.Ingredient
+//import com.dishdiscoverers.foodrecipe.garett.model.Ingredient
 //
 //import io.realm.kotlin.Realm
 //import io.realm.kotlin.notifications.ResultsChange

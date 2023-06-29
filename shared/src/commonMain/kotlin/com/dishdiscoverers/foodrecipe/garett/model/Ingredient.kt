@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.mains.model
+package com.dishdiscoverers.foodrecipe.garett.model
 
 
 import io.realm.kotlin.types.RealmObject

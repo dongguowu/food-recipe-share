@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.main.model
+package com.dishdiscoverers.foodrecipe.garett.model
 
 data class Nutrient(
     val id: String,

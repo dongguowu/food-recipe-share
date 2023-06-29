@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.main.screen
+package com.dishdiscoverers.foodrecipe.garett.screen
 
 
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,14 +36,13 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.lduboscq.appkickstarter.main.data.Ingredient
-import com.lduboscq.appkickstarter.main.data.RecipeRepositoryJson
-import com.lduboscq.appkickstarter.main.router.Route
-import com.lduboscq.appkickstarter.main.screenModel.RecipeScreenModel
-import com.lduboscq.appkickstarter.mains.model.User
-import com.lduboscq.appkickstarter.ui.Image
-import com.lduboscq.appkickstarter.ui.MyBottomBar
-import com.lduboscq.appkickstarter.ui.MyTopBar
+import com.dishdiscoverers.foodrecipe.garett.data.Ingredient
+import com.dishdiscoverers.foodrecipe.garett.data.RecipeRepositoryJson
+import com.dishdiscoverers.foodrecipe.garett.router.Route
+import com.dishdiscoverers.foodrecipe.garett.screenModel.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.garett.model.User
+import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
+import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
 
 internal class IngredientScreen(var user: User? = null, val title: String = "Your Ingredients") : Screen {
 

@@ -41,42 +41,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:92802496469:android:6fe98895ec04756985af5c",
-        "android_client_info": {
-          "package_name": "com.lduboscq.appkickstarter"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "92802496469-kcl8pvjn3p64b2t23hdi0qn99bsl91sh.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCtK9IU1u4EPwyfpWPTzrIK0UNH7eMZS38"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "92802496469-kcl8pvjn3p64b2t23hdi0qn99bsl91sh.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "92802496469-jb3tbskfma71sogbq5cloigpei0gd30e.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.flutter02.RunnerTests"
-              }
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

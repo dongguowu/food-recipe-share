@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.mains.screen
+package com.dishdiscoverers.foodrecipe.garett.router.screen
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen

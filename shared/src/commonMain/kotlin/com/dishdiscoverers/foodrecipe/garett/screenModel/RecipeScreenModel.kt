@@ -1,10 +1,10 @@
-package com.lduboscq.appkickstarter.main.screenModel
+package com.dishdiscoverers.foodrecipe.garett.screenModel
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
-import com.lduboscq.appkickstarter.main.data.Ingredient
-import com.lduboscq.appkickstarter.main.data.Recipe
-import com.lduboscq.appkickstarter.main.data.RecipeRepository
+import com.dishdiscoverers.foodrecipe.garett.data.Ingredient
+import com.dishdiscoverers.foodrecipe.garett.data.Recipe
+import com.dishdiscoverers.foodrecipe.garett.data.RecipeRepository
 
 import kotlinx.coroutines.launch
 
@@ -17,9 +17,9 @@ class RecipeScreenModel(
         object Init : State()
         object Loading : State()
         sealed class Result: State() {
-            class RecipeResult(val recipeList: List<Recipe>) : RecipeScreenModel.State.Result()
-            class RecipeSingleResult(val recipe: Recipe?) : RecipeScreenModel.State.Result()
-            class IngredientResult(val ingredientList: List<Ingredient>) : RecipeScreenModel.State.Result()
+            class RecipeResult(val recipeList: List<Recipe>) : Result()
+            class RecipeSingleResult(val recipe: Recipe?) : Result()
+            class IngredientResult(val ingredientList: List<Ingredient>) : Result()
         }
 
     }

@@ -1,6 +1,6 @@
-package com.lduboscq.appkickstarter.main.router
+package com.dishdiscoverers.foodrecipe.garett.router
 
-import com.lduboscq.appkickstarter.mains.model.User
+import com.dishdiscoverers.foodrecipe.garett.model.User
 
 
 sealed class Route {
