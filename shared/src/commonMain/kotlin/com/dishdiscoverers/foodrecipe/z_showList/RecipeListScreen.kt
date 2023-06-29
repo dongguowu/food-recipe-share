@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import com.dishdiscoverers.foodrecipe.dongguo.AuthRepositoryImpl
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
@@ -52,8 +53,8 @@ class HomeScreen() : Screen {
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
                 localRepository = RecipeRepositoryJsonTheMeal(),
-                secondLocalRepository = RecipeRepositoryJsonTheMeal(),
                 apiRepository = RecipeRepositoryTheMealAPI(),
+                authRepository = AuthRepositoryImpl()
             )
         }
 
