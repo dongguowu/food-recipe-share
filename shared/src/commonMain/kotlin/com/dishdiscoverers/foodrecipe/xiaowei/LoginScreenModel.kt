@@ -1,15 +1,17 @@
 package com.dishdiscoverers.foodrecipe.xiaowei
 
 import cafe.adriel.voyager.core.model.StateScreenModel
+import io.github.aakira.napier.LogLevel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
+
+
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.InternalAPI
+import io.realm.kotlin.log.RealmLog.level
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
@@ -72,9 +74,7 @@ class LoginScreenModel(private val repository: LoginRepositoryRealm) :
                     ignoreUnknownKeys = true
                 })
             }
-            install(Logging) {
-                level = LogLevel.ALL
-            }
+
         }
 
         @Serializable

@@ -13,6 +13,7 @@ interface UserRepository {
                               email: String,
                               password: String,
                               confirmPassword: String): UserData?
+    suspend fun getUserByUsername(username: String): UserData?
     suspend fun addUser(userData: UserData): UserData?
 
     suspend fun deleteOneUser(userName: String): UserData?
