@@ -70,10 +70,10 @@ class RegisterScreen : Screen {
         val screenModel =
             rememberScreenModel() { RegistrationScreenModel(RegisterRepositoryRealmLocal()) }
         val state by screenModel.state.collectAsState()
-        var userName by remember { mutableStateOf("") }
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var confirmPassword by remember { mutableStateOf("") }
+        var userName by remember { mutableStateOf("dongguo") }
+        var email by remember { mutableStateOf("dongguo5@wu.com") }
+        var password by remember { mutableStateOf("dongguo") }
+        var confirmPassword by remember { mutableStateOf("dongguo") }
         val navigator = LocalNavigator.currentOrThrow
         val siteKey =
             "6LeNbMgmAAAAADfFl8Oq8FB-FerIsp32EHiLijy2" // Replace with your reCAPTCHA site key

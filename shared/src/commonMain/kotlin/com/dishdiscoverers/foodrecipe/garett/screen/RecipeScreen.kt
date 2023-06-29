@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.main.screen
+package com.dishdiscoverers.foodrecipe.garett.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -37,17 +37,17 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.lduboscq.appkickstarter.main.data.Recipe
-import com.lduboscq.appkickstarter.main.data.RecipeRepositoryJson
-import com.lduboscq.appkickstarter.main.router.Route
-import com.lduboscq.appkickstarter.main.router.screenRouter
+import com.dishdiscoverers.foodrecipe.garett.data.Recipe
+import com.dishdiscoverers.foodrecipe.garett.data.RecipeRepositoryJson
+import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
+import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
+import com.dishdiscoverers.foodrecipe.garett.router.Route
+import com.dishdiscoverers.foodrecipe.garett.router.screenRouter
 import com.lduboscq.appkickstarter.main.screenModel.RecipeScreenModel
-
 import com.lduboscq.appkickstarter.ui.Image
-import com.lduboscq.appkickstarter.ui.MyBottomBar
-import com.lduboscq.appkickstarter.ui.MyTopBar
 
-internal class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") : Screen {
+class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") :
+    Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
@@ -95,7 +95,7 @@ internal class RecipeScreen(var feature: String = "Super!", val title: String = 
                     if (state is RecipeScreenModel.State.Result.RecipeResult) {
                         LazyColumn {
                             item {
-                                Text ("Here's some freshly made recipes just for you!")
+                                Text("Here's some freshly made recipes just for you!")
                             }
                             for (item in (state as RecipeScreenModel.State.Result.RecipeResult).recipeList) {
                                 item {

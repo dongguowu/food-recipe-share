@@ -2,9 +2,9 @@ package com.lduboscq.appkickstarter.main.screenModel
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
-import com.lduboscq.appkickstarter.main.data.Ingredient
-import com.lduboscq.appkickstarter.main.data.Recipe
-import com.lduboscq.appkickstarter.main.data.RecipeRepository
+import com.dishdiscoverers.foodrecipe.garett.data.Ingredient
+import com.dishdiscoverers.foodrecipe.garett.data.Recipe
+import com.dishdiscoverers.foodrecipe.garett.data.RecipeRepository
 
 import kotlinx.coroutines.launch
 

@@ -68,6 +68,7 @@ class HomeScreen() : Screen {
         var password by remember { mutableStateOf("dongguo") }
         val state by screenModel.state.collectAsState()
         var categories = screenModel.categories.collectAsState()
+        var comments = screenModel.comments.collectAsState()
         message = when (val result = state) {
             is RecipeScreenModel.State.Init -> "Just initialized"
             is RecipeScreenModel.State.Loading -> "Loading"
@@ -141,12 +142,49 @@ class HomeScreen() : Screen {
                     )
                     Button(
                         onClick = {
-                            screenModel.addComment("IYoAhbQbYIfxMg9IieZRG5F5ThA3", "test", "dongguo@wu.com.3", "")
+                            screenModel.addComment(
+                                "IYoAhbQbYIfxMg9IieZRG5F5ThA3",
+                                "test",
+                                "dongguo@wu.com.3",
+                                ""
+                            )
                         },
                         content = {
                             Text("Add comment")
                         }
                     )
+                    Button(
+                        onClick = {
+                            screenModel.getComments("test")
+                        },
+                        content = {
+                            Text("get all  comment")
+                        }
+                    )
+                    comments.value?.let {
+                        when (it) {
+                            is Resource.Failure -> {
+                                Text(it.exception.message!!)
+                            }
+
+                            Resource.Loading -> {
+                                Text("loading....")
+                            }
+
+                            is Resource.Success -> {
+                                var str = StringBuilder()
+                                for (item in it.result) {
+                                    str.append(item.userId)
+                                    str.append("; ")
+                                }
+                                Text(str.toString())
+                            }
+
+                            else -> {
+                                Text("some error happens")
+                            }
+                        }
+                    }
 //                    SearchRecipe(
 //                        description = "Search by recipe title",
 //                        search = { screenModel.searchRecipe(it) },

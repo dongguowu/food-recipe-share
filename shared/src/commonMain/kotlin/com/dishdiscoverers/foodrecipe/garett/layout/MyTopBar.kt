@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.ui
+package com.dishdiscoverers.foodrecipe.garett.layout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Icon
@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.lduboscq.appkickstarter.main.router.Route
+import com.dishdiscoverers.foodrecipe.garett.router.Route
 import com.lduboscq.appkickstarter.ui.theme.red.md_theme_light_primaryContainer
 
 @OptIn(ExperimentalMaterial3Api::class)

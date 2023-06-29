@@ -1,7 +1,7 @@
 //package com.lduboscq.appkickstarter.mains.data
 //
-//import com.lduboscq.appkickstarter.mains.model.Ingredient
-//import com.lduboscq.appkickstarter.mains.model.Recipe
+//import com.dishdiscoverers.foodrecipe.garett.model.Ingredient
+//import com.dishdiscoverers.foodrecipe.garett.model.Recipe
 //
 //interface IngredientRepository {
 //
