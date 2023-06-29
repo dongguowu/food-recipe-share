@@ -2,11 +2,9 @@ package com.dishdiscoverers.foodrecipe.xiaowei
 
 import Image
 import androidx.compose.animation.animateColorAsState
-
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,16 +17,15 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
 import androidx.compose.material.Icon
-
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,14 +44,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.dishdiscoverers.foodrecipe.xiaowei.ui.md_theme_dark_primary
-import com.dishdiscoverers.foodrecipe.xiaowei.ui.md_theme_light_secondary
-
+import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -73,8 +70,17 @@ class LoginScreen : Screen {
     override fun Content() {
 
 
-        val screenModel =
-            rememberScreenModel() { LoginScreenModel(LoginRepositoryRealmLocal()) }
+//        val screenModel =
+//            rememberScreenModel() { LoginScreenModel(LoginRepositoryRealmLocal()) }
+
+        val screenModel = rememberScreenModel() {
+            RecipeScreenModel(
+                localRepository = RecipeRepositoryJsonTheMeal(),
+                apiRepository = RecipeRepositoryTheMealAPI(),
+                authRepository = AuthRepository()
+            )
+        }
+
         val state by screenModel.state.collectAsState()
         //Todo: delete dongguo password
         var email by remember { mutableStateOf("dongguo@wu.com") }
@@ -112,17 +118,19 @@ class LoginScreen : Screen {
                         horizontalAlignment = Alignment.CenterHorizontally,
 
                         content = {
-                            when (val result = state) {
-                                is LoginScreenModel.State.Init -> Text("...")
-                                is LoginScreenModel.State.Loading -> Text("Loading")
-                                is LoginScreenModel.State.Result -> {
-                                    Text("Success")
-                                }
 
-                                else -> {
-                                    Text("Invalid email or password", color = Color.Red)
-                                }
-                            }
+                            //TODO
+//                            when (val result = state) {
+//                                is LoginScreenModel.State.Init -> Text("...")
+//                                is LoginScreenModel.State.Loading -> Text("Loading")
+//                                is LoginScreenModel.State.Result -> {
+//                                    Text("Success")
+//                                }
+//
+//                                else -> {
+//                                    Text("Invalid email or password", color = Color.Red)
+//                                }
+//                            }
 //                                ShinyText(
 //                                    text = "LoginMe",
 //                                    modifier = Modifier.padding(vertical = 50.dp)
@@ -197,20 +205,21 @@ class LoginScreen : Screen {
                             Button(
                                 onClick = {
                                     val result = runBlocking {
-                                        screenModel.login(email, password)
+                                        screenModel.loginUser(email, password)
                                     }
-                                    when (result) {
-                                        is LoginScreenModel.LoginResult.Success -> {
-
-                                            navigator.push(ScreenRouter(AllScreens.Profile(email)))
-
-                                        }
-
-                                        is LoginScreenModel.LoginResult.Error -> {
-                                            // Show error message
-                                            errorMessage = "Invalid credentials"
-                                        }
-                                    }
+                                    //TODO
+//                                    when (result) {
+//                                        is LoginScreenModel.LoginResult.Success -> {
+//
+//                                            navigator.push(ScreenRouter(AllScreens.Profile(email)))
+//
+//                                        }
+//
+//                                        is LoginScreenModel.LoginResult.Error -> {
+//                                            // Show error message
+//                                            errorMessage = "Invalid credentials"
+//                                        }
+//                                    }
 
                                 }, modifier = Modifier.padding(10.dp),
                                 shape = RoundedCornerShape(50.dp),
