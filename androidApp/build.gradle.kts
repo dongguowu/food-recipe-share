@@ -28,6 +28,8 @@ kotlin {
 
                 implementation("com.google.accompanist:accompanist-systemuicontroller:0.29.2-rc")
                 implementation("com.google.accompanist:accompanist-permissions:0.29.1-alpha")
+                implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
+
             }
         }
     }

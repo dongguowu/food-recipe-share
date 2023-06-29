@@ -77,6 +77,9 @@ kotlin {
                 api("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
                 implementation("cafe.adriel.voyager:voyager-koin:$voyagerVersion")
                 implementation("io.realm.kotlin:library-sync:1.9.1")
+                implementation("dev.gitlive:firebase-auth:1.8.0")
+                implementation("dev.gitlive:firebase-firestore:1.8.0")
+
             }
         }
         val androidMain by getting {

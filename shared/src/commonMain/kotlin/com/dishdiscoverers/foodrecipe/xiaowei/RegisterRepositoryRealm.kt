@@ -29,18 +29,18 @@ abstract class RegisterRepositoryRealm : UserRepository {
         }
 
         var userData: UserData? = null
-        realm.write {
-            if (user != null) {
-                userData = UserData(
-                    id = user!!._id,
-                    username = user!!.username,
-                    email = user!!.email,
-                    password = user!!.password,
-                    confirmPassword = user!!.confirmPassword,
-                    user = user,
-                )
-            }
-        }
+//        realm.write {
+//            if (user != null) {
+//                userData = UserData(
+//                    id = user!!._id,
+//                    username = user!!.username,
+//                    email = user!!.email,
+//                    password = user!!.password,
+//                    confirmPassword = user!!.confirmPassword,
+//                    user = user,
+//                )
+//            }
+//        }
         return userData
 
     }
@@ -123,26 +123,26 @@ abstract class RegisterRepositoryRealm : UserRepository {
         var user2: UserData? = null
 
 
-        try {
-            val findUser: User? =
-                realm.query<User>(User::class, "username = \"$userName\"").first().find()
-            realm.write {
-                if (findUser != null) {
-                    user2 = UserData(
-                        id = findLatest(findUser)!!._id,
-                        username = findLatest(findUser)!!.username,
-                        password = findLatest(findUser)!!.password,
-                        confirmPassword = findLatest(findUser)!!.confirmPassword,
-                        user = null
-                    )
-                    findLatest(findUser)
-                        ?.also { delete(it) }
-                }
-
-            }
-        } catch (e: Exception) {
-            print(e.message)
-        }
+//        try {
+//            val findUser: User? =
+//                realm.query<User>(User::class, "username = \"$userName\"").first().find()
+//            realm.write {
+//                if (findUser != null) {
+//                    user2 = UserData(
+//                        id = findLatest(findUser)!!._id,
+//                        username = findLatest(findUser)!!.username,
+//                        password = findLatest(findUser)!!.password,
+//                        confirmPassword = findLatest(findUser)!!.confirmPassword,
+//                        user = null
+//                    )
+//                    findLatest(findUser)
+//                        ?.also { delete(it) }
+//                }
+//
+//            }
+//        } catch (e: Exception) {
+//            print(e.message)
+//        }
         return user2
 
     }
