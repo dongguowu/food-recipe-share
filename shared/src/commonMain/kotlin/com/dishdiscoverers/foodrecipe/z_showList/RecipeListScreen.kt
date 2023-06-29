@@ -44,6 +44,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.dongguo.Resource
+import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
 
 class HomeScreen() : Screen {
 
@@ -56,7 +57,8 @@ class HomeScreen() : Screen {
             RecipeScreenModel(
                 localRepository = RecipeRepositoryJsonTheMeal(),
                 apiRepository = RecipeRepositoryTheMealAPI(),
-                authRepository = AuthRepository()
+                authRepository = AuthRepository(),
+                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository())
             )
         }
 
@@ -135,6 +137,14 @@ class HomeScreen() : Screen {
                         },
                         content = {
                             Text("Add new user")
+                        }
+                    )
+                    Button(
+                        onClick = {
+                            screenModel.addComment("IYoAhbQbYIfxMg9IieZRG5F5ThA3", "test", "dongguo@wu.com.3", "")
+                        },
+                        content = {
+                            Text("Add comment")
                         }
                     )
 //                    SearchRecipe(

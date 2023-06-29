@@ -53,6 +53,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.dongguo.Resource
+import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -78,7 +79,8 @@ class LoginScreen : Screen {
             RecipeScreenModel(
                 localRepository = RecipeRepositoryJsonTheMeal(),
                 apiRepository = RecipeRepositoryTheMealAPI(),
-                authRepository = AuthRepository()
+                authRepository = AuthRepository(),
+                commentRepository = UserRecipeCommentRepositoryFirebase(authRepository = AuthRepository()),
             )
         }
         var currentUser = screenModel.currentUser
@@ -216,9 +218,11 @@ class LoginScreen : Screen {
 //                                                ShowToast(message = it.exception.message.toString())
                                                 println(it.exception.message.toString())
                                             }
+
                                             is Resource.Loading -> {
 
                                             }
+
                                             is Resource.Success -> {
                                                 navigator.push(ScreenRouter(AllScreens.Profile(email)))
                                             }
