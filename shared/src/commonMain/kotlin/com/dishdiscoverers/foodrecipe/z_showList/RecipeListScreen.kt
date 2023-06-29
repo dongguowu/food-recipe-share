@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -60,6 +61,8 @@ class HomeScreen() : Screen {
 
         // State
         var message by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("dongguo@wu.com") }
+        var password by remember { mutableStateOf("dongguo") }
         val state by screenModel.state.collectAsState()
         var categories = screenModel.categories.collectAsState()
         message = when (val result = state) {
@@ -88,6 +91,8 @@ class HomeScreen() : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
+
+                    // Category
                     categories.value?.let {
                         when (it) {
                             is Resource.Failure -> {
@@ -113,25 +118,43 @@ class HomeScreen() : Screen {
                         }
                     }
 
-                    SearchRecipe(
-                        description = "Search by recipe title",
-                        search = { screenModel.searchRecipe(it) },
-                        getAll = { screenModel.getAllRecipe() })
-
-                    SearchRecipe(
-                        description = "Search by ingredient name",
-                        search = { screenModel.searchRecipeByIngredient(it) },
-                        getAll = { screenModel.getAllRecipe() })
-
-                    SearchRecipeByInternet(
-                        description = "Search on internet",
-                        search = {
-                            queryTitle = it
-                            screenModel.searchRecipeInternet(it)
+                    // User Auth
+                    Text("User")
+                    Button(
+                        onClick = {
+                            screenModel.loginUser(email, password)
                         },
-                        getAll = {
-                            screenModel.getAllRecipe()
-                        })
+                        content = {
+                            Text("Login ")
+                        }
+                    )
+                    Button(
+                        onClick = {
+                            screenModel.signupUser("test", "dongguo@wu.com.1", password)
+                        },
+                        content = {
+                            Text("Add new user")
+                        }
+                    )
+//                    SearchRecipe(
+//                        description = "Search by recipe title",
+//                        search = { screenModel.searchRecipe(it) },
+//                        getAll = { screenModel.getAllRecipe() })
+//
+//                    SearchRecipe(
+//                        description = "Search by ingredient name",
+//                        search = { screenModel.searchRecipeByIngredient(it) },
+//                        getAll = { screenModel.getAllRecipe() })
+//
+//                    SearchRecipeByInternet(
+//                        description = "Search on internet",
+//                        search = {
+//                            queryTitle = it
+//                            screenModel.searchRecipeInternet(it)
+//                        },
+//                        getAll = {
+//                            screenModel.getAllRecipe()
+//                        })
                     // list
                     if (state is RecipeScreenModel.State.Result) {
                         LazyColumn {
