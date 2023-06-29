@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,10 +38,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryNinjasJson
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.Resource
 
 class HomeScreen() : Screen {
 
@@ -51,28 +54,33 @@ class HomeScreen() : Screen {
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
                 localRepository = RecipeRepositoryJsonTheMeal(),
-                secondLocalRepository = RecipeRepositoryNinjasJson(),
                 apiRepository = RecipeRepositoryTheMealAPI(),
+                authRepository = AuthRepository()
             )
         }
+
+        // State
+        var message by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("dongguo@wu.com") }
+        var password by remember { mutableStateOf("dongguo") }
         val state by screenModel.state.collectAsState()
-
-
-        var queryTitle by remember { mutableStateOf("fish") }
-
-        // Load  data
-        LaunchedEffect(true) {
-            screenModel.getAllRecipe()
-
+        var categories = screenModel.categories.collectAsState()
+        message = when (val result = state) {
+            is RecipeScreenModel.State.Init -> "Just initialized"
+            is RecipeScreenModel.State.Loading -> "Loading"
+            is RecipeScreenModel.State.Result -> "Success"
         }
 
+        var queryTitle by remember { mutableStateOf("fish") }
+        // Load  data
+        LaunchedEffect(currentCompositeKeyHash) {
+            screenModel.getAllRecipe()
+        }
         var list: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
             list =
                 (state as? RecipeScreenModel.State.Result)?.list?.toMutableList() ?: mutableListOf()
         }
-
-        var message by remember { mutableStateOf("") }
 
 
         // Layout - Scaffold
@@ -83,30 +91,70 @@ class HomeScreen() : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
-                    message = when (val result = state) {
-                        is RecipeScreenModel.State.Init -> "Just initialized"
-                        is RecipeScreenModel.State.Loading -> "Loading"
-                        is RecipeScreenModel.State.Result -> "Success"
+
+                    // Category
+                    categories.value?.let {
+                        when (it) {
+                            is Resource.Failure -> {
+                                Text(it.exception.message!!)
+                            }
+
+                            Resource.Loading -> {
+                                Text("loading....")
+                            }
+
+                            is Resource.Success -> {
+                                var str = StringBuilder()
+                                for (item in it.result) {
+                                    str.append(item.title)
+                                    str.append("; ")
+                                }
+                                Text(str.toString())
+                            }
+
+                            else -> {
+                                Text("some error happens")
+                            }
+                        }
                     }
-                    SearchRecipe(
-                        description = "Search by recipe title",
-                        search = { screenModel.searchRecipe(it) },
-                        getAll = { screenModel.getAllRecipe() })
 
-                    SearchRecipe(
-                        description = "Search by ingredient name",
-                        search = { screenModel.searchRecipeByIngredient(it) },
-                        getAll = { screenModel.getAllRecipe() })
-
-                    SearchRecipeByInternet(
-                        description = "Search on internet",
-                        search = {
-                            queryTitle = it
-                            screenModel.searchRecipeInternet(it)
+                    // User Auth
+                    Text("User")
+                    Button(
+                        onClick = {
+                            screenModel.loginUser(email, password)
                         },
-                        getAll = {
-                            screenModel.getAllRecipe()
-                        })
+                        content = {
+                            Text("Login ")
+                        }
+                    )
+                    Button(
+                        onClick = {
+                            screenModel.signupUser("test", "dongguo@wu.com.2", password)
+                        },
+                        content = {
+                            Text("Add new user")
+                        }
+                    )
+//                    SearchRecipe(
+//                        description = "Search by recipe title",
+//                        search = { screenModel.searchRecipe(it) },
+//                        getAll = { screenModel.getAllRecipe() })
+//
+//                    SearchRecipe(
+//                        description = "Search by ingredient name",
+//                        search = { screenModel.searchRecipeByIngredient(it) },
+//                        getAll = { screenModel.getAllRecipe() })
+//
+//                    SearchRecipeByInternet(
+//                        description = "Search on internet",
+//                        search = {
+//                            queryTitle = it
+//                            screenModel.searchRecipeInternet(it)
+//                        },
+//                        getAll = {
+//                            screenModel.getAllRecipe()
+//                        })
                     // list
                     if (state is RecipeScreenModel.State.Result) {
                         LazyColumn {

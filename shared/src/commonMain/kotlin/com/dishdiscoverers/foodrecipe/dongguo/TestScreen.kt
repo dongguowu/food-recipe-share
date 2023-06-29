@@ -117,7 +117,7 @@ class TestScreen() : Screen {
 
         val urlString = "https://www.themealdb.com/api/json/v1/1/search.php?s=$title"
 
-        val results: TheMealResponse = ktorClient.get(urlString).body()
+        val results: MealsResponse = ktorClient.get(urlString).body()
         val recipes: MutableList<Recipe> = mutableListOf()
         for (item in results.meals ?: emptyList()) {
             val recipe = Recipe(

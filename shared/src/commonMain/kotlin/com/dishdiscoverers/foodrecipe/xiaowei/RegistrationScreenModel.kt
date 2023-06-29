@@ -111,37 +111,37 @@ class RegistrationScreenModel(private val repository: RegisterRepositoryRealm) :
          */
 
         suspend fun addUser(userName: String, email: String, password: String, confirmPassword: String) {
-            if (!isUsernameUnique(userName)) {
-                mutableState.value = State.Result.InvalidUserName
-                return
-            }
-
-            if (!isEmailValid(email)) {
-                mutableState.value = State.Result.InvalidEmail
-                return
-            }
-
-            if (!isPasswordValid(password)) {
-                mutableState.value = State.Result.InvalidPassword
-                return
-            }
-
-            if (!doPasswordsMatch(password, confirmPassword)) {
-                mutableState.value = State.Result.PasswordMismatch
-                return
-            }
-
-            coroutineScope.launch {
-                mutableState.value = State.Loading
-                val newUser = UserData(
-                    username = userName,
-                    email = email,
-                    password = password,
-                    confirmPassword = confirmPassword,
-                    user = null
-                )
-                mutableState.value = State.Result.SingleResult(repository.addUser(newUser))
-            }
+//            if (!isUsernameUnique(userName)) {
+//                mutableState.value = State.Result.InvalidUserName
+//                return
+//            }
+//
+//            if (!isEmailValid(email)) {
+//                mutableState.value = State.Result.InvalidEmail
+//                return
+//            }
+//
+//            if (!isPasswordValid(password)) {
+//                mutableState.value = State.Result.InvalidPassword
+//                return
+//            }
+//
+//            if (!doPasswordsMatch(password, confirmPassword)) {
+//                mutableState.value = State.Result.PasswordMismatch
+//                return
+//            }
+//
+//            coroutineScope.launch {
+//                mutableState.value = State.Loading
+//                val newUser = UserData(
+//                    username = userName,
+//                    email = email,
+//                    password = password,
+//                    confirmPassword = confirmPassword,
+//                    user = null
+//                )
+//                mutableState.value = State.Result.SingleResult(repository.addUser(newUser))
+//            }
         }
         /**
          * Function to delete a user.

@@ -2,6 +2,8 @@ plugins {
     kotlin("multiplatform")
     id("com.android.application")
     id("org.jetbrains.compose")
+    id("com.google.gms.google-services")
+
 }
 
 kotlin {
@@ -11,6 +13,7 @@ kotlin {
             dependencies {
                 implementation(project(":shared"))
                 implementation("androidx.appcompat:appcompat:1.6.1")
+                implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
 
                 implementation(platform("androidx.compose:compose-bom:2023.01.00"))
                 implementation("androidx.compose.material:material")
@@ -25,6 +28,8 @@ kotlin {
 
                 implementation("com.google.accompanist:accompanist-systemuicontroller:0.29.2-rc")
                 implementation("com.google.accompanist:accompanist-permissions:0.29.1-alpha")
+                implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
+
             }
         }
     }
@@ -36,7 +41,7 @@ properties.load(project.rootProject.file("local.properties").inputStream())
 android {
     compileSdk = 33
     defaultConfig {
-        applicationId = "com.lduboscq.appkickstarter.android"
+        applicationId = "com.lduboscq.appkickstarter"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
