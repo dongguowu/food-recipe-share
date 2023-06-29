@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -109,46 +110,52 @@ class ProfileScreen(private val email: String) : Screen {
                         text = "$email",
                         modifier = Modifier.padding(top = 20.dp),
                         fontSize = 25.sp,
-                        fontWeight = FontWeight.Black
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colors.onBackground
                     )
-
-                    val favoriteText = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(fontSize = 20.sp, fontWeight = FontWeight.Black)
-                        ) {
-                            append("Your ")
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Red
-                            )
-                        ) {
-                            appendInlineContent("heart", "❤️")
-                        }
-                        withStyle(
-                            style = SpanStyle(fontSize = 20.sp, fontWeight = FontWeight.Black)
-                        ) {
-                            append(" Recipe book")
-                        }
-                    }
-
-                    Text(
-                        text = favoriteText,
-                        modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
-                    )
-
-
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    Text(
+                        text = "Your ❤️ Recipe book",
+                        modifier = Modifier.padding(bottom = 24.dp),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Black,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    Divider(
+                        color = MaterialTheme.colors.onPrimary,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
                     // LazyRow to display recipe cards
-                    LazyRow(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        contentPadding = PaddingValues(end = 16.dp)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp)
                     ) {
-                        items(recipeList) { recipe ->
-                            RecipeCard(recipe)
+                        // Other content...
+
+                        val recipes = recipeList.take(4) // Get the first 4 recipes
+                        LazyRow(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            contentPadding = PaddingValues(end = 16.dp)
+                        ) {
+                            items(recipes) { recipe ->
+                                RecipeCard(recipe)
+                            }
+                        }
+
+                        if (recipeList.size > 4) {
+                            val remainingRecipes = recipeList.drop(4) // Get the remaining recipes
+                            if (remainingRecipes.isNotEmpty()) {
+                                LazyRow(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    contentPadding = PaddingValues(end = 16.dp)
+                                ) {
+                                    items(remainingRecipes) { recipe ->
+                                        RecipeCard(recipe)
+                                    }
+                                }
+                            }
                         }
                     }
                 }

@@ -97,6 +97,7 @@ class RegisterScreen : Screen {
                 Text(
                     "Sign Up",
                     color = MaterialTheme.colors.onSecondary,
+                    fontWeight = FontWeight.Bold,
                     fontSize = 25.sp,
                     style = MaterialTheme.typography.h3,
                     modifier = Modifier.padding(top = 35.dp, bottom = 10.dp)

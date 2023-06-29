@@ -187,7 +187,7 @@ class LoginScreen : Screen {
                                             )
                                         )
                                     }),
-                                color = md_theme_light_secondary,
+                                color = MaterialTheme.colors.onBackground,
                                 textDecoration = TextDecoration.Underline,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
