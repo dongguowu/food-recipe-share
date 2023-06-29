@@ -39,7 +39,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.dishdiscoverers.foodrecipe.garett.data.Ingredient
 import com.dishdiscoverers.foodrecipe.garett.data.RecipeRepositoryJson
 import com.dishdiscoverers.foodrecipe.garett.router.Route
-import com.lduboscq.appkickstarter.main.screenModel.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.garett.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.garett.model.User
 import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
 import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar

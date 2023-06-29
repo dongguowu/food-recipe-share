@@ -77,7 +77,6 @@ class LoginScreen : Screen {
 
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                localRepository = RecipeRepositoryJsonTheMeal(),
                 apiRepository = RecipeRepositoryTheMealAPI(),
                 authRepository = AuthRepository(),
                 commentRepository = UserRecipeCommentRepositoryFirebase(authRepository = AuthRepository()),

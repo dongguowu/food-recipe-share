@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.main.screenModel
+package com.dishdiscoverers.foodrecipe.garett.screenModel
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
@@ -17,9 +17,9 @@ class RecipeScreenModel(
         object Init : State()
         object Loading : State()
         sealed class Result: State() {
-            class RecipeResult(val recipeList: List<Recipe>) : RecipeScreenModel.State.Result()
-            class RecipeSingleResult(val recipe: Recipe?) : RecipeScreenModel.State.Result()
-            class IngredientResult(val ingredientList: List<Ingredient>) : RecipeScreenModel.State.Result()
+            class RecipeResult(val recipeList: List<Recipe>) : Result()
+            class RecipeSingleResult(val recipe: Recipe?) : Result()
+            class IngredientResult(val ingredientList: List<Ingredient>) : Result()
         }
 
     }

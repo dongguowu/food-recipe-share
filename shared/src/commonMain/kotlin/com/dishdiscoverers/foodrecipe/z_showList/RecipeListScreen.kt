@@ -55,7 +55,6 @@ class HomeScreen() : Screen {
         // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                localRepository = RecipeRepositoryJsonTheMeal(),
                 apiRepository = RecipeRepositoryTheMealAPI(),
                 authRepository = AuthRepository(),
                 commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository())

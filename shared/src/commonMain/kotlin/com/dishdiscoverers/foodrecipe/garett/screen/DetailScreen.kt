@@ -16,7 +16,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.garett.data.RecipeRepositoryJson
 import com.dishdiscoverers.foodrecipe.garett.router.Route
-import com.lduboscq.appkickstarter.main.screenModel.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.garett.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
 import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
 

@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RecipeScreenModel(
-    private val localRepository: RecipeRepository,
     private val apiRepository: RecipeRepository,
     private val authRepository: AuthRepository,
     private val commentRepository: UserRecipeCommentRepository
@@ -98,7 +97,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = localRepository.getAllRecipe())
+                State.Result(list = apiRepository.getAllRecipe())
         }
     }
 
@@ -107,7 +106,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = localRepository.searchRecipesByTitle(title))
+                State.Result(list = apiRepository.searchRecipesByTitle(title))
         }
     }
 
@@ -123,7 +122,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = localRepository.searchRecipesByIngredient(title))
+                State.Result(list = apiRepository.searchRecipesByIngredient(title))
         }
     }
 

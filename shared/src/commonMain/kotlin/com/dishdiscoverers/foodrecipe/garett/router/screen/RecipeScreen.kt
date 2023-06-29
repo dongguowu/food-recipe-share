@@ -37,17 +37,19 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.dishdiscoverers.foodrecipe.garett.data.Recipe
-import com.dishdiscoverers.foodrecipe.garett.data.RecipeRepositoryJson
-import com.dishdiscoverers.foodrecipe.garett.router.Route
-import com.dishdiscoverers.foodrecipe.garett.router.screenRouter
-import com.lduboscq.appkickstarter.main.screenModel.RecipeScreenModel
-
-import com.lduboscq.appkickstarter.ui.Image
+import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
 import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
+import com.dishdiscoverers.foodrecipe.garett.router.Route
+import com.dishdiscoverers.foodrecipe.garett.router.screenRouter
+import com.lduboscq.appkickstarter.ui.Image
 
-internal class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") : Screen {
+internal class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") :
+    Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
@@ -56,7 +58,10 @@ internal class RecipeScreen(var feature: String = "Super!", val title: String = 
         // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                repository = RecipeRepositoryJson()
+                apiRepository = RecipeRepositoryTheMealAPI(),
+                authRepository = AuthRepository(),
+                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository())
+
             )
         }
         val state by screenModel.state.collectAsState()
@@ -66,9 +71,9 @@ internal class RecipeScreen(var feature: String = "Super!", val title: String = 
             screenModel.getAllRecipe()
         }
         var recipeList: List<Recipe>? = null
-        if (state is RecipeScreenModel.State.Result.RecipeResult) {
+        if (state is RecipeScreenModel.State.Result) {
             recipeList =
-                (state as RecipeScreenModel.State.Result.RecipeResult).recipeList
+                (state as RecipeScreenModel.State.Result).list
         }
 
 
@@ -92,12 +97,12 @@ internal class RecipeScreen(var feature: String = "Super!", val title: String = 
 
 
                     // list
-                    if (state is RecipeScreenModel.State.Result.RecipeResult) {
+                    if (state is RecipeScreenModel.State.Result) {
                         LazyColumn {
                             item {
-                                Text ("Here's some freshly made recipes just for you!")
+                                Text("Here's some freshly made recipes just for you!")
                             }
-                            for (item in (state as RecipeScreenModel.State.Result.RecipeResult).recipeList) {
+                            for (item in (state as RecipeScreenModel.State.Result).list) {
                                 item {
                                     RecipeCard(
                                         recipe = item

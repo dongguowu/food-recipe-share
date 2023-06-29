@@ -14,6 +14,7 @@ public fun MainApp() {
 //    Navigator(PersonsListScreen()) { navigator ->
 //    Navigator(PreLoginScreen()) { navigator ->
     Navigator(RecipeScreen()) { navigator ->
+//        Navigator(HomeScreen()) { navigator ->
         SlideTransition(navigator)
     }
 }
