@@ -49,7 +49,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.dongguo.Resource
@@ -186,6 +185,14 @@ class LoginScreen : Screen {
                                     unfocusedBorderColor = MaterialTheme.colors.onSurface
                                 )
                             )
+                            // Error message
+                            if (errorMessage.isNotEmpty()) {
+                                Text(
+                                    text = errorMessage,
+                                    color = MaterialTheme.colors.error
+                                )
+                            }
+
                             Spacer(modifier = Modifier.height(15.dp))
 
                             Text(
@@ -214,12 +221,12 @@ class LoginScreen : Screen {
                                     authResource?.value?.let {
                                         when (it) {
                                             is Resource.Failure -> {
-//                                                ShowToast(message = it.exception.message.toString())
-                                                println(it.exception.message.toString())
+                                                errorMessage = it.exception.message.toString()
+                                                println(errorMessage)
                                             }
 
                                             is Resource.Loading -> {
-
+                                                errorMessage = "validating..."
                                             }
 
                                             is Resource.Success -> {
