@@ -130,7 +130,7 @@ class HomeScreen() : Screen {
                     )
                     Button(
                         onClick = {
-                            screenModel.signupUser("test", "dongguo@wu.com.1", password)
+                            screenModel.signupUser("test", "dongguo@wu.com.2", password)
                         },
                         content = {
                             Text("Add new user")
