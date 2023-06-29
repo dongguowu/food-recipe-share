@@ -52,6 +52,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.dongguo.Resource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -80,8 +81,9 @@ class LoginScreen : Screen {
                 authRepository = AuthRepository()
             )
         }
-
+        var currentUser = screenModel.currentUser
         val state by screenModel.state.collectAsState()
+        val authResource = screenModel?.loginFlow?.collectAsState()
         //Todo: delete dongguo password
         var email by remember { mutableStateOf("dongguo@wu.com") }
         var password by remember { mutableStateOf("dongguo") }
@@ -208,6 +210,20 @@ class LoginScreen : Screen {
                                         screenModel.loginUser(email, password)
                                     }
                                     //TODO
+                                    authResource?.value?.let {
+                                        when (it) {
+                                            is Resource.Failure -> {
+//                                                ShowToast(message = it.exception.message.toString())
+                                                println(it.exception.message.toString())
+                                            }
+                                            is Resource.Loading -> {
+
+                                            }
+                                            is Resource.Success -> {
+                                                navigator.push(ScreenRouter(AllScreens.Profile(email)))
+                                            }
+                                        }
+                                    }
 //                                    when (result) {
 //                                        is LoginScreenModel.LoginResult.Success -> {
 //
