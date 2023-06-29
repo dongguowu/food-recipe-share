@@ -2,7 +2,6 @@ package com.dishdiscoverers.foodrecipe.xiaowei
 
 
 import Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,23 +11,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,14 +39,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.model.coroutineScope
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -68,7 +62,12 @@ class RegisterScreen : Screen {
     @Composable
     override fun Content() {
         val screenModel =
-            rememberScreenModel() { RegistrationScreenModel(RegisterRepositoryRealmLocal()) }
+            rememberScreenModel() { RegistrationScreenModel(AuthRepository()) }
+
+        val authResource = screenModel?.signupFlow?.collectAsState()
+        var errorMessage by remember { mutableStateOf("") }
+
+
         val state by screenModel.state.collectAsState()
         var userName by remember { mutableStateOf("dongguo") }
         var email by remember { mutableStateOf("dongguo5@wu.com") }
@@ -189,26 +188,62 @@ class RegisterScreen : Screen {
                     )
                 )
                 Spacer(modifier = Modifier.height(15.dp))
-
+                // Error message
+                if (errorMessage.isNotEmpty()) {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colors.error
+                    )
+                }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    val isEnabled = runBlocking { runValidation() }
+//                    val isEnabled = runBlocking { runValidation() }
+                    val isEnabled = true
                     Button(
                         onClick = {
-                            // Run the click logic inside a coroutine
-                            coroutineScope.launch {
-                                if (runValidation()) {
-                                    screenModel.addUser(
-                                        userName,
-                                        email,
-                                        password,
-                                        confirmPassword
-                                    )
-                                    navigator.push(ScreenRouter(AllScreens.Login))
+                            if (screenModel.isEmailValid(email)) {
+                                val result = runBlocking {
+                                    screenModel.signupUser(email, password)
+                                }
+                            } else {
+                                errorMessage = "Invalidate Email"
+                            }
+
+                            authResource?.value?.let {
+                                when (it) {
+                                    is Resource.Failure -> {
+                                        errorMessage = it.exception.message.toString()
+                                        println(errorMessage)
+                                    }
+
+                                    is Resource.Loading -> {
+                                        errorMessage = "validating..."
+                                    }
+
+                                    is Resource.Success -> {
+                                        navigator.push(ScreenRouter(AllScreens.Login))
+                                    }
                                 }
                             }
+
+
+                            // Run the click logic inside a coroutine
+
+//                            screenModel.signupUser("test", "dongguo@wu.com.3", password)
+//                            coroutineScope.launch {
+////                                if (runValidation()) {
+//                                    if (true) {
+//                                    screenModel.addUser(
+//                                        userName,
+//                                        email,
+//                                        password,
+//                                        confirmPassword
+//                                    )
+//                                    navigator.push(ScreenRouter(AllScreens.Login))
+//                                }
+//                            }
                         },
                         modifier = Modifier.padding(10.dp),
                         shape = RoundedCornerShape(50.dp),

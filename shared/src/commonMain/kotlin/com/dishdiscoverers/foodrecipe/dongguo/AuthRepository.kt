@@ -9,11 +9,11 @@ class AuthRepository {
 
     val currentUser: FirebaseUser? = null
 
-    suspend fun signUp(username: String, password: String): Resource<FirebaseUser> {
+    suspend fun signUp(email: String, password: String): Resource<FirebaseUser> {
 //        return Firebase.auth.createUserWithEmailAndPassword(email = username, password = password)
         return try {
             val result =
-                Firebase.auth.createUserWithEmailAndPassword(email = username, password = password)
+                Firebase.auth.createUserWithEmailAndPassword(email = email, password = password)
             return Resource.Success(result.user!!)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -21,11 +21,11 @@ class AuthRepository {
         }
     }
 
-    suspend fun signIn(username: String, password: String): Resource<FirebaseUser> {
+    suspend fun signIn(email: String, password: String): Resource<FirebaseUser> {
 //        return Firebase.auth.signInWithEmailAndPassword(email = username, password = password)
         return try {
             val result =
-                Firebase.auth.signInWithEmailAndPassword(email = username, password = password)
+                Firebase.auth.signInWithEmailAndPassword(email = email, password = password)
             Resource.Success(result.user!!)
         } catch (e: Exception) {
             e.printStackTrace()

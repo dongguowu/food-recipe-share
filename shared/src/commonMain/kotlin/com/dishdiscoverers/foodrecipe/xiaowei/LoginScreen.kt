@@ -70,10 +70,6 @@ class LoginScreen : Screen {
     @Composable
     override fun Content() {
 
-
-//        val screenModel =
-//            rememberScreenModel() { LoginScreenModel(LoginRepositoryRealmLocal()) }
-
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
                 apiRepository = RecipeRepositoryTheMealAPI(),
@@ -81,6 +77,7 @@ class LoginScreen : Screen {
                 commentRepository = UserRecipeCommentRepositoryFirebase(authRepository = AuthRepository()),
             )
         }
+
         var currentUser = screenModel.currentUser
         val state by screenModel.state.collectAsState()
         val authResource = screenModel?.loginFlow?.collectAsState()
