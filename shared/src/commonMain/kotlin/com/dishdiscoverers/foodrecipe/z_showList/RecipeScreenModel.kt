@@ -4,10 +4,10 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
 import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.Category
-import com.dishdiscoverers.foodrecipe.dongguo.FirebaseUser
 import com.dishdiscoverers.foodrecipe.dongguo.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepository
 import com.dishdiscoverers.foodrecipe.dongguo.Resource
+import dev.gitlive.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -52,18 +52,18 @@ class RecipeScreenModel(
     // Auth
     fun loginUser(email: String, password: String) = coroutineScope.launch {
         _loginFlow.value = Resource.Loading
-        val result = authRepository.login(email, password)
+        val result = authRepository.signIn(email, password)
         _loginFlow.value = result
     }
 
     fun signupUser(name: String, email: String, password: String) = coroutineScope.launch {
         _signupFlow.value = Resource.Loading
-        val result = authRepository.signup(name, email, password)
+        val result = authRepository.signUp(email, password)
         _signupFlow.value = result
     }
 
-    fun logout() {
-        authRepository.logout()
+    suspend fun logout() {
+        authRepository.signOut()
         _loginFlow.value = null
         _signupFlow.value = null
     }

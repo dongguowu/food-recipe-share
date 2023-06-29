@@ -44,6 +44,8 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
+                implementation("dev.gitlive:firebase-auth:1.8.0")
+                implementation("dev.gitlive:firebase-firestore:1.8.0")
 
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
@@ -121,6 +123,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+}
+dependencies {
+    implementation("androidx.media3:media3-common:1.0.2")
 }
 
 multiplatformResources {
