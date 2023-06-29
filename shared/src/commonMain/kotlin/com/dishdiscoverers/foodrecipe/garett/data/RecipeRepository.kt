@@ -1,15 +1,5 @@
 package com.lduboscq.appkickstarter.main.data
 
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
-import com.dishdiscoverers.foodrecipe.dongguo.TheMealResponse
-import com.dishdiscoverers.foodrecipe.dongguo.convertMealRecipe
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.get
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -75,55 +65,6 @@ interface RecipeRepository {
     suspend fun getAllIngredient(): List<Ingredient>
     suspend fun deleteIngredientById(id: String)
     // no delete function
-}
-
-class RecipeRepositoryTheMealAPI : RecipeRepositoryJsonTheMeal() {
-    private val _recipes: MutableList<com.dishdiscoverers.foodrecipe.dongguo.Recipe> = emptyList<com.dishdiscoverers.foodrecipe.dongguo.Recipe>().toMutableList()
-
-    override suspend fun getAllRecipe(): List<com.dishdiscoverers.foodrecipe.dongguo.Recipe> {
-        _recipes.clear()
-        _recipes.addAll(getRecipeFromTheMealApi("fish") ?: emptyList())
-        return _recipes
-    }
-
-    override suspend fun searchRecipesByTitle(title: String): List<com.dishdiscoverers.foodrecipe.dongguo.Recipe> {
-        _recipes.clear()
-        _recipes.addAll(getRecipeFromTheMealApi(title) ?: emptyList())
-        return _recipes
-    }
-
-    private suspend fun getRecipeFromTheMealApi(title: String): List<com.dishdiscoverers.foodrecipe.dongguo.Recipe>? {
-        val ktorClient = HttpClient {
-            install(ContentNegotiation) {
-                json(Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                })
-            }
-            install(Logging) {
-                level = LogLevel.ALL
-            }
-        }
-
-        val urlString = "https://www.themealdb.com/api/json/v1/1/search.php?s=$title"
-        val results: TheMealResponse = ktorClient.get(urlString).body()
-        val mutableList: MutableList<com.dishdiscoverers.foodrecipe.dongguo.Recipe> = mutableListOf()
-        for (item in results.meals ?: emptyList()) {
-
-            val ingredients: StringBuilder = StringBuilder()
-            for (i in 1..20) {
-                val ingredientField = getIngredientField(item, i)
-                val measureField = getMeasureField(item, i)
-                if (ingredientField?.isNotEmpty() == true && measureField?.isNotEmpty() == true) {
-                    ingredients.append("$measureField $ingredientField; ")
-                }
-            }
-            convertMealRecipe(item, ingredients.toString())?.let { mutableList.add(it) }
-        }
-        return mutableList
-    }
-
 }
 
 class RecipeRepositoryJson : RecipeRepository {

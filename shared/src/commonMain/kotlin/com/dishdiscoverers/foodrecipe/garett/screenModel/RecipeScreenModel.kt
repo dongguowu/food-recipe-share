@@ -9,63 +9,54 @@ import com.lduboscq.appkickstarter.main.data.RecipeRepository
 import kotlinx.coroutines.launch
 
 class RecipeScreenModel(
-    private val localRepository: com.dishdiscoverers.foodrecipe.dongguo.RecipeRepository,
-    private val secondLocalRepository: com.dishdiscoverers.foodrecipe.dongguo.RecipeRepository,
-    private val apiRepository: com.dishdiscoverers.foodrecipe.dongguo.RecipeRepository,
+    private val repository: RecipeRepository
 ) :
     StateScreenModel<RecipeScreenModel.State>(State.Init) {
 
     sealed class State {
         object Init : State()
         object Loading : State()
-        data class Result(val list: List<com.dishdiscoverers.foodrecipe.dongguo.Recipe>) : State()
+        sealed class Result: State() {
+            class RecipeResult(val recipeList: List<Recipe>) : RecipeScreenModel.State.Result()
+            class RecipeSingleResult(val recipe: Recipe?) : RecipeScreenModel.State.Result()
+            class IngredientResult(val ingredientList: List<Ingredient>) : RecipeScreenModel.State.Result()
+        }
+
     }
 
-    fun getAllRecipe() {
+    suspend fun getAllIngredient() {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = localRepository.getAllRecipe())
+                State.Result.IngredientResult(ingredientList = repository.getAllIngredient())
         }
     }
 
-    fun searchRecipe(title: String) {
+    suspend fun getAllRecipe() {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = localRepository.searchRecipesByTitle(title))
+                State.Result.RecipeResult(recipeList = repository.getAllRecipe())
         }
     }
 
-    fun searchRecipeInternet(title: String) {
+    suspend fun searchRecipe(title: String) {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = apiRepository.searchRecipesByTitle(title))
+                State.Result.RecipeResult(recipeList = repository.searchRecipesByTitle(title))
         }
     }
 
-    fun searchRecipeByIngredient(title: String) {
+    suspend fun findRecipeById(id: String) {
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = secondLocalRepository.searchRecipesByIngredient(title))
+                State.Result.RecipeSingleResult(recipe = repository.findRecipeById(id))
         }
     }
 
-//    suspend fun searchRecipe(title: String) {
-//        coroutineScope.launch {
-//            mutableState.value = State.Loading
-//            mutableState.value =
-//                State.Result(recipeList = repository.searchRecipesByTitle(title))
-//        }
-//    }
-//
-//    suspend fun findRecipeById(id: String) {
-//        coroutineScope.launch {
-//            mutableState.value = State.Loading
-//            mutableState.value =
-//                State.Result(recipe = repository.findRecipeById(id))
-//        }
-//    }
+
+
+
 }

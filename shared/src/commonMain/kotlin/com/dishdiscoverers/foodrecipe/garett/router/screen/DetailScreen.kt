@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.main.screen
+package com.lduboscq.appkickstarter.main.router.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

@@ -1,10 +1,9 @@
 package com.lduboscq.appkickstarter.main.router
 
 import cafe.adriel.voyager.core.screen.Screen
-
-import com.lduboscq.appkickstarter.main.screen.DetailScreen
-import com.lduboscq.appkickstarter.main.screen.IngredientScreen
-import com.lduboscq.appkickstarter.main.screen.RecipeScreen
+import com.lduboscq.appkickstarter.main.router.screen.DetailScreen
+import com.lduboscq.appkickstarter.main.router.screen.IngredientScreen
+import com.lduboscq.appkickstarter.main.router.screen.RecipeScreen
 
 fun screenRouter(screen: Route): Screen {
     return when (screen) {

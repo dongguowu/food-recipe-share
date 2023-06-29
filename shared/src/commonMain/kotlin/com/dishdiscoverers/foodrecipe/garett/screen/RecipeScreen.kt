@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
@@ -38,9 +37,6 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryNinjasJson
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
 import com.lduboscq.appkickstarter.main.data.Recipe
 import com.lduboscq.appkickstarter.main.data.RecipeRepositoryJson
 import com.lduboscq.appkickstarter.main.router.Route
@@ -51,42 +47,35 @@ import com.lduboscq.appkickstarter.ui.Image
 import com.lduboscq.appkickstarter.ui.MyBottomBar
 import com.lduboscq.appkickstarter.ui.MyTopBar
 
-internal class RecipeScreen(var feature: String, val title: String) : Screen {
+internal class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
+
+        // Insert repository
         val screenModel = rememberScreenModel() {
-            com.dishdiscoverers.foodrecipe.z_showList.RecipeScreenModel(
-                localRepository = RecipeRepositoryJsonTheMeal(),
-                secondLocalRepository = RecipeRepositoryNinjasJson(),
-                apiRepository = RecipeRepositoryTheMealAPI(),
+            RecipeScreenModel(
+                repository = RecipeRepositoryJson()
             )
         }
+        val state by screenModel.state.collectAsState()
+
+        // Load  data
+        LaunchedEffect(true) {
+            screenModel.getAllRecipe()
+        }
+        var recipeList: List<Recipe>? = null
+        if (state is RecipeScreenModel.State.Result.RecipeResult) {
+            recipeList =
+                (state as RecipeScreenModel.State.Result.RecipeResult).recipeList
+        }
+
 
         // Load shopping cart data
         LaunchedEffect(true) {
             screenModel.getAllRecipe()
         }
-
-        val state by screenModel.state.collectAsState()
-
-
-        var queryTitle by remember { mutableStateOf("fish") }
-
-        // Load  data
-        LaunchedEffect(true) {
-            screenModel.getAllRecipe()
-
-        }
-
-        var list: MutableList<com.dishdiscoverers.foodrecipe.dongguo.Recipe> = mutableListOf()
-        if (state is com.dishdiscoverers.foodrecipe.z_showList.RecipeScreenModel.State.Result) {
-            list =
-                (state as? com.dishdiscoverers.foodrecipe.z_showList.RecipeScreenModel.State.Result)?.list?.toMutableList() ?: mutableListOf()
-        }
-
-        var message by remember { mutableStateOf("") }
 
 
         // Layout - Scaffold
@@ -103,22 +92,15 @@ internal class RecipeScreen(var feature: String, val title: String) : Screen {
 
 
                     // list
-                    if (state is com.dishdiscoverers.foodrecipe.z_showList.RecipeScreenModel.State.Result) {
+                    if (state is RecipeScreenModel.State.Result.RecipeResult) {
                         LazyColumn {
-                            val list =
-                                (state as? com.dishdiscoverers.foodrecipe.z_showList.RecipeScreenModel.State.Result)?.list?.toMutableList()
-                                    ?: mutableListOf()
-
-                            if (list.isEmpty()) {
+                            item {
+                                Text ("Here's some freshly made recipes just for you!")
+                            }
+                            for (item in (state as RecipeScreenModel.State.Result.RecipeResult).recipeList) {
                                 item {
-                                    com.dishdiscoverers.foodrecipe.z_showList.RecipeCard(
-                                        recipe = null,
-                                    )
-                                }
-                            } else {
-                                items(list) { recipe ->
-                                    com.dishdiscoverers.foodrecipe.z_showList.RecipeCard(
-                                        recipe = recipe
+                                    RecipeCard(
+                                        recipe = item
                                     )
                                 }
                             }
