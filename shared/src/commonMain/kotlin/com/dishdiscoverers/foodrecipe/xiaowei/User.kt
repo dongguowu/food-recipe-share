@@ -14,6 +14,7 @@ class User : RealmObject {
     var confirmPassword: String = ""
 }
 
+
 data class UserData(
     var id: String? = null,
     var username: String = "",
