@@ -69,27 +69,27 @@ class RegisterScreen : Screen {
 
 
         val state by screenModel.state.collectAsState()
-        var userName by remember { mutableStateOf("dongguo") }
-        var email by remember { mutableStateOf("dongguo5@wu.com") }
-        var password by remember { mutableStateOf("dongguo") }
-        var confirmPassword by remember { mutableStateOf("dongguo") }
+        var userName by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+        var confirmPassword by remember { mutableStateOf("") }
         val navigator = LocalNavigator.currentOrThrow
         val siteKey =
             "6LeNbMgmAAAAADfFl8Oq8FB-FerIsp32EHiLijy2" // Replace with your reCAPTCHA site key
         val coroutineScope = CoroutineScope(Dispatchers.Main)
 
 
-        suspend fun runValidation(): Boolean {
-            val userName = userName
-            val email = email
-            val password = password
-            val confirmPassword = confirmPassword
-
-            return screenModel.isUsernameUnique(userName) &&
-                    screenModel.isEmailValid(email) &&
-                    screenModel.isPasswordValid(password) &&
-                    screenModel.doPasswordsMatch(password, confirmPassword)
-        }
+//        suspend fun runValidation(): Boolean {
+//            val userName = userName
+//            val email = email
+//            val password = password
+//            val confirmPassword = confirmPassword
+//
+//            return screenModel.isUsernameUnique(userName) &&
+//                    screenModel.isEmailValid(email) &&
+//                    screenModel.isPasswordValid(password) &&
+//                    screenModel.doPasswordsMatch(password, confirmPassword)
+//        }
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
                 url = "https://i.pinimg.com/564x/9d/36/fd/9d36fd94e51bdb73759070905718e669.jpg",
@@ -199,16 +199,17 @@ class RegisterScreen : Screen {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-//                    val isEnabled = runBlocking { runValidation() }
                     val isEnabled = true
                     Button(
                         onClick = {
-                            if (screenModel.isEmailValid(email)) {
+                            if (screenModel.isEmailValid(email) && screenModel.isPasswordValid(password)
+                                && screenModel.doPasswordsMatch(password,confirmPassword)
+                                    ) {
                                 val result = runBlocking {
                                     screenModel.signupUser(email, password)
                                 }
                             } else {
-                                errorMessage = "Invalidate Email"
+                                errorMessage = "Invalidate fill out"
                             }
 
                             authResource?.value?.let {

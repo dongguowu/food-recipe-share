@@ -83,8 +83,8 @@ class LoginScreen : Screen {
         val state by screenModel.state.collectAsState()
         val authResource = screenModel?.loginFlow?.collectAsState()
         //Todo: delete dongguo password
-        var email by remember { mutableStateOf("dongguo@wu.com") }
-        var password by remember { mutableStateOf("dongguo") }
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
         var isClicked by remember { mutableStateOf(true) }
         val navigator = LocalNavigator.currentOrThrow
         var errorMessage by remember { mutableStateOf("") }

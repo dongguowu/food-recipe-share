@@ -145,7 +145,8 @@ class EditScreen(private val email: String): Screen {
 
                                     Button(
                                         onClick = {
-                                            saveChanges()
+                                            saveChanges();
+                                            navigator.push(ScreenRouter(AllScreens.Profile(email=null)))
                                         },
                                         modifier = Modifier.padding(10.dp),
                                         shape = RoundedCornerShape(50.dp),
