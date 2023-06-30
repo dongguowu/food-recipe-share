@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.dongguo
+package com.dishdiscoverers.foodrecipe.dongguo.repository
 
 
 /**

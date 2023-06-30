@@ -38,11 +38,11 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
-import com.dishdiscoverers.foodrecipe.dongguo.Recipe
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
-import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
 import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
 import com.dishdiscoverers.foodrecipe.garett.router.Route
@@ -70,7 +70,7 @@ class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes"
         LaunchedEffect(true) {
             screenModel.getAllRecipe()
         }
-        var recipeList: MutableList<com.dishdiscoverers.foodrecipe.dongguo.Recipe> = mutableListOf()
+        var recipeList: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
             recipeList =
                 (state as? RecipeScreenModel.State.Result)?.list?.toMutableList() ?: mutableListOf()

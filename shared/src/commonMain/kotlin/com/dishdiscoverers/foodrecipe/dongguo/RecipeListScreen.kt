@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.z_showList
+package com.dishdiscoverers.foodrecipe.dongguo
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,15 +38,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
-import com.dishdiscoverers.foodrecipe.dongguo.Recipe
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryJsonTheMeal
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
-import com.dishdiscoverers.foodrecipe.dongguo.Resource
-import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
 
-class HomeScreen() : Screen {
+class HomeScreen(email: String? = null) : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
@@ -173,7 +172,7 @@ class HomeScreen() : Screen {
                             is Resource.Success -> {
                                 var str = StringBuilder()
                                 for (item in it.result) {
-                                    str.append(item.userId)
+                                    str.append(item.id)
                                     str.append("; ")
                                 }
                                 Text(str.toString())
