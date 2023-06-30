@@ -434,30 +434,23 @@ fun RecipeCard(
                             }
                         }
                         // comments
-                        var showComment by remember { mutableStateOf(false) }
+                        var showComment by remember { mutableStateOf(true) }
                         var commentHint by remember { mutableStateOf("Show  comments") }
                         var commentsText by remember { mutableStateOf("") }
                         Column {
-                            if (showComment) {
-                                if (commentsText.isNotEmpty()) {
-                                    Text(commentsText)
-                                }
-                                var text by remember { mutableStateOf("") }
-//                                TextField(
-//                                    value = text,
-//                                    onValueChange = {
-//                                        text = it
-//                                    },
-//                                    singleLine = true,
-//
-//                                )
-//                                Button(onClick = {
-//                                    addComment(text)
-//                                }) {
-//                                    Text("Add comment")
-//                                }
+                            Text(commentsText)
+                            var text by remember { mutableStateOf("") }
+                            TextField(
+                                value = text,
+                                onValueChange = {
+                                    text = it
+                                },
+                            )
+                            Button(onClick = {
+                                addComment(text)
+                            }) {
+                                Text("Add comment")
                             }
-
                         }
                         Button(onClick = {
                             loadComments()
