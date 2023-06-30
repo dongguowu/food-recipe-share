@@ -38,15 +38,16 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
-import com.dishdiscoverers.foodrecipe.dongguo.Recipe
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
-import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
-import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
+import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
 import com.dishdiscoverers.foodrecipe.garett.router.Route
 import com.dishdiscoverers.foodrecipe.garett.router.screenRouter
+import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
 import com.lduboscq.appkickstarter.ui.Image
 
 class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") :
@@ -61,7 +62,8 @@ class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes"
             RecipeScreenModel(
                 apiRepository = RecipeRepositoryTheMealAPI(),
                 authRepository = AuthRepository(),
-                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository())
+                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository()),
+                favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),
             )
         }
         val state by screenModel.state.collectAsState()
@@ -70,7 +72,7 @@ class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes"
         LaunchedEffect(true) {
             screenModel.getAllRecipe()
         }
-        var recipeList: MutableList<com.dishdiscoverers.foodrecipe.dongguo.Recipe> = mutableListOf()
+        var recipeList: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
             recipeList =
                 (state as? RecipeScreenModel.State.Result)?.list?.toMutableList() ?: mutableListOf()
@@ -87,7 +89,7 @@ class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes"
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
             topBar = { MyTopBar(currentScreen = Route.Recipe(feature, title)) },
-            bottomBar = { MyBottomBar(currentScreen = Route.Recipe(feature, title)) },
+            bottomBar = { MyBottomBar() },
             content = { paddingValues ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

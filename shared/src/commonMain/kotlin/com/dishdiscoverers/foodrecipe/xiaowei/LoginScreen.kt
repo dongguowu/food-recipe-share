@@ -48,12 +48,12 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
-import com.dishdiscoverers.foodrecipe.dongguo.Resource
-import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
-
+import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -76,6 +76,7 @@ class LoginScreen : Screen {
                 apiRepository = RecipeRepositoryTheMealAPI(),
                 authRepository = AuthRepository(),
                 commentRepository = UserRecipeCommentRepositoryFirebase(authRepository = AuthRepository()),
+                favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),
             )
         }
 
@@ -83,8 +84,8 @@ class LoginScreen : Screen {
         val state by screenModel.state.collectAsState()
         val authResource = screenModel?.loginFlow?.collectAsState()
         //Todo: delete dongguo password
-        var email by remember { mutableStateOf("dongguo@wu.com") }
-        var password by remember { mutableStateOf("dongguo") }
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
         var isClicked by remember { mutableStateOf(true) }
         val navigator = LocalNavigator.currentOrThrow
         var errorMessage by remember { mutableStateOf("") }
@@ -99,12 +100,13 @@ class LoginScreen : Screen {
                 modifier = Modifier.fillMaxSize()
 
             )
-
             Box(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .align(Alignment.Center)
             ) {
+
+
                 Card(
                     shape = RoundedCornerShape(10.dp),
                     elevation = 8.dp,
@@ -228,7 +230,13 @@ class LoginScreen : Screen {
                                             }
 
                                             is Resource.Success -> {
-                                                navigator.push(ScreenRouter(AllScreens.Profile(email)))
+                                                navigator.push(
+                                                    ScreenRouter(
+                                                        AllScreens.Profile(
+                                                            email
+                                                        )
+                                                    )
+                                                )
                                             }
                                         }
                                     }
@@ -283,9 +291,7 @@ class LoginScreen : Screen {
                     )
                 }
             }
-
         }
-
 
     }
 //    private fun signInWithGoogle() {

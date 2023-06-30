@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.dongguo
+package com.dishdiscoverers.foodrecipe.dongguo.repository
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

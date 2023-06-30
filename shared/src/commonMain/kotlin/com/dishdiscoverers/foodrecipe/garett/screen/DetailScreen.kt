@@ -17,8 +17,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.garett.data.RecipeRepositoryJson
 import com.dishdiscoverers.foodrecipe.garett.router.Route
 import com.dishdiscoverers.foodrecipe.garett.screenModel.RecipeScreenModel
-import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
 import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
+import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
 
 internal class DetailScreen (var recipe: String, val title: String = "Recipe Details"): Screen {
 
@@ -36,7 +36,7 @@ internal class DetailScreen (var recipe: String, val title: String = "Recipe Det
         // Layout - Scaffold
         androidx.compose.material.Scaffold(
             topBar = { MyTopBar(currentScreen = Route.Detail(recipe, title)) },
-            bottomBar = { MyBottomBar(currentScreen = Route.Detail(recipe, title)) },
+            bottomBar = { MyBottomBar()},
 
             content = { paddingValues ->
                 Column(
@@ -87,4 +87,5 @@ internal class DetailScreen (var recipe: String, val title: String = "Recipe Det
             }
         )
         }
-    }
+
+}

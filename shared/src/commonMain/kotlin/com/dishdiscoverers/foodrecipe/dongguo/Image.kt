@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.z_showList
+package com.dishdiscoverers.foodrecipe.dongguo
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable

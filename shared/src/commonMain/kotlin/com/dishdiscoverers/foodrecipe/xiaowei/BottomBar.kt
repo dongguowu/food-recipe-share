@@ -31,7 +31,7 @@ fun MyBottomBar() {
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 IconButton(onClick = {
-                    navigator.push(ScreenRouter(AllScreens.PreLogin))
+                    navigator.push(ScreenRouter(AllScreens.Home))
                 }) {
                     Image(
                         url = "https://icons.iconarchive.com/icons/custom-icon-design/pretty-office-4/256/home-icon.png",
@@ -67,7 +67,7 @@ fun MyBottomBar() {
 
 
                 IconButton(onClick = {
-                    navigator.push(ScreenRouter(AllScreens.PreLogin))
+                    navigator.push(ScreenRouter(AllScreens.Profile(email=null)))
                 }) {
                     Image(
                         url = "https://cdn.iconscout.com/icon/free/png-256/free-profile-417-1163876.png",

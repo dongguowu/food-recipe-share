@@ -41,8 +41,8 @@ import com.dishdiscoverers.foodrecipe.garett.data.RecipeRepositoryJson
 import com.dishdiscoverers.foodrecipe.garett.router.Route
 import com.dishdiscoverers.foodrecipe.garett.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.garett.model.User
-import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
 import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
+import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
 
 internal class IngredientScreen(var user: User? = null, val title: String = "Your Ingredients") : Screen {
 
@@ -88,7 +88,7 @@ internal class IngredientScreen(var user: User? = null, val title: String = "You
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
             topBar = { MyTopBar(currentScreen = Route.Ingredient(user, title)) },
-            bottomBar = { MyBottomBar(currentScreen = Route.Ingredient(user, title)) },
+            bottomBar = { MyBottomBar() },
             content = { paddingValues ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
