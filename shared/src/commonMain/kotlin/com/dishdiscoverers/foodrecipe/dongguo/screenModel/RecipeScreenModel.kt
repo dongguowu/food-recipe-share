@@ -88,7 +88,9 @@ class RecipeScreenModel(
             userId = userId,
             recipeId = recipeId,
         )
-        _favorite.value = Resource.Success(true)
+        if(result == Resource.Success(true)){
+            _favorite.value = Resource.Success(true)
+        }
     }
     fun deleteFavorite(
         userId: String,
@@ -99,7 +101,9 @@ class RecipeScreenModel(
             userId = userId,
             recipeId = recipeId,
         )
-        _favorite.value = Resource.Success(true)
+        if(result == Resource.Success(true)){
+            _favorite.value = Resource.Success(true)
+        }
     }
 
     init {

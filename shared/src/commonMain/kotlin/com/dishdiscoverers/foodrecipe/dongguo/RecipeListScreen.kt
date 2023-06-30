@@ -167,15 +167,12 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                         }
                     }
 
-                    SearchRecipeByInternet(
-                        description = "Search on internet",
-                        search = {
-                            queryTitle = it
-                            screenModel.searchRecipeInternet(it)
-                        },
-                        getAll = {
-                            screenModel.getAllRecipe()
-                        })
+                    SearchRecipeByInternet(description = "Search on internet", search = {
+                        queryTitle = it
+                        screenModel.searchRecipeInternet(it)
+                    }, getAll = {
+                        screenModel.getAllRecipe()
+                    })
 
                     // list
                     if (state is RecipeScreenModel.State.Result) {
@@ -186,22 +183,20 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
 
                             if (list.isEmpty()) {
                                 item {
-                                    RecipeCard(
+                                    RecipeCard(updateFavorite = { },
                                         loadComments = { },
                                         addComment = {},
                                         comments = "",
                                         recipe = null,
                                         addFavorite = {},
-                                        removeFavorite = {}
-                                    )
+                                        removeFavorite = {})
                                 }
                             } else {
                                 for (recipe in list) {
                                     item {
                                         // Favorite
                                         screenModel.getFavorite(
-                                            userId = (email ?: ""),
-                                            recipeId = recipe.id
+                                            userId = (email ?: ""), recipeId = recipe.id
                                         )
                                         var favoriteChecked by remember { mutableStateOf(false) }
                                         screenModel.favorite.collectAsState().value?.let {
@@ -236,6 +231,12 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                                             }
                                         }
                                         RecipeCard(
+                                            updateFavorite = {
+                                                screenModel.getFavorite(
+                                                    userId = (email ?: ""), recipeId = recipe.id
+                                                )
+                                            },
+                                            favoriteChecked = favoriteChecked,
                                             loadComments = {
                                                 screenModel.getComments(recipe.id)
                                             },
@@ -251,17 +252,14 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                                             comments = commentString,
                                             addFavorite = {
                                                 screenModel.addFavorite(
-                                                    userId = (email ?: ""),
-                                                    recipeId = recipe.id
+                                                    userId = (email ?: ""), recipeId = recipe.id
                                                 )
                                             },
                                             removeFavorite = {
                                                 screenModel.deleteFavorite(
-                                                    userId = (email ?: ""),
-                                                    recipeId = recipe.id
+                                                    userId = (email ?: ""), recipeId = recipe.id
                                                 )
-                                            }
-                                        )
+                                            })
                                     }
                                 }
                             }
@@ -277,59 +275,47 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchRecipe(
-    description: String,
-    search: (title: String) -> Unit,
-    getAll: () -> Unit
+    description: String, search: (title: String) -> Unit, getAll: () -> Unit
 ) {
     Text(description)
     var text by remember { mutableStateOf("") }
-    OutlinedTextField(
-        value = text,
-        onValueChange = {
-            text = it
-            if (it.length >= 3) {
-                search(it)
-            } else {
-                getAll()
-            }
-
-        },
-        label = {
-            Icon(
-                Icons.Outlined.Search,
-                contentDescription = description,
-            )
+    OutlinedTextField(value = text, onValueChange = {
+        text = it
+        if (it.length >= 3) {
+            search(it)
+        } else {
+            getAll()
         }
-    )
+
+    }, label = {
+        Icon(
+            Icons.Outlined.Search,
+            contentDescription = description,
+        )
+    })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchRecipeByInternet(
-    description: String,
-    search: (title: String) -> Unit,
-    getAll: () -> Unit
+    description: String, search: (title: String) -> Unit, getAll: () -> Unit
 ) {
     Text(description)
     var text by remember { mutableStateOf("") }
 
-    OutlinedTextField(
-        value = text,
-        onValueChange = {
-            text = it
-            if (text.length <= 2) {
-                getAll()
-            } else {
-                search(text)
-            }
-        },
-        label = {
-            Icon(
-                Icons.Outlined.Search,
-                contentDescription = description,
-            )
+    OutlinedTextField(value = text, onValueChange = {
+        text = it
+        if (text.length <= 2) {
+            getAll()
+        } else {
+            search(text)
         }
-    )
+    }, label = {
+        Icon(
+            Icons.Outlined.Search,
+            contentDescription = description,
+        )
+    })
 }
 
 
@@ -338,6 +324,7 @@ fun SearchRecipeByInternet(
 fun RecipeCard(
     recipe: Recipe? = null,
     favoriteChecked: Boolean = false,
+    updateFavorite: () -> Unit,
     comments: String,
     loadComments: () -> Unit,
     addComment: (text: String) -> Unit,
@@ -347,12 +334,9 @@ fun RecipeCard(
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
-
+        updateFavorite()
         Card(
-            modifier = Modifier
-                .padding(8.dp)
-                .height(IntrinsicSize.Min)
-                .wrapContentHeight(),
+            modifier = Modifier.padding(8.dp).height(IntrinsicSize.Min).wrapContentHeight(),
         ) {
             if (recipe == null) {
                 Row {
@@ -384,8 +368,7 @@ fun RecipeCard(
                                 )
                             } else {
                                 Icon(
-                                    Icons.Outlined.Favorite,
-                                    contentDescription = "Favorite icon"
+                                    Icons.Outlined.Favorite, contentDescription = "Favorite icon"
                                 )
                             }
                         }
@@ -420,8 +403,7 @@ fun RecipeCard(
                             }
                         }) {
                             Text(
-                                commentHint,
-                                fontSize = 12.sp
+                                commentHint, fontSize = 12.sp
                             )
                         }
                     }
@@ -443,8 +425,7 @@ fun RecipeCard(
                         var ingredientStr by remember {
                             mutableStateOf(
                                 recipe.ingredients?.substring(
-                                    0,
-                                    50
+                                    0, 50
                                 ) ?: ""
                             )
                         }
@@ -467,8 +448,7 @@ fun RecipeCard(
                             }
                         }) {
                             Text(
-                                text = IngredientHint,
-                                fontSize = 12.sp
+                                text = IngredientHint, fontSize = 12.sp
                             )
                         }
 
@@ -476,8 +456,7 @@ fun RecipeCard(
                         var instructionStr by remember {
                             mutableStateOf(
                                 recipe.instructions?.substring(
-                                    0,
-                                    50
+                                    0, 50
                                 ) ?: ""
                             )
                         }
@@ -500,8 +479,7 @@ fun RecipeCard(
                             }
                         }) {
                             Text(
-                                IngredientHint,
-                                fontSize = 12.sp
+                                IngredientHint, fontSize = 12.sp
                             )
                         }
                     }

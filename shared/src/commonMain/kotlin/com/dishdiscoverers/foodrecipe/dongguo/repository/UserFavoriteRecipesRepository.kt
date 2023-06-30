@@ -72,9 +72,10 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
             db.collection(COLLECTION_PATH_FAVORIATE).where(field = "userId", equalTo = userId)
                 .where(field = "recipeId", equalTo = recipeId)
         val querySnapshot = collection.get()
-        if (querySnapshot != null)
+        if (querySnapshot != null){
             return Resource.Success(true)
-        return Resource.Success(true)
+        }
+        return Resource.Success(false)
     }
 
     override suspend fun addFavoriteRecipe(
@@ -88,12 +89,14 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
             recipeId = recipeId,
         )
         if (userId != null && recipeId != null) {
-//            val authResult = authRepository.signUp("dongguo@wu.com", "dongguo")
-            db.collection(COLLECTION_PATH_FAVORIATE)
-                .document(id)
-                .set(UserFavoriteRecipe.serializer(), userFavoriteRecipe, encodeDefaults = true)
-
-            return Resource.Success(true);
+            try {
+                db.collection(COLLECTION_PATH_FAVORIATE)
+                    .document(id)
+                    .set(UserFavoriteRecipe.serializer(), userFavoriteRecipe, encodeDefaults = true)
+                return Resource.Success(true);
+            } catch (e: Exception) {
+                return Resource.Failure(Exception(e.message))
+            }
         }
         return Resource.Failure(Exception("failed to add"))
     }
@@ -102,7 +105,6 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
         userId: String,
         recipeId: String
     ): Resource<Boolean> {
-//        if (authRepository.isLoggedIn()) {
         val db = Firebase.firestore
         val id = recipeId + userId
         val docRef = db.collection(COLLECTION_PATH_FAVORIATE).document(id)
@@ -110,13 +112,11 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
         if (doc.exists) {
             try {
                 docRef.delete()
+                return Resource.Success(true)
             } catch (e: Exception) {
                 return Resource.Failure(Exception(e.message))
             }
-            // Temp hack to demonstrate that auth also works
-//            authRepository.delete()
         }
-//        }
-        return Resource.Success(true)
+        return Resource.Failure(Exception("Error"))
     }
 }
