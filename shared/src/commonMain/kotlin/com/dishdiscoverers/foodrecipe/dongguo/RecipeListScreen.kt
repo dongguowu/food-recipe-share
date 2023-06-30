@@ -249,8 +249,18 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                                             },
                                             recipe = recipe,
                                             comments = commentString,
-                                            addFavorite = { },
-                                            removeFavorite = {}
+                                            addFavorite = {
+                                                screenModel.addFavorite(
+                                                    userId = (email ?: ""),
+                                                    recipeId = recipe.id
+                                                )
+                                            },
+                                            removeFavorite = {
+                                                screenModel.deleteFavorite(
+                                                    userId = (email ?: ""),
+                                                    recipeId = recipe.id
+                                                )
+                                            }
                                         )
                                     }
                                 }

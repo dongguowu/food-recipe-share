@@ -79,14 +79,23 @@ class RecipeScreenModel(
         _favorite.value = result
     }
 
-    fun updateFavorite(
+    fun addFavorite(
         userId: String,
         recipeId: String,
     ) = coroutineScope.launch {
         _favorite.value = Resource.Loading
-
-
-        val result = favoriteRepository.addFavoriteRecipe(
+        var result = favoriteRepository.addFavoriteRecipe(
+            userId = userId,
+            recipeId = recipeId,
+        )
+        _favorite.value = Resource.Success(true)
+    }
+    fun deleteFavorite(
+        userId: String,
+        recipeId: String,
+    ) = coroutineScope.launch {
+        _favorite.value = Resource.Loading
+        var result = favoriteRepository.deleteFavoriteRecipe(
             userId = userId,
             recipeId = recipeId,
         )
