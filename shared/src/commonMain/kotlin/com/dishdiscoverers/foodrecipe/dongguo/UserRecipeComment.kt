@@ -16,13 +16,13 @@ data class UserRecipeComment(
 )
 
 interface UserRecipeCommentRepository {
-    suspend fun getCommentsByRecipeId(recipeId: String): List<UserRecipeComment>
+    suspend fun getCommentsByRecipeId(recipeId: String): Resource<List<UserRecipeComment>>
     suspend fun addComment(
         userId: String,
         recipeId: String,
         text: String,
         imageUrl: String? = null
-    ): UserRecipeComment?
+    ): Resource<UserRecipeComment>
     //TODO: update, delete
     //suspend fun getCommentsByUserId(userId : String): Resource<List<UserRecipeComment>>
 }
@@ -34,7 +34,7 @@ class UserRecipeCommentRepositoryFirebase constructor(private val authRepository
         return authRepository.authStateChanged()
     }
 
-    override suspend fun getCommentsByRecipeId(recipeId: String): List<UserRecipeComment> {
+    override suspend fun getCommentsByRecipeId(recipeId: String): Resource<List<UserRecipeComment>> {
         // Access a Cloud Firestore instance from your Activity
         val db = Firebase.firestore
         val collection = db.collection("comments")
@@ -46,7 +46,7 @@ class UserRecipeCommentRepositoryFirebase constructor(private val authRepository
                 list.add(it.copy(id = document.id))
             }
         }
-        return list.toList()
+        return Resource.Success(list.toList())
     }
 
     override suspend fun addComment(
@@ -54,18 +54,22 @@ class UserRecipeCommentRepositoryFirebase constructor(private val authRepository
         recipeId: String,
         text: String,
         imageUrl: String?
-    ): UserRecipeComment? {
-        TODO("Not yet implemented")
-        // Access a Cloud Firestore instance from your Activity
+    ): Resource<UserRecipeComment> {
         val db = Firebase.firestore
-        // Add a new document with a generated ID
-//        if (userId != null && recipeId != null) {
-//            val authResult = authRepository.signUp("dongguo@wu.com", "dongguo")
-//            db.collection("comments").document(frogData!!.name!!)
-//                .set(FrogData.serializer(), frogData, encodeDefaults = true)
-//
-//            return frogData;
-//        }
+        val comment = UserRecipeComment(
+            userId = userId,
+            recipeId = recipeId,
+            text = text,
+            imageUrl = imageUrl ?: ""
+        )
+        if (userId != null && recipeId != null) {
+            val authResult = authRepository.signUp("dongguo@wu.com", "dongguo")
+            db.collection("comments").document(comment!!.recipeId!!)
+                .set(UserRecipeComment.serializer(), comment, encodeDefaults = true)
+
+            return Resource.Success(comment);
+        }
+        return Resource.Failure(Exception("failed to add"))
 
     }
 

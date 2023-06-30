@@ -1,6 +1,5 @@
-package com.lduboscq.appkickstarter.ui
+package com.dishdiscoverers.foodrecipe.garett.layout
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.icons.Icons
@@ -13,9 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.lduboscq.appkickstarter.main.router.Route
-import com.lduboscq.appkickstarter.main.router.screenRouter
-import com.lduboscq.appkickstarter.mains.model.User
+import com.dishdiscoverers.foodrecipe.garett.router.Route
+import com.dishdiscoverers.foodrecipe.garett.router.screenRouter
+import com.dishdiscoverers.foodrecipe.garett.model.User
 
 
 

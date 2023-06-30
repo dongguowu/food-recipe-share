@@ -1,6 +1,6 @@
-package com.lduboscq.appkickstarter.main.model
+package com.dishdiscoverers.foodrecipe.garett.model
 
-import com.lduboscq.appkickstarter.mains.model.Ingredient
+import com.dishdiscoverers.foodrecipe.garett.model.Ingredient
 
 data class IngredientData(
     var id: String? = null,

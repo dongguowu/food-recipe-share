@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.main.screen
+package com.dishdiscoverers.foodrecipe.garett.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
@@ -37,17 +38,19 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.lduboscq.appkickstarter.main.data.Recipe
-import com.lduboscq.appkickstarter.main.data.RecipeRepositoryJson
-import com.lduboscq.appkickstarter.main.router.Route
-import com.lduboscq.appkickstarter.main.router.screenRouter
-import com.lduboscq.appkickstarter.main.screenModel.RecipeScreenModel
-
+import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
+import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
+import com.dishdiscoverers.foodrecipe.garett.router.Route
+import com.dishdiscoverers.foodrecipe.garett.router.screenRouter
 import com.lduboscq.appkickstarter.ui.Image
-import com.lduboscq.appkickstarter.ui.MyBottomBar
-import com.lduboscq.appkickstarter.ui.MyTopBar
 
-internal class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") : Screen {
+class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") :
+    Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
@@ -56,7 +59,9 @@ internal class RecipeScreen(var feature: String = "Super!", val title: String = 
         // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                repository = RecipeRepositoryJson()
+                apiRepository = RecipeRepositoryTheMealAPI(),
+                authRepository = AuthRepository(),
+                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository())
             )
         }
         val state by screenModel.state.collectAsState()
@@ -65,10 +70,10 @@ internal class RecipeScreen(var feature: String = "Super!", val title: String = 
         LaunchedEffect(true) {
             screenModel.getAllRecipe()
         }
-        var recipeList: List<Recipe>? = null
-        if (state is RecipeScreenModel.State.Result.RecipeResult) {
+        var recipeList: MutableList<com.dishdiscoverers.foodrecipe.dongguo.Recipe> = mutableListOf()
+        if (state is RecipeScreenModel.State.Result) {
             recipeList =
-                (state as RecipeScreenModel.State.Result.RecipeResult).recipeList
+                (state as? RecipeScreenModel.State.Result)?.list?.toMutableList() ?: mutableListOf()
         }
 
 
@@ -92,15 +97,32 @@ internal class RecipeScreen(var feature: String = "Super!", val title: String = 
 
 
                     // list
-                    if (state is RecipeScreenModel.State.Result.RecipeResult) {
+                    if (state is RecipeScreenModel.State.Result) {
                         LazyColumn {
-                            item {
-                                Text ("Here's some freshly made recipes just for you!")
-                            }
-                            for (item in (state as RecipeScreenModel.State.Result.RecipeResult).recipeList) {
+//                            item {
+//                                Text("Here's some freshly made recipes just for you!")
+//                            }
+//                            for (item in (state as RecipeScreenModel.State.Result).recipeList) {
+//                                item {
+//                                    RecipeCard(
+//                                        recipe = item
+//                                    )
+//                                }
+//                            }
+                            val list =
+                                (state as? RecipeScreenModel.State.Result)?.list?.toMutableList()
+                                    ?: mutableListOf()
+
+                            if (list.isEmpty()) {
                                 item {
                                     RecipeCard(
-                                        recipe = item
+                                        recipe = null,
+                                    )
+                                }
+                            } else {
+                                items(list) { recipe ->
+                                    RecipeCard(
+                                        recipe = recipe
                                     )
                                 }
                             }
@@ -119,7 +141,7 @@ Card component that displays a recipe object
  */
 @Composable
 fun RecipeCard(
-    recipe: Recipe,
+    recipe: Recipe? = null,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val string = "I am a recipe"
@@ -127,46 +149,55 @@ fun RecipeCard(
     Card(
         modifier = Modifier.size(width = 400.dp, height = 200.dp).padding(15.dp),
     ) {
-        Row {
-            Image(
-                url = recipe.imageUrl,
-                modifier = Modifier.size(width = 120.dp, height = 180.dp).padding(15.dp)
-                    .clickable(onClick = {
-                        navigator.push(screenRouter(Route.Detail(string, title)))
-                    }
-                    )
-            )
-            Column(
-                modifier = Modifier.padding(9.dp, 15.dp, 9.dp, 9.dp),
-            ) {
-                Text(
-                    text = recipe.title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    textAlign = TextAlign.Start,
+        if (recipe == null) {
+            Row {
+                Text("No realted recipe found.")
+            }
+        } else {
+            Row {
+
+                Image(
+                    url = recipe.imageUrl,
+                    modifier = Modifier.size(width = 120.dp, height = 180.dp).padding(15.dp)
+                        .clickable(onClick = {
+                            navigator.push(screenRouter(Route.Detail(string, title)))
+                        }
+                        )
                 )
+                Column(
+                    modifier = Modifier.padding(9.dp, 15.dp, 9.dp, 9.dp),
+                ) {
+                    Text(
+                        text = recipe.title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        textAlign = TextAlign.Start,
+                    )
 
-                Spacer(modifier = Modifier.height(60.dp).width(60.dp))
+                    Spacer(modifier = Modifier.height(60.dp).width(60.dp))
 
-                Row {
-                    // Favorite icon
-                    var checked by remember { mutableStateOf(false) }
-                    IconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
-                        if (checked) {
-                            Icon(
-                                Icons.Filled.Favorite,
-                                contentDescription = "Favorite icon",
-                                tint = Color.Red
-                            )
-                        } else {
-                            Icon(
-                                Icons.Outlined.Favorite,
-                                contentDescription = "Favorite icon"
-                            )
+                    Row {
+                        // Favorite icon
+                        var checked by remember { mutableStateOf(false) }
+                        IconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
+                            if (checked) {
+                                Icon(
+                                    Icons.Filled.Favorite,
+                                    contentDescription = "Favorite icon",
+                                    tint = Color.Red
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Outlined.Favorite,
+                                    contentDescription = "Favorite icon"
+                                )
+                            }
                         }
                     }
                 }
             }
+
         }
+
     }
 }

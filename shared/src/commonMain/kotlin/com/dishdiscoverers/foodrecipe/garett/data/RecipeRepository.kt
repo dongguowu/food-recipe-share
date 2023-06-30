@@ -1,4 +1,4 @@
-package com.lduboscq.appkickstarter.main.data
+package com.dishdiscoverers.foodrecipe.garett.data
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString

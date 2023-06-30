@@ -1,7 +1,7 @@
 package com.dishdiscoverers.foodrecipe.garett.data//import com.lduboscq.appkickstarter.mains.data.IngredientRepository
-//import com.lduboscq.appkickstarter.mains.model.Ingredient
-//import com.lduboscq.appkickstarter.mains.model.Recipe
-//import com.lduboscq.appkickstarter.mains.model.RecipeIngredients
+//import com.dishdiscoverers.foodrecipe.garett.model.Ingredient
+//import com.dishdiscoverers.foodrecipe.garett.model.Recipe
+//import com.dishdiscoverers.foodrecipe.garett.model.RecipeIngredients
 //
 //class RecipeDummyData : IngredientRepository {
 //    private val recipes: MutableList<Recipe> = mutableListOf(
