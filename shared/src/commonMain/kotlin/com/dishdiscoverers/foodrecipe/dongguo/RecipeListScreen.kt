@@ -1,5 +1,6 @@
 package com.dishdiscoverers.foodrecipe.dongguo
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +16,18 @@ import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,6 +35,7 @@ import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,9 +49,10 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
-import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
+import kotlinx.coroutines.launch
 
 class HomeScreen(email: String? = null) : Screen {
 
@@ -88,6 +97,7 @@ class HomeScreen(email: String? = null) : Screen {
         // Layout - Scaffold
         Scaffold(
             topBar = { Text(message) },
+
             content = { paddingValues ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -106,12 +116,50 @@ class HomeScreen(email: String? = null) : Screen {
                             }
 
                             is Resource.Success -> {
-                                var str = StringBuilder()
+                                val items: MutableList<String> = mutableListOf()
                                 for (item in it.result) {
-                                    str.append(item.title)
-                                    str.append("; ")
+                                    items.add(item.title)
                                 }
-                                Text(str.toString())
+//                                val drawerState = rememberDrawerState(DrawerValue.Closed)
+//                                val scope = rememberCoroutineScope()
+//
+//                                val selectedItem = remember { mutableStateOf(items[0]) }
+//                                Box() {
+//                                    ModalNavigationDrawer(
+//                                        drawerState = drawerState,
+//                                        drawerContent = {
+//                                            ModalDrawerSheet {
+//                                                Spacer(Modifier.height(12.dp))
+//                                                items.forEach { item ->
+//                                                    NavigationDrawerItem(
+//                                                        label = { Text(item) },
+//                                                        selected = item == selectedItem.value,
+//                                                        onClick = {
+//                                                            scope.launch { drawerState.close() }
+//                                                            selectedItem.value = item
+//                                                        },
+//                                                        modifier = Modifier.padding(
+//                                                            NavigationDrawerItemDefaults.ItemPadding
+//                                                        )
+//                                                    )
+//                                                }
+//                                            }
+//                                        },
+//                                        content = {
+//                                            Column(
+//                                                modifier = Modifier
+//                                                    .padding(16.dp),
+//                                                horizontalAlignment = Alignment.CenterHorizontally
+//                                            ) {
+//                                                Spacer(Modifier.height(20.dp))
+//                                                Button(onClick = { scope.launch { drawerState.open() } }) {
+//                                                    Text("Category")
+//                                                }
+//                                            }
+//                                        }
+//                                    )
+//                                }
+
                             }
 
                             else -> {
