@@ -42,10 +42,11 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
 import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
-import com.dishdiscoverers.foodrecipe.garett.layout.MyBottomBar
+
 import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
 import com.dishdiscoverers.foodrecipe.garett.router.Route
 import com.dishdiscoverers.foodrecipe.garett.router.screenRouter
+import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
 import com.lduboscq.appkickstarter.ui.Image
 
 internal class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") :
@@ -87,7 +88,7 @@ internal class RecipeScreen(var feature: String = "Super!", val title: String = 
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
             topBar = { MyTopBar(currentScreen = Route.Recipe(feature, title)) },
-            bottomBar = { MyBottomBar(currentScreen = Route.Recipe(feature, title)) },
+            bottomBar = { MyBottomBar() },
             content = { paddingValues ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
