@@ -41,9 +41,9 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
-import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
-
+import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
 import com.dishdiscoverers.foodrecipe.garett.router.Route
 import com.dishdiscoverers.foodrecipe.garett.router.screenRouter
@@ -62,7 +62,8 @@ class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes"
             RecipeScreenModel(
                 apiRepository = RecipeRepositoryTheMealAPI(),
                 authRepository = AuthRepository(),
-                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository())
+                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository()),
+                favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),
             )
         }
         val state by screenModel.state.collectAsState()

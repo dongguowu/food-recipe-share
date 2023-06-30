@@ -2,13 +2,14 @@ package com.dishdiscoverers.foodrecipe.dongguo.screenModel
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
-import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeComment
-import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Category
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeComment
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepository
 import dev.gitlive.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,9 @@ import kotlinx.coroutines.launch
 class RecipeScreenModel(
     private val apiRepository: RecipeRepository,
     private val authRepository: AuthRepository,
-    private val commentRepository: UserRecipeCommentRepository
+    private val commentRepository: UserRecipeCommentRepository,
+    private val favoriteRepository: UserFavoriteRecipeRepository,
+
 ) :
     StateScreenModel<RecipeScreenModel.State>(State.Init) {
 
@@ -48,12 +51,6 @@ class RecipeScreenModel(
         val result = commentRepository.getCommentsByRecipeId(recipeId)
         _comments.value = result
     }
-    fun addComment(userId: String, recipeId: String, text: String) = coroutineScope.launch {
-        _comments.value = Resource.Loading
-        commentRepository.addComment(userId, recipeId, text)
-        val result = commentRepository.getCommentsByRecipeId(recipeId)
-        _comments.value = result
-    }
 
     private val _comment = MutableStateFlow<Resource<UserRecipeComment>?>(null)
     val comment: StateFlow<Resource<UserRecipeComment>?> = _comment
@@ -73,9 +70,27 @@ class RecipeScreenModel(
         _comment.value = result
     }
 
+    // Favorite
+    private val _favorite = MutableStateFlow<Resource<Boolean>?>(null)
+    val favorite: StateFlow<Resource<Boolean>?> = _favorite
+
+    fun updateFavorite(
+        userId: String,
+        recipeId: String,
+    ) = coroutineScope.launch {
+        _favorite.value = Resource.Loading
+
+
+        val result = favoriteRepository.addFavoriteRecipe(
+            userId = userId,
+            recipeId = recipeId,
+        )
+        _favorite.value = Resource.Success(true)
+    }
+
     init {
         if (authRepository.currentUser != null) {
-            _loginFlow.value = Resource.Success(authRepository.currentUser!!)
+            _loginFlow.value = Resource.Success(authRepository.currentUser)
         }
 
         // Category

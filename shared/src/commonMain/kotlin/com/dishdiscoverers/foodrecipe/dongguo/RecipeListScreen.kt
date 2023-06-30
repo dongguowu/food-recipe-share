@@ -46,6 +46,8 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
@@ -61,7 +63,8 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
             RecipeScreenModel(
                 apiRepository = RecipeRepositoryTheMealAPI(),
                 authRepository = AuthRepository(),
-                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository())
+                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository()),
+                favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),
             )
         }
 

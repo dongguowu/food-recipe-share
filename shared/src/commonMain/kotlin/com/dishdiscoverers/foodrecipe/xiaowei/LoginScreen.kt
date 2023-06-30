@@ -1,7 +1,6 @@
 package com.dishdiscoverers.foodrecipe.xiaowei
 
 import Image
-import androidx.compose.foundation.Image
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -51,13 +50,12 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
-import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
-import dev.icerock.moko.resources.compose.painterResource
+import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 
 /**
@@ -78,6 +76,7 @@ class LoginScreen : Screen {
                 apiRepository = RecipeRepositoryTheMealAPI(),
                 authRepository = AuthRepository(),
                 commentRepository = UserRecipeCommentRepositoryFirebase(authRepository = AuthRepository()),
+                favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),
             )
         }
 
