@@ -232,7 +232,7 @@ class LoginScreen : Screen {
                                             is Resource.Success -> {
                                                 navigator.push(
                                                     ScreenRouter(
-                                                        AllScreens.Profile(
+                                                        AllScreens.Home(
                                                             email
                                                         )
                                                     )

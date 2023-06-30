@@ -16,7 +16,7 @@ sealed class AllScreens {
     data class Edit(val email: String?) : AllScreens()
 
     data class Detail(val recipe: String?, val title: String?) : AllScreens()
-    object Home : AllScreens()
+    data class Home(val email: String?) : AllScreens()
 
 }
 
@@ -38,8 +38,10 @@ fun ScreenRouter(screen: AllScreens): Screen {
         is AllScreens.Detail ->
             DetailScreen(screen.recipe ?: "", screen.title ?: "")
 
-        is AllScreens.Profile ->
+        is AllScreens.Home ->
             HomeScreen(screen.email ?: "")
+        is AllScreens.Profile ->
+            ProfileScreen(screen.email ?:"")
 
         else -> {
             PreLoginScreen()
