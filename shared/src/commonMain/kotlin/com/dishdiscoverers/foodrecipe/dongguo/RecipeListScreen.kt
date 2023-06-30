@@ -52,6 +52,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMeal
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
 import kotlinx.coroutines.launch
 
 class HomeScreen(email: String? = null) : Screen {
@@ -97,6 +98,9 @@ class HomeScreen(email: String? = null) : Screen {
         // Layout - Scaffold
         Scaffold(
             topBar = { Text(message) },
+            bottomBar = {
+                        MyBottomBar()
+            },
 
             content = { paddingValues ->
                 Column(
