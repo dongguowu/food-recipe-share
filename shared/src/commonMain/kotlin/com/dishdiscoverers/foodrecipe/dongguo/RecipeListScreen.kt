@@ -434,32 +434,32 @@ fun RecipeCard(
                             }
                         }
                         // comments
-                        var showComment by remember { mutableStateOf(true) }
+                        var showComments by remember { mutableStateOf(false) }
                         var commentHint by remember { mutableStateOf("Show  comments") }
                         var commentsText by remember { mutableStateOf("") }
-                        Column {
+                        if(showComments) {
                             Text(commentsText)
-                            var text by remember { mutableStateOf("") }
+                            var newComment by remember { mutableStateOf("") }
                             TextField(
-                                value = text,
+                                value = newComment,
                                 onValueChange = {
-                                    text = it
+                                    newComment = it
                                 },
                             )
                             Button(onClick = {
-                                addComment(text)
+                                addComment(newComment)
                             }) {
                                 Text("Add comment")
                             }
                         }
                         Button(onClick = {
                             loadComments()
-                            showComment = !showComment
-                            if (showComment) {
-                                commentsText = ""
+                            showComments = !showComments
+                            if (showComments) {
+                                commentsText = comments
                                 commentHint = "Show comments"
                             } else {
-                                commentsText = comments
+                                commentsText = ""
                                 commentHint = "Hide comments"
                             }
                         }) {
