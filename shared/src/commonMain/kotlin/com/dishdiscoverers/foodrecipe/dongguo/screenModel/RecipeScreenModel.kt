@@ -73,6 +73,11 @@ class RecipeScreenModel(
     // Favorite
     private val _favorite = MutableStateFlow<Resource<Boolean>?>(null)
     val favorite: StateFlow<Resource<Boolean>?> = _favorite
+    fun getFavorite(userId: String, recipeId: String) = coroutineScope.launch {
+        _favorite.value = Resource.Loading
+        val result = favoriteRepository.getFavoritesRecipe(userId = userId, recipeId = recipeId)
+        _favorite.value = result
+    }
 
     fun updateFavorite(
         userId: String,

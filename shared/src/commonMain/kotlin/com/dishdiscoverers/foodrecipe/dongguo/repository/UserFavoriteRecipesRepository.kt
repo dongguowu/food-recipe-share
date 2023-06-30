@@ -21,6 +21,11 @@ interface UserFavoriteRecipeRepository {
         userId: String,
         recipeId: String,
     ): Resource<List<UserFavoriteRecipe>>
+
+    suspend fun getFavoritesRecipe(
+        userId: String,
+        recipeId: String
+    ): Resource<Boolean>
 }
 
 class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepository: AuthRepository) :
@@ -59,6 +64,17 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
             }
         }
         return Resource.Success(list.toList())
+    }
+
+    override suspend fun getFavoritesRecipe(userId: String, recipeId: String): Resource<Boolean> {
+        val db = Firebase.firestore
+        val collection =
+            db.collection(COLLECTION_PATH_FAVORIATE).where(field = "userId", equalTo = userId)
+                .where(field = "recipeId", equalTo = recipeId)
+        val querySnapshot = collection.get()
+        if (querySnapshot != null)
+            return Resource.Success(true)
+        return Resource.Success(true)
     }
 
     override suspend fun addFavoriteRecipe(
@@ -105,7 +121,7 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
         }
 
         // return favorite recipe list
-                val db = Firebase.firestore
+        val db = Firebase.firestore
         val collection =
             db.collection(COLLECTION_PATH_FAVORIATE).where(field = "userId", equalTo = userId)
         val querySnapshot = collection.get()

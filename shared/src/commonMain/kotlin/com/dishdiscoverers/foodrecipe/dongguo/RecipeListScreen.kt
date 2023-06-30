@@ -46,7 +46,6 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
-import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
@@ -69,10 +68,10 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
         }
 
         // State
-        var message by remember { mutableStateOf(email ?: "") }
         val state by screenModel.state.collectAsState()
         var categories = screenModel.categories.collectAsState()
         var comments = screenModel.comments.collectAsState()
+        var message by remember { mutableStateOf(email ?: "") }
         message = when (val result = state) {
             is RecipeScreenModel.State.Init -> "Just initialized"
             is RecipeScreenModel.State.Loading -> "Loading"
@@ -168,81 +167,6 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                         }
                     }
 
-                    // User Auth
-
-//                    Button(
-//                        onClick = {
-//                            screenModel.addComment(
-//                                "dongguo@wu.com",
-//                                "52802",
-//                                "is absolutely delightful!",
-//                                ""
-//                            )
-//                            screenModel.addComment(
-//                                "dongguo@wu.com",
-//                                "52802",
-//                                "incredibly flavorful",
-//                                ""
-//                            )
-//                            screenModel.addComment(
-//                                "dongguo@wu.com",
-//                                "53043",
-//                                "simply can't miss the fish",
-//                                ""
-//                            )
-//                            screenModel.addComment(
-//                                "dongguo@wu.com",
-//                                "53043",
-//                                "I can't get enough ",
-//                                ""
-//                            )
-//                        },
-//                        content = {
-//                            Text("Add comment")
-//                        }
-//                    )
-//                    Button(
-//                        onClick = {
-//                            screenModel.getComments("test")
-//                        },
-//                        content = {
-//                            Text("get all  comment")
-//                        }
-//                    )
-//                    comments.value?.let {
-//                        when (it) {
-//                            is Resource.Failure -> {
-//                                Text(it.exception.message!!)
-//                            }
-//
-//                            Resource.Loading -> {
-//                                Text("loading....")
-//                            }
-//
-//                            is Resource.Success -> {
-//                                var str = StringBuilder()
-//                                for (item in it.result) {
-//                                    str.append(item.id)
-//                                    str.append("; ")
-//                                }
-//                                Text(str.toString())
-//                            }
-//
-//                            else -> {
-//                                Text("some error happens")
-//                            }
-//                        }
-//                    }
-//                    SearchRecipe(
-//                        description = "Search by recipe title",
-//                        search = { screenModel.searchRecipe(it) },
-//                        getAll = { screenModel.getAllRecipe() })
-//
-//                    SearchRecipe(
-//                        description = "Search by ingredient name",
-//                        search = { screenModel.searchRecipeByIngredient(it) },
-//                        getAll = { screenModel.getAllRecipe() })
-//
                     SearchRecipeByInternet(
                         description = "Search on internet",
                         search = {
@@ -252,6 +176,7 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                         getAll = {
                             screenModel.getAllRecipe()
                         })
+
                     // list
                     if (state is RecipeScreenModel.State.Result) {
                         LazyColumn {
@@ -273,6 +198,25 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                             } else {
                                 for (recipe in list) {
                                     item {
+                                        // Favorite
+                                        screenModel.getFavorite(
+                                            userId = (email ?: ""),
+                                            recipeId = recipe.id
+                                        )
+                                        var favoriteChecked by remember { mutableStateOf(false) }
+                                        screenModel.favorite.collectAsState().value?.let {
+                                            favoriteChecked = when (it) {
+                                                is Resource.Success -> {
+                                                    it.result
+                                                }
+
+                                                else -> {
+                                                    false
+                                                }
+                                            }
+                                        }
+
+                                        // Comments
                                         var commentString by remember { mutableStateOf("") }
                                         comments.value?.let {
                                             when (it) {
@@ -289,8 +233,6 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                                                     }
                                                     commentString = str.toString()
                                                 }
-
-
                                             }
                                         }
                                         RecipeCard(
@@ -385,6 +327,7 @@ fun SearchRecipeByInternet(
 @Composable
 fun RecipeCard(
     recipe: Recipe? = null,
+    favoriteChecked: Boolean = false,
     comments: String,
     loadComments: () -> Unit,
     addComment: (text: String) -> Unit,
@@ -414,7 +357,7 @@ fun RecipeCard(
                             modifier = Modifier.size(width = 160.dp, height = 180.dp).padding(15.dp)
                         )
                         // Favorite icon
-                        var checked by remember { mutableStateOf(false) }
+                        var checked by remember { mutableStateOf(favoriteChecked) }
                         IconToggleButton(checked = checked, onCheckedChange = {
                             checked = it
                             if (checked) {
@@ -440,7 +383,7 @@ fun RecipeCard(
                         var showComments by remember { mutableStateOf(false) }
                         var commentHint by remember { mutableStateOf("Show  comments") }
                         var commentsText by remember { mutableStateOf("") }
-                        if(showComments) {
+                        if (showComments) {
                             Text(commentsText)
                             var newComment by remember { mutableStateOf("") }
                             TextField(
