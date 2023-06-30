@@ -48,6 +48,12 @@ class RecipeScreenModel(
         val result = commentRepository.getCommentsByRecipeId(recipeId)
         _comments.value = result
     }
+    fun addComment(userId: String, recipeId: String, text: String) = coroutineScope.launch {
+        _comments.value = Resource.Loading
+        commentRepository.addComment(userId, recipeId, text)
+        val result = commentRepository.getCommentsByRecipeId(recipeId)
+        _comments.value = result
+    }
 
     private val _comment = MutableStateFlow<Resource<UserRecipeComment>?>(null)
     val comment: StateFlow<Resource<UserRecipeComment>?> = _comment

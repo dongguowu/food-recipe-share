@@ -3,6 +3,7 @@ package com.dishdiscoverers.foodrecipe.dongguo.repository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseUser
 import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.firestore.where
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 
@@ -37,9 +38,8 @@ class UserRecipeCommentRepositoryFirebase constructor(private val authRepository
     }
 
     override suspend fun getCommentsByRecipeId(recipeId: String): Resource<List<UserRecipeComment>> {
-        // Access a Cloud Firestore instance from your Activity
         val db = Firebase.firestore
-        val collection = db.collection("comments")
+        val collection = db.collection(COLLECTION_PATH_COMMENTS).where("recipeId", recipeId)
         val querySnapshot = collection.get()
         val list: MutableList<UserRecipeComment> = mutableListOf()
         for (document in querySnapshot.documents) {
