@@ -1,6 +1,7 @@
 package com.dishdiscoverers.foodrecipe.xiaowei
 
 import cafe.adriel.voyager.core.screen.Screen
+import com.dishdiscoverers.foodrecipe.dongguo.HomeScreen
 
 sealed class AllScreens {
 
@@ -14,6 +15,7 @@ sealed class AllScreens {
 
     //
     data class Edit(val email: String?) : AllScreens()
+    data class DongguoPage(val email: String?) : AllScreens()
 
 
 }
@@ -26,15 +28,20 @@ fun ScreenRouter(screen: AllScreens): Screen {
 
         is AllScreens.Edit ->
             EditScreen(screen.email ?: "")
+
         is AllScreens.Register ->
             RegisterScreen()
+
         is AllScreens.PreLogin ->
             PreLoginScreen()
 //        is AllScreens.Administrator ->
 //            AdministratorScreen()
 //
         is AllScreens.Profile ->
-            ProfileScreen(screen.email ?: "")
+            HomeScreen(screen.email ?: "")
 
+        else -> {
+            PreLoginScreen()
+        }
     }
 }

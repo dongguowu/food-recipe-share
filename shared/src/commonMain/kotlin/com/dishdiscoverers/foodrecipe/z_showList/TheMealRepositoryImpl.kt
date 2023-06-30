@@ -1,5 +1,8 @@
-package com.dishdiscoverers.foodrecipe.dongguo
+package com.dishdiscoverers.foodrecipe.z_showList
 
+import com.dishdiscoverers.foodrecipe.dongguo.repository.MealsResponse
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeTheMeal
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation

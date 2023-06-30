@@ -1,7 +1,14 @@
-package com.dishdiscoverers.foodrecipe.dongguo
+package com.dishdiscoverers.foodrecipe.dongguo.screenModel
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeComment
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Category
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
 import dev.gitlive.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

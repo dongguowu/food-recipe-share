@@ -48,11 +48,11 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
-import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
-import com.dishdiscoverers.foodrecipe.dongguo.Resource
-import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
