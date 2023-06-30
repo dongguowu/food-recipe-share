@@ -7,6 +7,7 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
 import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.Resource
+import dev.gitlive.firebase.auth.EmailAuthProvider
 import dev.gitlive.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,8 @@ class RegistrationScreenModel(private val authRepository: AuthRepository) :
     var email by mutableStateOf("")
     var password by mutableStateOf("dongguo")
     var confirmPassword by mutableStateOf("dongguo")
-
+    private val _state = mutableStateOf<State>(State.Init)
+     val states: State get() = _state.value
     /**
      * Sealed class representing the different states of the screen model.
      */
@@ -39,6 +41,8 @@ class RegistrationScreenModel(private val authRepository: AuthRepository) :
             object InvalidPassword : Result()
             object PasswordMismatch : Result()
         }
+        object PasswordUpdateSuccess : State()
+        class PasswordUpdateFailure(val errorMessage: String) : State()
     }
 
     // Dongguo Version
@@ -181,18 +185,28 @@ class RegistrationScreenModel(private val authRepository: AuthRepository) :
      * @param password The new password.
      * @param confirmPassword The confirmed new password.
      */
-//    fun updatePassword(userName: String, password: String, confirmPassword: String) {
-//        coroutineScope.launch {
-//            mutableState.value = State.Loading
-//
-//            mutableState.value = State.Result.SingleResult(
-//                repository.updateUser(
-//                    userName,
-//                    password,
-//                    confirmPassword
-//                )
-//            )
-//        }
-//    }
+    fun updatePassword(oldPassword: String, newPassword: String, confirmPassword: String) {
+        coroutineScope.launch {
+            _state.value = State.Loading
+
+            if (!isPasswordValid(newPassword)) {
+                _state.value = State.PasswordUpdateFailure("Invalid password format")
+                return@launch
+            }
+
+            if (!doPasswordsMatch(newPassword, confirmPassword)) {
+                _state.value = State.PasswordUpdateFailure("Passwords do not match")
+                return@launch
+            }
+
+            val result = authRepository.updatePassword( newPassword)
+
+            _state.value = if (result is Resource.Success) {
+                State.PasswordUpdateSuccess
+            } else {
+                State.PasswordUpdateFailure("Failed to update password")
+            }
+        }
+    }
 
 }

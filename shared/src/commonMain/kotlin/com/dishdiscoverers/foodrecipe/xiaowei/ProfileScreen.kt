@@ -47,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 
 /**
  * Screen class representing the user's profile.
@@ -171,6 +173,7 @@ class ProfileScreen(private val email: String) : Screen {
  */
 @Composable
 private fun RecipeCard(recipe: Recipe) {
+    val navigator = LocalNavigator.currentOrThrow
     Box(
         modifier = Modifier
             .width(150.dp)
@@ -198,6 +201,7 @@ private fun RecipeCard(recipe: Recipe) {
                 modifier = Modifier
                     .height(100.dp)
                     .fillMaxWidth()
+                    .clickable (onClick = { navigator.push(ScreenRouter(AllScreens.Detail(recipe=null,title = null)))})
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
