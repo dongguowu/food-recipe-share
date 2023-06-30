@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +47,9 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.Resource
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3Api::class)
 class EditScreen(private val email: String): Screen {
@@ -57,7 +61,10 @@ class EditScreen(private val email: String): Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val screenModel =
-            rememberScreenModel() { ProfileScreenModel(LoginRepositoryRealmLocal()) }
+            rememberScreenModel() { RegistrationScreenModel(AuthRepository()) }
+        val authResource = screenModel?.signupFlow?.collectAsState()
+        var errorMessage by remember { mutableStateOf("") }
+
         val state by screenModel.state.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -76,15 +83,6 @@ class EditScreen(private val email: String): Screen {
                     horizontalAlignment = Alignment.CenterHorizontally
 
                 ) {
-                    when (val result = state) {
-                        is ProfileScreenModel.State.Init -> Text("")
-                        is ProfileScreenModel.State.Loading -> Text("")
-                        is ProfileScreenModel.State.Result -> {
-                            Text("")
-                        }
-
-                        else -> {}
-                    }
                     Box(
                         modifier = Modifier
                             .size(100.dp)
@@ -145,7 +143,16 @@ class EditScreen(private val email: String): Screen {
 
                                     Button(
                                         onClick = {
-                                            saveChanges();
+
+                                            if (screenModel.isPasswordValid(newPasswordState) && screenModel.doPasswordsMatch(
+                                                    newPasswordState,
+                                                    confirmNewPasswordState
+                                                )
+                                            ) {
+                                                screenModel.updatePassword(oldPasswordState, newPasswordState, confirmNewPasswordState)
+                                            } else {
+                                                errorMessage = "Invalid input"
+                                            }
                                             navigator.push(ScreenRouter(AllScreens.Profile(email=null)))
                                         },
                                         modifier = Modifier.padding(10.dp),

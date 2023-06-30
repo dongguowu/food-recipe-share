@@ -2,6 +2,7 @@ package com.dishdiscoverers.foodrecipe.xiaowei
 
 
 import Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -108,6 +109,8 @@ class RegisterScreen : Screen {
                     is RegistrationScreenModel.State.Result -> {
                         Text("Success")
                     }
+
+                    else -> {}
                 }
                 Text(
                     "Sign Up",
@@ -249,9 +252,10 @@ class RegisterScreen : Screen {
                         modifier = Modifier.padding(10.dp),
                         shape = RoundedCornerShape(50.dp),
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = MaterialTheme.colors.primary,
-                            contentColor = MaterialTheme.colors.onPrimary
+                            backgroundColor = Color.White,
+                            contentColor = MaterialTheme.colors.onBackground
                         ),
+                        border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
                         enabled = isEnabled
                     ) {
 

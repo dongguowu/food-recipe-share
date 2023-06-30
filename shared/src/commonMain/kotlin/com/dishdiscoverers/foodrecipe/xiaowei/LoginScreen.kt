@@ -1,6 +1,7 @@
 package com.dishdiscoverers.foodrecipe.xiaowei
 
 import Image
+import androidx.compose.foundation.Image
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -53,9 +54,10 @@ import com.dishdiscoverers.foodrecipe.dongguo.RecipeRepositoryTheMealAPI
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.dongguo.Resource
 import com.dishdiscoverers.foodrecipe.dongguo.UserRecipeCommentRepositoryFirebase
-
+import dev.icerock.moko.resources.compose.painterResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 
 /**
@@ -99,12 +101,13 @@ class LoginScreen : Screen {
                 modifier = Modifier.fillMaxSize()
 
             )
-
             Box(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .align(Alignment.Center)
             ) {
+
+
                 Card(
                     shape = RoundedCornerShape(10.dp),
                     elevation = 8.dp,
@@ -228,7 +231,13 @@ class LoginScreen : Screen {
                                             }
 
                                             is Resource.Success -> {
-                                                navigator.push(ScreenRouter(AllScreens.Profile(email)))
+                                                navigator.push(
+                                                    ScreenRouter(
+                                                        AllScreens.Profile(
+                                                            email
+                                                        )
+                                                    )
+                                                )
                                             }
                                         }
                                     }
@@ -283,9 +292,7 @@ class LoginScreen : Screen {
                     )
                 }
             }
-
         }
-
 
     }
 //    private fun signInWithGoogle() {
