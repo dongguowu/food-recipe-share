@@ -31,7 +31,7 @@ fun MyBottomBar() {
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 IconButton(onClick = {
-                    navigator.push(ScreenRouter(AllScreens.Home))
+                    navigator.push(ScreenRouter(AllScreens.Home(email = null)))
                 }) {
                     Image(
                         url = "https://icons.iconarchive.com/icons/custom-icon-design/pretty-office-4/256/home-icon.png",
