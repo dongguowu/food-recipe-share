@@ -32,8 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
-import com.dishdiscoverers.foodrecipe.z_showList.Image
-import com.dishdiscoverers.foodrecipe.z_showList.SearchRecipe
+import com.dishdiscoverers.foodrecipe.dongguo.repository.MealsResponse
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation

@@ -5,9 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
-import com.dishdiscoverers.foodrecipe.dongguo.AuthRepository
-import com.dishdiscoverers.foodrecipe.dongguo.Resource
-import dev.gitlive.firebase.auth.EmailAuthProvider
+import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
 import dev.gitlive.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

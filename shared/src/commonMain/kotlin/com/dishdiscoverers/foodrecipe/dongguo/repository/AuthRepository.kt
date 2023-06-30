@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.dongguo
+package com.dishdiscoverers.foodrecipe.dongguo.repository
 
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.AuthCredential
