@@ -4,6 +4,7 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
 import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Category
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Ingredient
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
@@ -15,19 +16,26 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/**
+ *  Store and manage UI-related data and functions:
+ *  auth: login, signup,
+ *  a list of [Recipe],
+ *  a list of [Category],
+ *  food recipe review: [UserRecipeComment] and UserFavoriteRecipe,
+ */
 class RecipeScreenModel(
     private val apiRepository: RecipeRepository,
     private val authRepository: AuthRepository,
     private val commentRepository: UserRecipeCommentRepository,
     private val favoriteRepository: UserFavoriteRecipeRepository,
 
-) :
+    ) :
     StateScreenModel<RecipeScreenModel.State>(State.Init) {
 
     sealed class State {
         object Init : State()
         object Loading : State()
-        data class Result(val list: List<Recipe>) : State()
+        data class Result(val recipeList: List<Recipe>) : State()
     }
 
     // Auth
@@ -38,12 +46,34 @@ class RecipeScreenModel(
     private val _signupFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val signupFlow: StateFlow<Resource<FirebaseUser>?> = _signupFlow
 
+    init {
+        if (authRepository.currentUser != null) {
+            _loginFlow.value = Resource.Success(authRepository.currentUser)
+        }
+
+        // Category
+        coroutineScope.launch {
+            _categories.value = Resource.Loading
+            _categories.value = apiRepository.getAllCategory()
+        }
+
+        // Ingredient
+        coroutineScope.launch {
+            _ingredients.value = Resource.Loading
+            _ingredients.value = apiRepository.getAllIngredient()
+        }
+    }
 
     // Category
     private val _categories = MutableStateFlow<Resource<List<Category>>?>(null)
     val categories: StateFlow<Resource<List<Category>>?> = _categories
 
-    //  Comment
+    // Ingredients
+    private val _ingredients = MutableStateFlow<Resource<List<Ingredient>>?>(null)
+    val ingredients: StateFlow<Resource<List<Ingredient>>?> = _ingredients
+
+
+    // Comment
     private val _comments = MutableStateFlow<Resource<List<UserRecipeComment>>?>(null)
     val comments: StateFlow<Resource<List<UserRecipeComment>>?> = _comments
     fun getComments(recipeId: String) = coroutineScope.launch {
@@ -88,10 +118,11 @@ class RecipeScreenModel(
             userId = userId,
             recipeId = recipeId,
         )
-        if(result == Resource.Success(true)){
+        if (result == Resource.Success(true)) {
             _favorite.value = Resource.Success(true)
         }
     }
+
     fun deleteFavorite(
         userId: String,
         recipeId: String,
@@ -101,22 +132,11 @@ class RecipeScreenModel(
             userId = userId,
             recipeId = recipeId,
         )
-        if(result == Resource.Success(true)){
+        if (result == Resource.Success(true)) {
             _favorite.value = Resource.Success(true)
         }
     }
 
-    init {
-        if (authRepository.currentUser != null) {
-            _loginFlow.value = Resource.Success(authRepository.currentUser)
-        }
-
-        // Category
-        coroutineScope.launch {
-            _categories.value = Resource.Loading
-            _categories.value = apiRepository.getAllCategory()
-        }
-    }
 
     // Auth
     fun loginUser(email: String, password: String) = coroutineScope.launch {
@@ -143,7 +163,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = apiRepository.getAllRecipe())
+                State.Result(recipeList = apiRepository.searchRecipesByTitle("fish"))
         }
     }
 
@@ -152,7 +172,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = apiRepository.searchRecipesByTitle(title))
+                State.Result(recipeList = apiRepository.searchRecipesByTitle(title))
         }
     }
 
@@ -160,7 +180,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = apiRepository.searchRecipesByTitle(title))
+                State.Result(recipeList = apiRepository.searchRecipesByTitle(title))
         }
     }
 
@@ -168,7 +188,7 @@ class RecipeScreenModel(
         coroutineScope.launch {
             mutableState.value = State.Loading
             mutableState.value =
-                State.Result(list = apiRepository.searchRecipesByIngredient(title))
+                State.Result(recipeList = apiRepository.searchRecipesByIngredient(title))
         }
     }
 

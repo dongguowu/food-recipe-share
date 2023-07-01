@@ -14,10 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import com.dishdiscoverers.foodrecipe.garett.data.RecipeRepositoryJson
-import com.dishdiscoverers.foodrecipe.garett.router.Route
-import com.dishdiscoverers.foodrecipe.garett.screenModel.RecipeScreenModel
-import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
+import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
+import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
 
 internal class DetailScreen (var recipe: String, val title: String = "Recipe Details"): Screen {
@@ -29,13 +30,15 @@ internal class DetailScreen (var recipe: String, val title: String = "Recipe Det
         // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                repository = RecipeRepositoryJson()
+                apiRepository = RecipeRepositoryTheMealAPI(),
+                authRepository = AuthRepository(),
+                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository()),
+                favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),
             )
         }
 
         // Layout - Scaffold
         androidx.compose.material.Scaffold(
-            topBar = { MyTopBar(currentScreen = Route.Detail(recipe, title)) },
             bottomBar = { MyBottomBar()},
 
             content = { paddingValues ->

@@ -4,7 +4,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
-import com.dishdiscoverers.foodrecipe.dongguo.HomeScreen
 import com.dishdiscoverers.foodrecipe.xiaowei.PreLoginScreen
 
 @OptIn(ExperimentalAnimationApi::class)
