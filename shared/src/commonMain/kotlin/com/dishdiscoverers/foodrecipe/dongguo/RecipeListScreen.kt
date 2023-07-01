@@ -51,7 +51,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentReposi
 import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
 
-class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
+class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
@@ -67,10 +67,8 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
             )
         }
 
-        // State
+        // State and Message info
         val state by screenModel.state.collectAsState()
-        var categories = screenModel.categories.collectAsState()
-        var comments = screenModel.comments.collectAsState()
         var message by remember { mutableStateOf(email ?: "") }
         message = when (val result = state) {
             is RecipeScreenModel.State.Init -> "Just initialized"
@@ -78,15 +76,19 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
             is RecipeScreenModel.State.Result -> email ?: ""
         }
 
+        // query title for search food recipe
         var queryTitle by remember { mutableStateOf("fish") }
+
         // Load  data
         LaunchedEffect(currentCompositeKeyHash) {
-            screenModel.getAllRecipe()
+            screenModel.searchRecipeInternet("fish")
         }
+
         var list: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
             list =
-                (state as? RecipeScreenModel.State.Result)?.list?.toMutableList() ?: mutableListOf()
+                (state as? RecipeScreenModel.State.Result)?.recipeList?.toMutableList()
+                    ?: mutableListOf()
         }
 
 
@@ -104,7 +106,7 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                 ) {
 
                     // Category
-                    categories.value?.let {
+                    screenModel.categories.collectAsState().value?.let {
                         when (it) {
                             is Resource.Failure -> {
                                 Text(it.exception.message!!)
@@ -166,7 +168,6 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                             }
                         }
                     }
-
                     SearchRecipeByInternet(description = "Search on internet", search = {
                         queryTitle = it
                         screenModel.searchRecipeInternet(it)
@@ -174,11 +175,11 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                         screenModel.getAllRecipe()
                     })
 
-                    // list
+                    // Recipe List
                     if (state is RecipeScreenModel.State.Result) {
                         LazyColumn {
                             val list =
-                                (state as? RecipeScreenModel.State.Result)?.list?.toMutableList()
+                                (state as? RecipeScreenModel.State.Result)?.recipeList?.toMutableList()
                                     ?: mutableListOf()
 
                             if (list.isEmpty()) {
@@ -213,7 +214,7 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
 
                                         // Comments
                                         var commentString by remember { mutableStateOf("") }
-                                        comments.value?.let {
+                                        screenModel.comments.collectAsState().value?.let {
                                             when (it) {
                                                 is Resource.Failure -> {
                                                 }
@@ -230,13 +231,26 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                                                 }
                                             }
                                         }
+
                                         RecipeCard(
+                                            recipe = recipe,
+                                            favoriteChecked = favoriteChecked,
                                             updateFavorite = {
                                                 screenModel.getFavorite(
                                                     userId = (email ?: ""), recipeId = recipe.id
                                                 )
                                             },
-                                            favoriteChecked = favoriteChecked,
+                                            addFavorite = {
+                                                screenModel.addFavorite(
+                                                    userId = (email ?: ""), recipeId = recipe.id
+                                                )
+                                            },
+                                            removeFavorite = {
+                                                screenModel.deleteFavorite(
+                                                    userId = (email ?: ""), recipeId = recipe.id
+                                                )
+                                            },
+                                            comments = commentString,
                                             loadComments = {
                                                 screenModel.getComments(recipe.id)
                                             },
@@ -248,18 +262,7 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
                                                     imageUrl = null
                                                 )
                                             },
-                                            recipe = recipe,
-                                            comments = commentString,
-                                            addFavorite = {
-                                                screenModel.addFavorite(
-                                                    userId = (email ?: ""), recipeId = recipe.id
-                                                )
-                                            },
-                                            removeFavorite = {
-                                                screenModel.deleteFavorite(
-                                                    userId = (email ?: ""), recipeId = recipe.id
-                                                )
-                                            })
+                                        )
                                     }
                                 }
                             }
@@ -271,29 +274,6 @@ class HomeScreen(val email: String? = "dongguo@wu.com") : Screen {
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchRecipe(
-    description: String, search: (title: String) -> Unit, getAll: () -> Unit
-) {
-    Text(description)
-    var text by remember { mutableStateOf("") }
-    OutlinedTextField(value = text, onValueChange = {
-        text = it
-        if (it.length >= 3) {
-            search(it)
-        } else {
-            getAll()
-        }
-
-    }, label = {
-        Icon(
-            Icons.Outlined.Search,
-            contentDescription = description,
-        )
-    })
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -410,18 +390,22 @@ fun RecipeCard(
                     Column(
                         modifier = Modifier.padding(9.dp, 15.dp, 9.dp, 9.dp),
                     ) {
+                        // Title
                         Text(
                             text = recipe.title,
                             fontWeight = FontWeight.Bold,
                             fontSize = 24.sp,
                             textAlign = TextAlign.Start,
                         )
+                        // Id for debugging
                         Text(
                             text = recipe.id,
                             fontSize = 9.sp,
                             textAlign = TextAlign.Start,
                         )
                         Spacer(modifier = Modifier.height(20.dp).width(60.dp))
+
+                        // Ingredient
                         var ingredientStr by remember {
                             mutableStateOf(
                                 recipe.ingredients?.substring(
@@ -451,8 +435,9 @@ fun RecipeCard(
                                 text = IngredientHint, fontSize = 12.sp
                             )
                         }
-
                         Spacer(modifier = Modifier.height(12.dp).width(60.dp))
+
+                        // Instructions
                         var instructionStr by remember {
                             mutableStateOf(
                                 recipe.instructions?.substring(

@@ -1,7 +1,7 @@
 package com.dishdiscoverers.foodrecipe.xiaowei
 
 import cafe.adriel.voyager.core.screen.Screen
-import com.dishdiscoverers.foodrecipe.dongguo.HomeScreen
+import com.dishdiscoverers.foodrecipe.dongguo.RecipeListScreen
 import com.dishdiscoverers.foodrecipe.garett.screen.DetailScreen
 
 sealed class AllScreens {
@@ -39,7 +39,7 @@ fun ScreenRouter(screen: AllScreens): Screen {
             DetailScreen(screen.recipe ?: "", screen.title ?: "")
 
         is AllScreens.Home ->
-            HomeScreen(screen.email ?: "")
+            RecipeListScreen(screen.email ?: "")
         is AllScreens.Profile ->
             ProfileScreen(screen.email ?:"")
 

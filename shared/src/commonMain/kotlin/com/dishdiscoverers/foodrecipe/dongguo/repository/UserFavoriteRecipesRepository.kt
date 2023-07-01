@@ -7,21 +7,56 @@ import dev.gitlive.firebase.firestore.where
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class UserFavoriteRecipe(
-    var userId: String = "",
-    var recipeId: String = "",
-)
 
+
+/**
+ * Repository for managing user's favorite recipes.
+ */
 interface UserFavoriteRecipeRepository {
+    /**
+     * Retrieves the favorite recipes for a specific user.
+     *
+     * @param userId The ID of the user.
+     * @return A resource containing the list of user's favorite recipes.
+     */
     suspend fun getFavoritesRecipeByUserId(userId: String): Resource<List<UserFavoriteRecipe>>
+
+    /**
+     * Retrieves the users who have favorited a specific recipe.
+     *
+     * @param recipeId The ID of the recipe.
+     * @return A resource containing the list of users who have favorited the recipe.
+     */
     suspend fun getFavoritesRecipeByRecipeId(recipeId: String): Resource<List<UserFavoriteRecipe>>
+
+    /**
+     * Adds a recipe to a user's favorite list.
+     *
+     * @param userId   The ID of the user.
+     * @param recipeId The ID of the recipe.
+     * @return A resource indicating the success status of the operation.
+     */
     suspend fun addFavoriteRecipe(userId: String, recipeId: String): Resource<Boolean>
+
+    /**
+     * Deletes a recipe from a user's favorite list.
+     *
+     * @param userId   The ID of the user.
+     * @param recipeId The ID of the recipe.
+     * @return A resource indicating the success status of the operation.
+     */
     suspend fun deleteFavoriteRecipe(
         userId: String,
         recipeId: String,
     ): Resource<Boolean>
 
+    /**
+     * Checks if a specific recipe is favorited by a user.
+     *
+     * @param userId   The ID of the user.
+     * @param recipeId The ID of the recipe.
+     * @return A resource indicating if the recipe is favorited by the user.
+     */
     suspend fun getFavoritesRecipe(
         userId: String,
         recipeId: String
@@ -120,3 +155,12 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
         return Resource.Failure(Exception("Error"))
     }
 }
+
+/**
+ * Represents a favorite recipe for a user.
+ */
+@Serializable
+data class UserFavoriteRecipe(
+    var userId: String = "",
+    var recipeId: String = "",
+)
