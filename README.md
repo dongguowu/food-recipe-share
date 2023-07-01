@@ -45,6 +45,7 @@ Implement CRUD
 - [Voyager](https://github.com/adrielcafe/voyager) navigation
 - JetPack Compose / Material3 Components
 - Material3 Theme
+- Git GitHub
 
 ## Next
 
