@@ -1,35 +1,55 @@
-## please FORK this repository
+# Project : Food Recipe Share Kotlin Multiplatform / Compose Multiplatform App
 
-## Git Summary from Dongguo
+### [Dongguo Wu](https://github.com/dongguowu)
 
-### 0 clone repository
+### [Garret](https://github.com/Aeternitas460/food_recipe_share_garett)
 
-```
-git clone your-forked-repository
-cd your-forked-repository
-git switch your-branch
-```
+### [Xiaowei](https://github.com/xiaoqianniu/food_recipe_share)
 
-### update your repository from pulling dongguo repository
+### Based on [AppKickstarter Template](https://github.com/JetBrains/compose-multiplatform-ios-android-template)
 
-go to the GitHub Website use Pull requests pull dongguo repository into your repository
+## Functionality
 
-```
-git pull origin dongguo
-git switch your-branch
-git merge --no-ff dongguo
-```
+### Recipe Search from large real food recipe data
 
-### commit and push code into your repository
+ <img src="readme_images/steak_search.png" alt="Image Description" width="300" height="">
+  <img src="readme_images/sushi_search.png" alt="Image Description" width="300" height="">
+### Recipe user review ( favorite, comments)
+ <img src="readme_images/fish_comments.png" alt="Image Description" width="300" height="">
+  <img src="readme_images/sushi_comment.png" alt="Image Description" width="300" height="">
+### User Registration and Authentication
+ <img src="readme_images/login.png" alt="Image Description" width="300" height="">
+  <img src="readme_images/signup.png" alt="Image Description" width="300" height="">
+### User Profile
+ <img src="readme_images/profile.png" alt="Image Description" width="300" height="">
+  <img src="readme_images/update.png" alt="Image Description" width="300" height="">
+Implement CRUD
 
-```
-git add -A
-git commit -m 'your commit'
-git push origin yourBranch
-```
+## Database Design and Implementation
 
-### push your repository into dongguo repository
+- User Auth: create new, login, update password
+- Recipe: search by title
+- User-favorite-Recipe: create, delete
+- Recipe-comments: create, getAllByRecipeID
+- Ingredient and Nutrient are not implemented
 
-go to ge GitHub Website use Pull requests
+<img src="readme_images/database.png" alt="Image Description" width="300" height="">
+<img src="readme_images/firebase.png" alt="Image Description" width="300" height="">
 
+## Technology
 
+- [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)
+- Firebase Authentication
+- Firebase Database
+- [Ktor client](https://ktor.io/docs/create-client.html)
+- [Voyager](https://github.com/adrielcafe/voyager) navigation
+- JetPack Compose / Material3 Components
+- Material3 Theme
+- Git GitHub
+
+## Next
+
+- Registered user creates and shares her own recipe
+- Add pictures by phone camera in the comments
+- Food recipe nutrition calculated by ingredients
+- Food recipe rating computing by user favorite recipes data
