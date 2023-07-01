@@ -12,17 +12,13 @@
 
 ### Recipe Search from large real food recipe data
 
- <img src="readme_images/steak_search.png" alt="Image Description" width="200" height="">
-  <img src="readme_images/sushi_search.png" alt="Image Description" width="200" height="">
+ <img src="readme_images/steak_search.png" alt="Image Description" width="200" height="">  <img src="readme_images/sushi_search.png" alt="Image Description" width="200" height="">
 ### Recipe user review ( favorite, comments)
- <img src="readme_images/fish_comments.png" alt="Image Description" width="200" height="">
-  <img src="readme_images/sushi_comment.png" alt="Image Description" width="200" height="">
+ <img src="readme_images/fish_comments.png" alt="Image Description" width="200" height="">  <img src="readme_images/sushi_comment.png" alt="Image Description" width="200" height="">
 ### User Registration and Authentication
- <img src="readme_images/login.png" alt="Image Description" width="200" height="">
-  <img src="readme_images/signup.png" alt="Image Description" width="200" height="">
+ <img src="readme_images/login.png" alt="Image Description" width="200" height="">  <img src="readme_images/signup.png" alt="Image Description" width="200" height="">
 ### User Profile
- <img src="readme_images/profile.png" alt="Image Description" width="200" height="">
-  <img src="readme_images/update.png" alt="Image Description" width="200" height="">
+ <img src="readme_images/profile.png" alt="Image Description" width="200" height="">  <img src="readme_images/update.png" alt="Image Description" width="200" height="">
 Implement CRUD
 
 ## Database Design and Implementation
