@@ -8,6 +8,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.Ingredient
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeComment
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepository
@@ -102,6 +103,36 @@ class RecipeScreenModel(
     }
 
     // Favorite
+    private val _favorites = MutableStateFlow<Resource<List<Recipe>>?>(null)
+    val favorites: StateFlow<Resource<List<Recipe>>?> = _favorites
+    fun getFavoritesByUserId(userId: String) = coroutineScope.launch {
+        _favorites.value = Resource.Loading
+        when(val favoriteResource = favoriteRepository.getFavoritesByUserId(userId)) {
+            is Resource.Success -> {
+                val ids = favoriteResource.result.map { it.recipeId }
+                Napier.i { ids.toString() }
+                when(val recipesResource = apiRepository.findRecipesByIds(ids)) {
+                    is Resource.Success -> {
+                        _favorites.value = recipesResource
+                    }
+                    is Resource.Loading -> {
+                        Resource.Loading
+                    }
+                    is Resource.Failure -> {
+                        Napier.i { recipesResource.exception.message.toString() }
+                    }
+                }
+            }
+            is Resource.Loading -> {
+                 Resource.Loading
+            }
+            is Resource.Failure -> {
+                Napier.i { favoriteResource.exception.message.toString() }
+            }
+        }
+    }
+
+
     private val _favorite = MutableStateFlow<Resource<Boolean>?>(null)
     val favorite: StateFlow<Resource<Boolean>?> = _favorite
     fun getFavorite(userId: String, recipeId: String) = coroutineScope.launch {
@@ -185,23 +216,25 @@ class RecipeScreenModel(
     }
 
     fun debug() {
-        coroutineScope.launch {
-           var r =  apiRepository.findRecipesByIds(listOf("52771", "52935"))
-            when(r) {
-                is Resource.Success -> {
-                    for(i in r.result) {
-                        Napier.i {i.id}
-                    }
-                }
-                is Resource.Failure -> {
-                    Napier.i {r.exception.message.toString()}
-                }
-                else -> {
-                    Napier.i {"error"}
-                }
-            }
-
-        }
+//        coroutineScope.launch {
+//            var r = apiRepository.findRecipesByIds(listOf("52771", "52935"))
+//            when (r) {
+//                is Resource.Success -> {
+//                    for (i in r.result) {
+//                        Napier.i { i.id }
+//                    }
+//                }
+//
+//                is Resource.Failure -> {
+//                    Napier.i { r.exception.message.toString() }
+//                }
+//
+//                else -> {
+//                    Napier.i { "error" }
+//                }
+//            }
+//
+//        }
     }
 
     override fun onDispose() {

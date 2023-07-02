@@ -69,10 +69,14 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
         for (id in ids) {
             var resource = this.findRecipeById(id)
             when (resource) {
-                is Resource.Success -> resource.result?.let { mutableList.add(it) }
+                is Resource.Success -> resource.result?.let {
+                    Napier.i { "Add ${resource.result.id}" }
+                    mutableList.add(it)
+                }
+
                 is Resource.Loading -> return Resource.Loading
                 is Resource.Failure -> {
-                    Napier.i {resource.exception.message.toString()}
+                    Napier.i { resource.exception.message.toString() }
                 }
             }
         }
