@@ -1,14 +1,18 @@
 package com.dishdiscoverers.foodrecipe.dongguo.repository
 
+import com.dishdiscoverers.foodrecipe.dongguo.repository.api.TheMealdbApi
 import com.dishdiscoverers.foodrecipe.dongguo.repository.json.CategoryTheMeal
 import com.dishdiscoverers.foodrecipe.dongguo.repository.json.RecipeRepositoryJsonTheMeal
 import com.dishdiscoverers.foodrecipe.dongguo.repository.json.RecipeTheMeal
 import com.dishdiscoverers.foodrecipe.dongguo.repository.json.convertMealCategory
 import com.dishdiscoverers.foodrecipe.dongguo.repository.json.convertMealRecipe
+import com.dishdiscoverers.foodrecipe.dongguo.repository.json.getIngredientsFromTheMealRecipe
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
@@ -34,23 +38,33 @@ interface RecipeRepository {
      */
     suspend fun getAllIngredient(): Resource<List<Ingredient>>
 
-    //TODO: update to Resource version
     /**
      * Retrieves recipes filtered by containing the title.
      * @param title The title to be contained.
      * @return A list of [Recipe] matching the provided title.
      */
-    suspend fun searchRecipesByTitle(title: String): List<Recipe>
+    suspend fun findRecipesByTitle(title: String): Resource<List<Recipe>>
 
-    //TODO: delete getAll, only for debugging
-    suspend fun getAllRecipe(): List<Recipe>
+    /**
+     * Retrieve recipe by id.
+     * @param recipeId a string.
+     * @return A [Resource] containing a [Recipe].
+     */
+    suspend fun findRecipeById(recipeId: String): Resource<Recipe>
+
+    /**
+     * Retrieve recipes by a list of id.
+     * @param ids a list of string.
+     * @return A [Resource] containing a list of [Recipe].
+     */
+    suspend fun findRecipesByIds(ids: List<String>): Resource<List<Recipe>>
+
+    suspend fun findIngredientByIds(ids: List<String>): List<Ingredient>
 
     //TODO: below, not implemented.
     suspend fun filterByCategory(category: String): Resource<List<Recipe>>
     suspend fun filterByMainIngredient(ingredient: String): Resource<List<Recipe>>
-    suspend fun findRecipeById(id: String): Resource<Recipe>
 
-    suspend fun findAllRecipesByIds(ids: List<String>): List<Recipe>
     suspend fun addRecipe(recipe: Recipe): String?
     suspend fun deleteRecipeById(id: String)
     suspend fun updateRecipeById(id: String, recipeToUpdate: Recipe)
@@ -59,7 +73,6 @@ interface RecipeRepository {
 
     suspend fun findIngredientById(id: String): Ingredient?
     suspend fun findIngredientByName(name: String): List<Ingredient>
-    suspend fun findIngredientByIds(ids: List<String>): List<Ingredient>
 
     suspend fun addIngredient(ingredient: Ingredient): String?
     suspend fun updateIngredientById(id: String, ingredientToUpdate: Ingredient)
@@ -70,8 +83,6 @@ interface RecipeRepository {
  * Implementation of the [RecipeRepository] interface for retrieving recipes from TheMealAPI.
  */
 class RecipeRepositoryTheMealAPI : RecipeRepositoryJsonTheMeal() {
-    private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
-    private val _categories: MutableList<Category> = mutableListOf()
 
     //TODO: insert httpClient to save resource
     private val ktorClient = HttpClient {
@@ -83,9 +94,13 @@ class RecipeRepositoryTheMealAPI : RecipeRepositoryJsonTheMeal() {
             })
         }
         install(Logging) {
+            logger = Logger.DEFAULT
             level = LogLevel.ALL
         }
     }
+
+    private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
+    private val _categories: MutableList<Category> = mutableListOf()
 
     override suspend fun getAllCategory(): Resource<List<Category>> {
         try {
@@ -103,40 +118,27 @@ class RecipeRepositoryTheMealAPI : RecipeRepositoryJsonTheMeal() {
         }
     }
 
-
-    override suspend fun getAllRecipe(): List<Recipe> {
-        _recipes.clear()
-        _recipes.addAll(getRecipeFromTheMealApi("fish") ?: emptyList())
-        return _recipes
+    override suspend fun findRecipeById(recipeId: String): Resource<Recipe> {
+        return TheMealdbApi(ktorClient).getRecipe(recipeId)
     }
 
-    override suspend fun searchRecipesByTitle(title: String): List<Recipe> {
-        _recipes.clear()
-        _recipes.addAll(getRecipeFromTheMealApi(title) ?: emptyList())
-        return _recipes
+    override suspend fun findRecipesByTitle(title: String): Resource<List<Recipe>> {
+        return TheMealdbApi(ktorClient).getRecipeByTitle(title)
     }
 
-    /**
-     * Retrieves recipes from the Meal API based on the provided title.
-     * @param title The title to search for in the Meal API.
-     * @return A list of [Recipe] retrieved from the Meal API matching the provided title, or null if an error occurs or no recipes are found.
-     */
-    private suspend fun getRecipeFromTheMealApi(title: String): List<Recipe>? {
+    // /**
+    //  * Retrieves recipes from the Meal API based on the provided title.
+    //  * @param title The title to search for in the Meal API.
+    //  * @return A list of [Recipe] retrieved from the Meal API matching the provided title, or null if an error occurs or no recipes are found.
+    //  */
+    private suspend fun getRecipeByTitleFromTheMealApi(title: String): List<Recipe>? {
 
         val urlString = MEAL_URL + "search.php?s=$title"
         val results: MealsResponse = ktorClient.get(urlString).body()
         val mutableList: MutableList<Recipe> = mutableListOf()
         for (item in results.meals ?: emptyList()) {
-
-            val ingredients: StringBuilder = StringBuilder()
-            for (i in 1..20) {
-                val ingredientField = getIngredientField(item, i)
-                val measureField = getMeasureField(item, i)
-                if (ingredientField?.isNotEmpty() == true && measureField?.isNotEmpty() == true) {
-                    ingredients.append("$measureField $ingredientField; ")
-                }
-            }
-            convertMealRecipe(item, ingredients.toString())?.let { mutableList.add(it) }
+            val ingredients = getIngredientsFromTheMealRecipe(item)
+            convertMealRecipe(item, ingredients)?.let { mutableList.add(it) }
         }
         return mutableList
     }

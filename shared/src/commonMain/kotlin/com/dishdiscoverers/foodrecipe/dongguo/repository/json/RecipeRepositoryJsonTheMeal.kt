@@ -6,6 +6,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeIngredients
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
+import io.github.aakira.napier.Napier
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -15,88 +16,21 @@ import kotlinx.serialization.json.Json
  * Implementation of the [RecipeRepository] interface for retrieving recipes from local [jsonStringTheMeal].
  */
 open class RecipeRepositoryJsonTheMeal : RecipeRepository {
-    private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
+    private var _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
     private val _ingredients: MutableList<Ingredient> = mutableListOf()
     private val _recipeIngredients: MutableList<RecipeIngredients> = mutableListOf()
     private val _categories: MutableList<Category> = mutableListOf()
 
-    override suspend fun getAllRecipe(): List<Recipe> {
+    fun getAllRecipe(): List<Recipe> {
         _recipes.clear()
         _recipes.addAll(getRecipesFromTheMealJson(jsonStringTheMeal))
         return _recipes
     }
 
-    private fun getRecipesFromTheMealJson(json: String): List<Recipe> {
-        val list = Json.decodeFromString<List<RecipeTheMeal>>(json)
-        var mutableList: MutableList<Recipe> = mutableListOf()
-        for (item in list) {
-            val ingredients: StringBuilder = StringBuilder()
-            for (i in 1..20) {
-                val ingredientField = getIngredientField(item, i)
-                val measureField = getMeasureField(item, i)
-                if (ingredientField?.isNotEmpty() == true && measureField?.isNotEmpty() == true) {
-                    ingredients.append("$measureField $ingredientField; ")
-                }
-            }
-            convertMealRecipe(item, ingredients.toString())?.let { mutableList.add(it) }
-        }
-        return mutableList.toList()
-    }
 
-    internal fun getIngredientField(item: RecipeTheMeal, index: Int): String? {
-        return when (index) {
-            1 -> item.strIngredient1
-            2 -> item.strIngredient2
-            3 -> item.strIngredient3
-            4 -> item.strIngredient4
-            5 -> item.strIngredient5
-            6 -> item.strIngredient6
-            7 -> item.strIngredient7
-            8 -> item.strIngredient8
-            9 -> item.strIngredient9
-            10 -> item.strIngredient10
-            11 -> item.strIngredient11
-            12 -> item.strIngredient12
-            13 -> item.strIngredient13
-            14 -> item.strIngredient14
-            15 -> item.strIngredient15
-            16 -> item.strIngredient16
-            17 -> item.strIngredient17
-            18 -> item.strIngredient18
-            19 -> item.strIngredient19
-            20 -> item.strIngredient20
-            else -> null
-        }
-    }
-
-    internal fun getMeasureField(item: RecipeTheMeal, index: Int): String? {
-        return when (index) {
-            1 -> item.strMeasure1
-            2 -> item.strMeasure2
-            3 -> item.strMeasure3
-            4 -> item.strMeasure4
-            5 -> item.strMeasure5
-            6 -> item.strMeasure6
-            7 -> item.strMeasure7
-            8 -> item.strMeasure8
-            9 -> item.strMeasure9
-            10 -> item.strMeasure10
-            11 -> item.strMeasure11
-            12 -> item.strMeasure12
-            13 -> item.strMeasure13
-            14 -> item.strMeasure14
-            15 -> item.strMeasure15
-            16 -> item.strMeasure16
-            17 -> item.strMeasure17
-            18 -> item.strMeasure18
-            19 -> item.strMeasure19
-            20 -> item.strMeasure20
-            else -> null
-        }
-    }
-
-    override suspend fun searchRecipesByTitle(title: String): List<Recipe> {
-        return _recipes.filter { it.title.contains(title, ignoreCase = true) }
+    override suspend fun findRecipesByTitle(title: String): Resource<List<Recipe>> {
+        var list = _recipes.filter { it.title.contains(title, ignoreCase = true) }
+        return Resource.Success(list)
     }
 
     override suspend fun searchRecipesByIngredient(ingredientName: String): List<Recipe> {
@@ -110,7 +44,6 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
     }
 
     override suspend fun getAllIngredient(): Resource<List<Ingredient>> {
-
         return Resource.Failure(Exception("Not yet implemented"))
     }
 
@@ -123,8 +56,8 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
         return Resource.Success(_recipes)
     }
 
-    override suspend fun findRecipeById(id: String): Resource<Recipe> {
-        var recipe = _recipes.firstOrNull() { it.id == id }
+    override suspend fun findRecipeById(recipeId: String): Resource<Recipe> {
+        var recipe = _recipes.firstOrNull() { it.id == recipeId }
 
         if (recipe == null) {
             return Resource.Failure(Exception("Not Found"))
@@ -132,8 +65,23 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
         return Resource.Success(recipe)
     }
 
-    override suspend fun findAllRecipesByIds(ids: List<String>): List<Recipe> {
-        return _recipes.filter { it.id in ids }
+    override suspend fun findRecipesByIds(ids: List<String>): Resource<List<Recipe>> {
+        var mutableList: MutableList<Recipe> = mutableListOf()
+        for (id in ids) {
+            var resource = this.findRecipeById(id)
+            when (resource) {
+                is Resource.Success -> resource.result?.let {
+                    Napier.i { "Add ${resource.result.id}" }
+                    mutableList.add(it)
+                }
+
+                is Resource.Loading -> return Resource.Loading
+                is Resource.Failure -> {
+                    Napier.i { resource.exception.message.toString() }
+                }
+            }
+        }
+        return Resource.Success(mutableList)
     }
 
 
@@ -227,6 +175,109 @@ fun convertMealCategory(item: CategoryTheMeal): Category? {
             imageUrl = it.strCategoryThumb ?: "",
             description = it.strCategoryDescription ?: ""
         )
+    }
+}
+
+/**
+ * Converts a JSON string into a list of Recipe objects.
+ * @param json The JSON string representing the data.
+ * @return A list of Recipe objects parsed from the JSON.
+ */
+fun getRecipesFromTheMealJson(json: String): List<Recipe> {
+    val list = Json.decodeFromString<List<RecipeTheMeal>>(json)
+    var mutableList: MutableList<Recipe> = mutableListOf()
+    for (item in list) {
+        val ingredients: StringBuilder = StringBuilder()
+        for (i in 1..20) {
+            val ingredientField = getIngredientField(item, i)
+            val measureField = getMeasureField(item, i)
+            if (ingredientField?.isNotEmpty() == true && measureField?.isNotEmpty() == true) {
+                ingredients.append("$measureField $ingredientField; ")
+            }
+        }
+        convertMealRecipe(item, ingredients.toString())?.let { mutableList.add(it) }
+    }
+    return mutableList.toList()
+}
+
+/**
+ * Retrieves a string representing the food ingredients from a [RecipeTheMeal] object.
+ * @param recipe The [RecipeTheMeal] object.
+ *  @return A string representing the food ingredients.
+ */
+fun getIngredientsFromTheMealRecipe(recipe: RecipeTheMeal): String {
+    val ingredients: StringBuilder = StringBuilder()
+    for (i in 1..20) {
+        val ingredientField = getIngredientField(recipe, i)
+        val measureField = getMeasureField(recipe, i)
+        if (ingredientField?.isNotEmpty() == true && measureField?.isNotEmpty() == true) {
+            ingredients.append("$measureField $ingredientField; ")
+        }
+    }
+    return ingredients.toString()
+}
+
+/**
+ * Retrieves the ingredient field based on the specified index from a [RecipeTheMeal] object.
+ * @param item The RecipeTheMeal object.
+ * @param index The index of the ingredient field to retrieve.
+ * @return The value of the ingredient field at the specified index, or null if the index is out of bounds.
+ */
+fun getIngredientField(item: RecipeTheMeal, index: Int): String? {
+    return when (index) {
+        1 -> item.strIngredient1
+        2 -> item.strIngredient2
+        3 -> item.strIngredient3
+        4 -> item.strIngredient4
+        5 -> item.strIngredient5
+        6 -> item.strIngredient6
+        7 -> item.strIngredient7
+        8 -> item.strIngredient8
+        9 -> item.strIngredient9
+        10 -> item.strIngredient10
+        11 -> item.strIngredient11
+        12 -> item.strIngredient12
+        13 -> item.strIngredient13
+        14 -> item.strIngredient14
+        15 -> item.strIngredient15
+        16 -> item.strIngredient16
+        17 -> item.strIngredient17
+        18 -> item.strIngredient18
+        19 -> item.strIngredient19
+        20 -> item.strIngredient20
+        else -> null
+    }
+}
+
+/**
+ * Retrieves the measure field based on the specified index from a [RecipeTheMeal] object.
+ * @param item The RecipeTheMeal object.
+ * @param index The index of the ingredient field to retrieve.
+ * @return The value of the ingredient field at the specified index, or null if the index is out of bounds.
+ */
+fun getMeasureField(item: RecipeTheMeal, index: Int): String? {
+    return when (index) {
+        1 -> item.strMeasure1
+        2 -> item.strMeasure2
+        3 -> item.strMeasure3
+        4 -> item.strMeasure4
+        5 -> item.strMeasure5
+        6 -> item.strMeasure6
+        7 -> item.strMeasure7
+        8 -> item.strMeasure8
+        9 -> item.strMeasure9
+        10 -> item.strMeasure10
+        11 -> item.strMeasure11
+        12 -> item.strMeasure12
+        13 -> item.strMeasure13
+        14 -> item.strMeasure14
+        15 -> item.strMeasure15
+        16 -> item.strMeasure16
+        17 -> item.strMeasure17
+        18 -> item.strMeasure18
+        19 -> item.strMeasure19
+        20 -> item.strMeasure20
+        else -> null
     }
 }
 
