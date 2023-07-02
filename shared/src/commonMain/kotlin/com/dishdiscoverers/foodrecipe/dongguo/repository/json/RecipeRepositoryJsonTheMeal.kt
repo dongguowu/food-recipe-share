@@ -6,6 +6,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeIngredients
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
+import io.github.aakira.napier.Napier
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -42,7 +43,6 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
     }
 
     override suspend fun getAllIngredient(): Resource<List<Ingredient>> {
-
         return Resource.Failure(Exception("Not yet implemented"))
     }
 
@@ -55,8 +55,8 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
         return Resource.Success(_recipes)
     }
 
-    override suspend fun findRecipeById(id: String): Resource<Recipe> {
-        var recipe = _recipes.firstOrNull() { it.id == id }
+    override suspend fun findRecipeById(recipeId: String): Resource<Recipe> {
+        var recipe = _recipes.firstOrNull() { it.id == recipeId }
 
         if (recipe == null) {
             return Resource.Failure(Exception("Not Found"))
@@ -64,8 +64,19 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
         return Resource.Success(recipe)
     }
 
-    override suspend fun findAllRecipesByIds(ids: List<String>): List<Recipe> {
-        return _recipes.filter { it.id in ids }
+    override suspend fun findRecipesByIds(ids: List<String>): Resource<List<Recipe>> {
+        var mutableList: MutableList<Recipe> = mutableListOf()
+        for (id in ids) {
+            var resource = this.findRecipeById(id)
+            when (resource) {
+                is Resource.Success -> resource.result?.let { mutableList.add(it) }
+                is Resource.Loading -> return Resource.Loading
+                is Resource.Failure -> {
+                    Napier.i {resource.exception.message.toString()}
+                }
+            }
+        }
+        return Resource.Success(mutableList)
     }
 
 

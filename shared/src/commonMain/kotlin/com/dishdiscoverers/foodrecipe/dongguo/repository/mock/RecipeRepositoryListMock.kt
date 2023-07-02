@@ -35,12 +35,12 @@ class RecipeRepositoryListMock : RecipeRepository {
         return Resource.Failure(Exception("Not yet implemented"))
     }
 
-    override suspend fun findRecipeById(id: String): Resource<Recipe> {
+    override suspend fun findRecipeById(recipeId: String): Resource<Recipe> {
         return Resource.Failure(Exception("Not yet implemented"))
     }
 
-    override suspend fun findAllRecipesByIds(ids: List<String>): List<Recipe> {
-        return _recipes.filter { it.id in ids }
+    override suspend fun findRecipesByIds(ids: List<String>): Resource<List<Recipe>> {
+        return Resource.Success(_recipes.filter { it.id in ids })
     }
 
     override suspend fun searchRecipesByTitle(title: String): List<Recipe> {

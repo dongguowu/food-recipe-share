@@ -12,6 +12,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepos
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeComment
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepository
 import dev.gitlive.firebase.auth.FirebaseUser
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -157,25 +158,16 @@ class RecipeScreenModel(
         _signupFlow.value = null
     }
 
-
     // Recipe
-    fun getAllRecipe() {
-        coroutineScope.launch {
-            mutableState.value = State.Loading
-            mutableState.value =
-                State.Result(recipeList = apiRepository.searchRecipesByTitle("fish"))
-        }
+    private val _recipe = MutableStateFlow<Resource<Recipe>?>(null)
+    val recipe: StateFlow<Resource<Recipe>?> = _recipe
+    fun getRecipeById(recipeId: String) = coroutineScope.launch {
+        _recipe.value = Resource.Loading
+        val result = apiRepository.findRecipeById(recipeId)
+        _recipe.value = result
     }
 
-
-    fun searchRecipe(title: String) {
-        coroutineScope.launch {
-            mutableState.value = State.Loading
-            mutableState.value =
-                State.Result(recipeList = apiRepository.searchRecipesByTitle(title))
-        }
-    }
-
+    // Recipes
     fun searchRecipeInternet(title: String) {
         coroutineScope.launch {
             mutableState.value = State.Loading
@@ -189,6 +181,26 @@ class RecipeScreenModel(
             mutableState.value = State.Loading
             mutableState.value =
                 State.Result(recipeList = apiRepository.searchRecipesByIngredient(title))
+        }
+    }
+
+    fun debug() {
+        coroutineScope.launch {
+           var r =  apiRepository.findRecipesByIds(listOf("52771", "52935"))
+            when(r) {
+                is Resource.Success -> {
+                    for(i in r.result) {
+                        Napier.i {i.id}
+                    }
+                }
+                is Resource.Failure -> {
+                    Napier.i {r.exception.message.toString()}
+                }
+                else -> {
+                    Napier.i {"error"}
+                }
+            }
+
         }
     }
 
