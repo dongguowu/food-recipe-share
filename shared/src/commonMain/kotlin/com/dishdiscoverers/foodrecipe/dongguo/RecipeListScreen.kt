@@ -82,6 +82,7 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
         // Load  data
         LaunchedEffect(currentCompositeKeyHash) {
             screenModel.searchRecipeInternet("fish")
+            screenModel.debug()
         }
 
         var list: MutableList<Recipe> = mutableListOf()
@@ -172,7 +173,6 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
                         queryTitle = it
                         screenModel.searchRecipeInternet(it)
                     }, getAll = {
-                        screenModel.getAllRecipe()
                     })
 
                     // Recipe List
@@ -287,7 +287,9 @@ fun SearchRecipeByInternet(
         text = it
         if (text.length >= 3) {
             search(text)
-        }
+        }else{
+					getAll()
+				}
     }, label = {
         Icon(
             Icons.Outlined.Search,
