@@ -15,7 +15,7 @@ class RecipeRepositoryListMock : RecipeRepository {
     private val _recipeIngredients: MutableList<RecipeIngredients> =
         recipeIngredients.toList() as MutableList<RecipeIngredients>
 
-    override suspend fun getAllRecipe(): List<Recipe> {
+    fun getAllRecipe(): List<Recipe> {
         return recipesMock
     }
 
