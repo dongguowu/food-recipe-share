@@ -84,9 +84,9 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
         LaunchedEffect(currentCompositeKeyHash) {
             screenModel.debug()
             if (email?.isEmpty() == true) {
-                screenModel.searchRecipeInternet("fish")
+                screenModel.findRecipesByTitle("fish")
             } else {
-                screenModel.getFavoritesByUserId(email!!)
+                screenModel.getFavoriteRecipesByUserId(email!!)
             }
         }
 
@@ -95,25 +95,6 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
             recipeMutableList =
                 (state as? RecipeScreenModel.State.Result)?.recipeList?.toMutableList()
                     ?: mutableListOf()
-        }
-
-        // User Favorite Recipes
-        screenModel.favorites.collectAsState().value?.let {
-            when (it) {
-                is Resource.Success -> {
-                    recipeMutableList.clear()
-                    Napier.i { "Refresh recipe list"}
-                    Napier.i { "${recipeMutableList.size} : ${it.result.size}" }
-                    recipeMutableList.addAll(it.result)
-                    Napier.i { "${recipeMutableList.size} : ${it.result.size}" }
-                }
-                is Resource.Loading -> {
-                    Resource.Loading
-                }
-                is Resource.Failure -> {
-                    Napier.i { it.exception.message.toString() }
-                }
-            }
         }
 
 
@@ -194,19 +175,20 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
                             }
                         }
                     }
+
+
+                    // Search
                     SearchRecipeByInternet(description = "Search on internet", search = {
                         queryTitle = it
-                        screenModel.searchRecipeInternet(it)
+                        screenModel.findRecipesByTitle(it)
                     }, getAll = {
                     })
 
                     // Recipe List
-                    screenModel.favorites.collectAsState().value?.let {
+                    screenModel.foodRecipes.collectAsState().value?.let {
                         when (it) {
                             is Resource.Success -> {
-
                                 LazyColumn {
-
                                     if (it.result.isEmpty()) {
                                         item {
                                             RecipeCard(updateFavorite = { },

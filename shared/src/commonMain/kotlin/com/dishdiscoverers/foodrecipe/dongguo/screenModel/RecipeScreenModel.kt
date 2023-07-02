@@ -8,7 +8,6 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.Ingredient
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
-import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeComment
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepository
@@ -102,32 +101,53 @@ class RecipeScreenModel(
         _comment.value = result
     }
 
-    // Favorite
-    private val _favorites = MutableStateFlow<Resource<List<Recipe>>?>(null)
-    val favorites: StateFlow<Resource<List<Recipe>>?> = _favorites
-    fun getFavoritesByUserId(userId: String) = coroutineScope.launch {
-        _favorites.value = Resource.Loading
-        when(val favoriteResource = favoriteRepository.getFavoritesByUserId(userId)) {
+    // Food Recipes
+    private val _foodRecipes = MutableStateFlow<Resource<List<Recipe>>?>(null)
+    val foodRecipes: StateFlow<Resource<List<Recipe>>?> = _foodRecipes
+    fun getFavoriteRecipesByUserId(userId: String) = coroutineScope.launch {
+        _foodRecipes.value = Resource.Loading
+        when (val userFavorites = favoriteRepository.getFavoritesByUserId(userId)) {
             is Resource.Success -> {
-                val ids = favoriteResource.result.map { it.recipeId }
+                val ids = userFavorites.result.map { it.recipeId }
                 Napier.i { ids.toString() }
-                when(val recipesResource = apiRepository.findRecipesByIds(ids)) {
+                when (val recipes = apiRepository.findRecipesByIds(ids)) {
                     is Resource.Success -> {
-                        _favorites.value = recipesResource
+                        _foodRecipes.value = recipes
                     }
+
                     is Resource.Loading -> {
                         Resource.Loading
                     }
+
                     is Resource.Failure -> {
-                        Napier.i { recipesResource.exception.message.toString() }
+                        Napier.i { recipes.exception.message.toString() }
                     }
                 }
             }
+
             is Resource.Loading -> {
-                 Resource.Loading
+                Resource.Loading
             }
+
             is Resource.Failure -> {
-                Napier.i { favoriteResource.exception.message.toString() }
+                Napier.i { userFavorites.exception.message.toString() }
+            }
+        }
+    }
+
+    fun findRecipesByTitle(title: String) = coroutineScope.launch {
+        _foodRecipes.value = Resource.Loading
+        when (val recipes = apiRepository.findRecipesByTitle(title)) {
+            is Resource.Success -> {
+                _foodRecipes.value = recipes
+            }
+
+            is Resource.Loading -> {
+                Resource.Loading
+            }
+
+            is Resource.Failure -> {
+                Napier.i { recipes.exception.message.toString() }
             }
         }
     }
@@ -198,14 +218,8 @@ class RecipeScreenModel(
         _recipe.value = result
     }
 
-    // Recipes
-    fun searchRecipeInternet(title: String) {
-        coroutineScope.launch {
-            mutableState.value = State.Loading
-            mutableState.value =
-                State.Result(recipeList = apiRepository.searchRecipesByTitle(title))
-        }
-    }
+// Recipes
+
 
     fun searchRecipeByIngredient(title: String) {
         coroutineScope.launch {
@@ -216,28 +230,29 @@ class RecipeScreenModel(
     }
 
     fun debug() {
-//        coroutineScope.launch {
-//            var r = apiRepository.findRecipesByIds(listOf("52771", "52935"))
-//            when (r) {
-//                is Resource.Success -> {
-//                    for (i in r.result) {
-//                        Napier.i { i.id }
-//                    }
-//                }
-//
-//                is Resource.Failure -> {
-//                    Napier.i { r.exception.message.toString() }
-//                }
-//
-//                else -> {
-//                    Napier.i { "error" }
-//                }
-//            }
-//
-//        }
+        coroutineScope.launch {
+            var r = apiRepository.findRecipesByIds(listOf("52771", "52935"))
+            when (r) {
+                is Resource.Success -> {
+                    for (i in r.result) {
+                        Napier.i { i.id }
+                    }
+                }
+
+                is Resource.Failure -> {
+                    Napier.i { r.exception.message.toString() }
+                }
+
+                else -> {
+                    Napier.i { "error" }
+                }
+            }
+
+        }
     }
 
     override fun onDispose() {
         println("ScreenModel: dispose ")
     }
+
 }
