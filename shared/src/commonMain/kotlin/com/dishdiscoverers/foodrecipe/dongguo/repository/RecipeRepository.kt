@@ -42,9 +42,6 @@ interface RecipeRepository {
      */
     suspend fun searchRecipesByTitle(title: String): List<Recipe>
 
-    //TODO: delete getAll, only for debugging
-    suspend fun getAllRecipe(): List<Recipe>
-
     //TODO: below, not implemented.
     suspend fun filterByCategory(category: String): Resource<List<Recipe>>
     suspend fun filterByMainIngredient(ingredient: String): Resource<List<Recipe>>
