@@ -285,9 +285,7 @@ fun SearchRecipeByInternet(
 
     OutlinedTextField(value = text, onValueChange = {
         text = it
-        if (text.length <= 2) {
-            getAll()
-        } else {
+        if (text.length >= 3) {
             search(text)
         }
     }, label = {
