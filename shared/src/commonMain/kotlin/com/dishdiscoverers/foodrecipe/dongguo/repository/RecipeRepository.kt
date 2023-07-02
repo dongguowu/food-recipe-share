@@ -38,13 +38,12 @@ interface RecipeRepository {
      */
     suspend fun getAllIngredient(): Resource<List<Ingredient>>
 
-    //TODO: update to Resource version
     /**
      * Retrieves recipes filtered by containing the title.
      * @param title The title to be contained.
      * @return A list of [Recipe] matching the provided title.
      */
-    suspend fun searchRecipesByTitle(title: String): List<Recipe>
+    suspend fun findRecipesByTitle(title: String): Resource<List<Recipe>>
 
     /**
      * Retrieve recipe by id.
@@ -123,17 +122,15 @@ class RecipeRepositoryTheMealAPI : RecipeRepositoryJsonTheMeal() {
         return TheMealdbApi(ktorClient).getRecipe(recipeId)
     }
 
-    override suspend fun searchRecipesByTitle(title: String): List<Recipe> {
-        _recipes.clear()
-        _recipes.addAll(getRecipeByTitleFromTheMealApi(title) ?: emptyList())
-        return _recipes
+    override suspend fun findRecipesByTitle(title: String): Resource<List<Recipe>> {
+        return TheMealdbApi(ktorClient).getRecipeByTitle(title)
     }
 
-    /**
-     * Retrieves recipes from the Meal API based on the provided title.
-     * @param title The title to search for in the Meal API.
-     * @return A list of [Recipe] retrieved from the Meal API matching the provided title, or null if an error occurs or no recipes are found.
-     */
+    // /**
+    //  * Retrieves recipes from the Meal API based on the provided title.
+    //  * @param title The title to search for in the Meal API.
+    //  * @return A list of [Recipe] retrieved from the Meal API matching the provided title, or null if an error occurs or no recipes are found.
+    //  */
     private suspend fun getRecipeByTitleFromTheMealApi(title: String): List<Recipe>? {
 
         val urlString = MEAL_URL + "search.php?s=$title"

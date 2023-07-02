@@ -43,8 +43,8 @@ class RecipeRepositoryListMock : RecipeRepository {
         return Resource.Success(_recipes.filter { it.id in ids })
     }
 
-    override suspend fun searchRecipesByTitle(title: String): List<Recipe> {
-        return _recipes.filter { it.title.contains(title, ignoreCase = true) }
+    override suspend fun findRecipesByTitle(title: String): Resource<List<Recipe>> {
+        return Resource.Success(_recipes.filter { it.title.contains(title, ignoreCase = true) })
     }
 
     override suspend fun addRecipe(recipe: Recipe): String? {

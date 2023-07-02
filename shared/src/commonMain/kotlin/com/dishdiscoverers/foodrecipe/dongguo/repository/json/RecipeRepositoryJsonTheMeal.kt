@@ -16,7 +16,7 @@ import kotlinx.serialization.json.Json
  * Implementation of the [RecipeRepository] interface for retrieving recipes from local [jsonStringTheMeal].
  */
 open class RecipeRepositoryJsonTheMeal : RecipeRepository {
-    private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
+    private var _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
     private val _ingredients: MutableList<Ingredient> = mutableListOf()
     private val _recipeIngredients: MutableList<RecipeIngredients> = mutableListOf()
     private val _categories: MutableList<Category> = mutableListOf()
@@ -28,8 +28,9 @@ open class RecipeRepositoryJsonTheMeal : RecipeRepository {
     }
 
 
-    override suspend fun searchRecipesByTitle(title: String): List<Recipe> {
-        return _recipes.filter { it.title.contains(title, ignoreCase = true) }
+    override suspend fun findRecipesByTitle(title: String): Resource<List<Recipe>> {
+        var list = _recipes.filter { it.title.contains(title, ignoreCase = true) }
+        return Resource.Success(list)
     }
 
     override suspend fun searchRecipesByIngredient(ingredientName: String): List<Recipe> {

@@ -5,18 +5,20 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
 import com.dishdiscoverers.foodrecipe.dongguo.repository.json.convertMealRecipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.json.getIngredientsFromTheMealRecipe
-import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 
 class TheMealdbApi(private val client: HttpClient) {
     val END_POINT_GET_RECIPE = "https://www.themealdb.com/api/json/v1/1/lookup.php?i="
+    val THE_MEAL_API_SERVER = "https://www.themealdb.com/api/json/v1/1/"
 
     suspend fun getRecipe(recipeId: String): Resource<Recipe> {
-        val urlString = "$END_POINT_GET_RECIPE$recipeId"
-        val result: MealsResponse = client.get(urlString).body() ?: return Resource.Failure(Exception("Not found"))
-        val recipeTheMeal = result.meals?.firstOrNull() ?: return Resource.Failure(Exception("Not found"))
+        val urlString = "${THE_MEAL_API_SERVER}lookup.php?i=$recipeId"
+        val result: MealsResponse =
+            client.get(urlString).body() ?: return Resource.Failure(Exception("Not found"))
+        val recipeTheMeal =
+            result.meals?.firstOrNull() ?: return Resource.Failure(Exception("Not found"))
         val ingredients = getIngredientsFromTheMealRecipe(recipeTheMeal)
         val recipe = convertMealRecipe(recipeTheMeal, ingredients)
 
@@ -25,6 +27,25 @@ class TheMealdbApi(private val client: HttpClient) {
         } else {
             Resource.Failure(Exception("Conversion failed"))
         }
+    }
+
+    /**
+     * Retrieves recipes from the Meal API based on the provided title.
+     * @param title The title to search for in the Meal API.
+     * @return A list of [Recipe] retrieved from the Meal API matching the provided title, or null if an error occurs or no recipes are found.
+     */
+    suspend fun getRecipeByTitle(title: String): Resource<List<Recipe>> {
+        val urlString = "${THE_MEAL_API_SERVER}search.php?s=$title"
+        val results: MealsResponse =
+            client.get(urlString).body() ?: return Resource.Failure(Exception("Not found"))
+
+        val mutableList: MutableList<Recipe> = mutableListOf()
+        for (item in results.meals ?: emptyList()) {
+            val ingredients = getIngredientsFromTheMealRecipe(item)
+            convertMealRecipe(item, ingredients)?.let { mutableList.add(it) }
+        }
+
+        return Resource.Success(mutableList)
     }
 }
 
