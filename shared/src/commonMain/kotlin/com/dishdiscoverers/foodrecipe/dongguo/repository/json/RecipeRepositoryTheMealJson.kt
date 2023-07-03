@@ -2,6 +2,7 @@ package com.dishdiscoverers.foodrecipe.dongguo.repository.json
 
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Category
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Ingredient
+import com.dishdiscoverers.foodrecipe.dongguo.repository.MealsResponse
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeIngredients
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepository
@@ -184,9 +185,10 @@ fun convertMealCategory(item: CategoryTheMeal): Category? {
  * @return A list of Recipe objects parsed from the JSON.
  */
 fun getRecipesFromTheMealJson(json: String): List<Recipe> {
-    val list = Json.decodeFromString<List<RecipeTheMeal>>(json)
+    val response = Json.decodeFromString<MealsResponse>(json)
+    val list = response.meals
     var mutableList: MutableList<Recipe> = mutableListOf()
-    for (item in list) {
+    for (item in list ?: emptyList()) {
         val ingredients: StringBuilder = StringBuilder()
         for (i in 1..20) {
             val ingredientField = getIngredientField(item, i)
@@ -285,7 +287,9 @@ fun getMeasureField(item: RecipeTheMeal, index: Int): String? {
  * A json string contains four recipes from The Meal API
  */
 val jsonStringTheMeal = """
-       [
+    {
+    "meals": 
+[
            {
       "idMeal": "52955",
       "strMeal": "Egg Drop Soup",
@@ -727,6 +731,7 @@ val jsonStringTheMeal = """
       "dateModified": null
     }
         ]
+}       
 """.trimIndent()
 
 @Serializable
