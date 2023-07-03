@@ -103,7 +103,7 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
         Scaffold(
             topBar = { Text(message) },
             bottomBar = {
-                MyBottomBar()
+                MyBottomBar(email)
             },
 
             content = { paddingValues ->

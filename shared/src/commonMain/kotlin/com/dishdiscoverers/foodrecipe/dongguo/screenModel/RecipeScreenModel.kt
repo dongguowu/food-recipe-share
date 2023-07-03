@@ -228,26 +228,26 @@ class RecipeScreenModel(
     }
 
     fun debug() {
-        coroutineScope.launch {
-            var r = apiRepository.getAllIngredient()
-            when (r) {
-                is Resource.Success -> {
-                    Napier.i { "------------------------------${r.result.size}------------------------------------"}
-                    for (i in r.result) {
-                        Napier.i { i.toString() }
-                    }
-                }
-
-                is Resource.Failure -> {
-                    Napier.i { r.exception.message.toString() }
-                }
-
-                else -> {
-                    Napier.i { "error" }
-                }
-            }
-
-        }
+//        coroutineScope.launch {
+//            var r = apiRepository.getAllIngredient()
+//            when (r) {
+//                is Resource.Success -> {
+//                    Napier.i { "------------------------------${r.result.size}------------------------------------"}
+//                    for (i in r.result) {
+//                        Napier.i { i.toString() }
+//                    }
+//                }
+//
+//                is Resource.Failure -> {
+//                    Napier.i { r.exception.message.toString() }
+//                }
+//
+//                else -> {
+//                    Napier.i { "error" }
+//                }
+//            }
+//
+//        }
     }
 
     override fun onDispose() {

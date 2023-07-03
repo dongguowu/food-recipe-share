@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPIJson
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
@@ -29,7 +30,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-internal class DetailScreen (var recipe: String, val title: String = "Recipe Details"): Screen {
+internal class DetailScreen (var recipe: Recipe, val title: String = "Recipe Details"): Screen {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -66,7 +67,7 @@ internal class DetailScreen (var recipe: String, val title: String = "Recipe Det
                             verticalArrangement = Arrangement.Center,
                         ) {
                             item {
-                                Text(recipe)
+                                Text(recipe.title)
 //                                recipe?.let {
 //                                    Image(
 //                                        url = it.imageUrl,
