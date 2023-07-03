@@ -35,25 +35,10 @@ internal class DetailScreen (var recipe: String, val title: String = "Recipe Det
     @Composable
     override fun Content() {
 
-        // An http client to fetch data from The Meal Db API
-        val ktorClient = HttpClient {
-            install(ContentNegotiation) {
-                json(Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                })
-            }
-            install(Logging) {
-                logger = Logger.DEFAULT
-                level = LogLevel.ALL
-            }
-        }
-
         // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                apiRepository = RecipeRepositoryTheMealAPIJson(ktorClient),
+                apiRepository = RecipeRepositoryTheMealAPIJson(),
                 authRepository = AuthRepository(),
                 commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository()),
                 favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),

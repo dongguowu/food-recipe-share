@@ -1,8 +1,7 @@
 package com.dishdiscoverers.foodrecipe.dongguo.repository
 
-import com.dishdiscoverers.foodrecipe.dongguo.repository.api.RecipeServiceTheMeal
+import com.dishdiscoverers.foodrecipe.dongguo.repository.api.RecipeServiceTheMealSingleton
 import com.dishdiscoverers.foodrecipe.dongguo.repository.json.RecipeRepositoryTheMealJson
-import io.ktor.client.HttpClient
 import kotlinx.serialization.Serializable
 
 const val MEAL_URL = "https://www.themealdb.com/api/json/v1/1/"
@@ -68,25 +67,25 @@ interface RecipeRepository {
  * Implementation of the [RecipeRepository] interface for retrieving recipes from TheMealAPI.
  */
 
-class RecipeRepositoryTheMealAPIJson constructor(private val ktorClient: HttpClient) :
+class RecipeRepositoryTheMealAPIJson  :
     RecipeRepositoryTheMealJson() {
 
     private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
     private val _categories: MutableList<Category> = mutableListOf()
 
     override suspend fun getAllCategory(): Resource<List<Category>> {
-        return RecipeServiceTheMeal(ktorClient).getAllCategory()
+        return RecipeServiceTheMealSingleton.getAllCategory()
     }
 
     override suspend fun getAllIngredient(): Resource<List<Ingredient>> {
-        return RecipeServiceTheMeal(ktorClient).getAllIngredient()
+        return RecipeServiceTheMealSingleton.getAllIngredient()
     }
     override suspend fun findRecipeById(recipeId: String): Resource<Recipe> {
-        return RecipeServiceTheMeal(ktorClient).getRecipe(recipeId)
+        return RecipeServiceTheMealSingleton.getRecipe(recipeId)
     }
 
     override suspend fun findRecipesByTitle(title: String): Resource<List<Recipe>> {
-        return RecipeServiceTheMeal(ktorClient).getRecipeByTitle(title)
+        return RecipeServiceTheMealSingleton.getRecipeByTitle(title)
     }
 
 }
