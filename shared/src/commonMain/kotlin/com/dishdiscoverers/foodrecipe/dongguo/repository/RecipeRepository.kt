@@ -1,24 +1,9 @@
 package com.dishdiscoverers.foodrecipe.dongguo.repository
 
-import com.dishdiscoverers.foodrecipe.dongguo.repository.api.TheMealdbApi
-import com.dishdiscoverers.foodrecipe.dongguo.repository.json.CategoryTheMeal
-import com.dishdiscoverers.foodrecipe.dongguo.repository.json.RecipeRepositoryJsonTheMeal
-import com.dishdiscoverers.foodrecipe.dongguo.repository.json.RecipeTheMeal
-import com.dishdiscoverers.foodrecipe.dongguo.repository.json.convertMealCategory
-import com.dishdiscoverers.foodrecipe.dongguo.repository.json.convertMealRecipe
-import com.dishdiscoverers.foodrecipe.dongguo.repository.json.getIngredientsFromTheMealRecipe
+import com.dishdiscoverers.foodrecipe.dongguo.repository.api.RecipeServiceTheMeal
+import com.dishdiscoverers.foodrecipe.dongguo.repository.json.RecipeRepositoryTheMealJson
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.DEFAULT
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.get
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 const val MEAL_URL = "https://www.themealdb.com/api/json/v1/1/"
 
@@ -82,86 +67,29 @@ interface RecipeRepository {
 /**
  * Implementation of the [RecipeRepository] interface for retrieving recipes from TheMealAPI.
  */
-class RecipeRepositoryTheMealAPI : RecipeRepositoryJsonTheMeal() {
 
-    //TODO: insert httpClient to save resource
-    private val ktorClient = HttpClient {
-        install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                isLenient = true
-                ignoreUnknownKeys = true
-            })
-        }
-        install(Logging) {
-            logger = Logger.DEFAULT
-            level = LogLevel.ALL
-        }
-    }
+class RecipeRepositoryTheMealAPIJson constructor(private val ktorClient: HttpClient) :
+    RecipeRepositoryTheMealJson() {
 
     private val _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
     private val _categories: MutableList<Category> = mutableListOf()
 
     override suspend fun getAllCategory(): Resource<List<Category>> {
-        try {
-            val urlString = MEAL_URL + "categories.php"
-            val response: CategoriesResponse =
-                ktorClient.get(urlString).body() as CategoriesResponse
-            _categories.clear()
-            for (item in response.categories ?: emptyList()) {
-                convertMealCategory(item)?.let { _categories.add(it) }
-            }
-            return Resource.Success(_categories)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return Resource.Failure(e)
-        }
+        return RecipeServiceTheMeal(ktorClient).getAllCategory()
     }
 
+    override suspend fun getAllIngredient(): Resource<List<Ingredient>> {
+        return RecipeServiceTheMeal(ktorClient).getAllIngredient()
+    }
     override suspend fun findRecipeById(recipeId: String): Resource<Recipe> {
-        return TheMealdbApi(ktorClient).getRecipe(recipeId)
+        return RecipeServiceTheMeal(ktorClient).getRecipe(recipeId)
     }
 
     override suspend fun findRecipesByTitle(title: String): Resource<List<Recipe>> {
-        return TheMealdbApi(ktorClient).getRecipeByTitle(title)
-    }
-
-    // /**
-    //  * Retrieves recipes from the Meal API based on the provided title.
-    //  * @param title The title to search for in the Meal API.
-    //  * @return A list of [Recipe] retrieved from the Meal API matching the provided title, or null if an error occurs or no recipes are found.
-    //  */
-    private suspend fun getRecipeByTitleFromTheMealApi(title: String): List<Recipe>? {
-
-        val urlString = MEAL_URL + "search.php?s=$title"
-        val results: MealsResponse = ktorClient.get(urlString).body()
-        val mutableList: MutableList<Recipe> = mutableListOf()
-        for (item in results.meals ?: emptyList()) {
-            val ingredients = getIngredientsFromTheMealRecipe(item)
-            convertMealRecipe(item, ingredients)?.let { mutableList.add(it) }
-        }
-        return mutableList
+        return RecipeServiceTheMeal(ktorClient).getRecipeByTitle(title)
     }
 
 }
-
-/**
- * Represents the response from the Meal API for retrieving meals.
- * @property meals The list of [RecipeTheMeal] objects returned in the response. Can be null if no meals are found.
- */
-@Serializable
-data class MealsResponse(
-    @SerialName("meals") val meals: List<RecipeTheMeal>? = null
-)
-
-/**
- * Represents the response from the Meal API for retrieving categories.
- * @property categories The list of [CategoryTheMeal] objects returned in the response. Can be null if no categories are found.
- */
-@Serializable
-data class CategoriesResponse(
-    @SerialName("categories") val categories: List<CategoryTheMeal>? = null
-)
 
 
 /**
@@ -183,15 +111,15 @@ data class Nutrient(
  * @property category The category of the ingredient. Can be null.
  * @property unit The unit of measurement for the ingredient.
  * @property imageUrl The URL of the image associated with the ingredient. Can be null.
- * @property nutrientId The unique identifier of the nutrient associated with the ingredient. Can be null.
+ * @property description Description. Can be null.
  */
 data class Ingredient(
     val id: String,
     val name: String,
     val category: String? = null,
-    val unit: String,
+    val unit: String? = null,
     val imageUrl: String? = null,
-    val nutrientId: String? = null
+    val description: String? = null,
 )
 
 /**
