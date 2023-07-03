@@ -2,7 +2,6 @@ package com.dishdiscoverers.foodrecipe.dongguo.repository.json
 
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Category
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Ingredient
-import com.dishdiscoverers.foodrecipe.dongguo.repository.MealsResponse
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeIngredients
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepository
@@ -16,7 +15,7 @@ import kotlinx.serialization.json.Json
 /**
  * Implementation of the [RecipeRepository] interface for retrieving recipes from local [jsonStringTheMeal].
  */
-open class RecipeRepositoryJsonTheMeal : RecipeRepository {
+open class RecipeRepositoryTheMealJson : RecipeRepository {
     private var _recipes: MutableList<Recipe> = emptyList<Recipe>().toMutableList()
     private val _ingredients: MutableList<Ingredient> = mutableListOf()
     private val _recipeIngredients: MutableList<RecipeIngredients> = mutableListOf()
@@ -179,6 +178,25 @@ fun convertMealCategory(item: CategoryTheMeal): Category? {
     }
 }
 
+/**
+ * Converts a [IngredientTheMeal] from the API response to a [Ingredient] object.
+ *
+ * @param item The food ingredient to convert.
+ * @return The converted object, or null if conversion fails.
+ */
+fun convertMealIngredient(item: IngredientTheMeal): Ingredient? {
+    return item?.let {
+        if (it.idIngredient == null || it.strIngredient == null) {
+            return null
+        }
+        Ingredient(
+            id = it.idIngredient,
+            name = it.strIngredient,
+            imageUrl = "https://www.themealdb.com/images/ingredients/${it.strIngredient}.png",
+            description = it.strDescription ?: ""
+        )
+    }
+}
 /**
  * Converts a JSON string into a list of Recipe objects.
  * @param json The JSON string representing the data.
@@ -855,3 +873,43 @@ data class CategoryTheMeal(
     @SerialName("strCategoryThumb")
     val strCategoryThumb: String
 )
+
+@Serializable
+data class IngredientTheMeal(
+    @SerialName("idIngredient")
+    val idIngredient: String?,
+    @SerialName("strDescription")
+    val strDescription: String?,
+    @SerialName("strIngredient")
+    val strIngredient: String?,
+    @SerialName("strType")
+    val strType: String? = null
+)
+
+/**
+ * Represents the response from the Meal API for retrieving ingredients.
+ * @property meals The list of [IngredientTheMeal] objects returned in the response. Can be null if no ingredient are found.
+ */
+@Serializable
+data class IngredientsResponse(
+    @SerialName("meals") val meals: List<IngredientTheMeal>? = null
+)
+
+/**
+ * Represents the response from the Meal API for retrieving meals.
+ * @property meals The list of [RecipeTheMeal] objects returned in the response. Can be null if no meals are found.
+ */
+@Serializable
+data class MealsResponse(
+    @SerialName("meals") val meals: List<RecipeTheMeal>? = null
+)
+
+/**
+ * Represents the response from the Meal API for retrieving categories.
+ * @property categories The list of [CategoryTheMeal] objects returned in the response. Can be null if no categories are found.
+ */
+@Serializable
+data class CategoriesResponse(
+    @SerialName("categories") val categories: List<CategoryTheMeal>? = null
+)
+
