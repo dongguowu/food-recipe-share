@@ -218,9 +218,7 @@ class RecipeScreenModel(
         _recipe.value = result
     }
 
-// Recipes
-
-
+    // Recipes
     fun searchRecipeByIngredient(title: String) {
         coroutineScope.launch {
             mutableState.value = State.Loading
@@ -231,11 +229,12 @@ class RecipeScreenModel(
 
     fun debug() {
         coroutineScope.launch {
-            var r = apiRepository.findRecipesByIds(listOf("52771", "52935"))
+            var r = apiRepository.getAllIngredient()
             when (r) {
                 is Resource.Success -> {
+                    Napier.i { "------------------------------${r.result.size}------------------------------------"}
                     for (i in r.result) {
-                        Napier.i { i.id }
+                        Napier.i { i.toString() }
                     }
                 }
 

@@ -44,13 +44,20 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
-import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPIJson
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
 import io.github.aakira.napier.Napier
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 
 class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
 
@@ -58,10 +65,29 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
     @Composable
     override fun Content() {
 
+        // An http client to fetch data from The Meal Db API
+        val ktorClient = HttpClient {
+            install(ContentNegotiation) {
+                json(Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                })
+            }
+            install(Logging) {
+                level = LogLevel.ALL
+                logger = object: Logger {
+                    override fun log(message: String) {
+                        Napier.v(tag ="HTTP Client", message= message)
+                    }
+                }
+            }
+        }
+
         // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                apiRepository = RecipeRepositoryTheMealAPI(),
+                apiRepository = RecipeRepositoryTheMealAPIJson(ktorClient),
                 authRepository = AuthRepository(),
                 commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository()),
                 favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),
@@ -206,7 +232,11 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
                                                 screenModel.getFavorite(
                                                     userId = (email ?: ""), recipeId = recipe.id
                                                 )
-                                                var favoriteChecked by remember { mutableStateOf(false) }
+                                                var favoriteChecked by remember {
+                                                    mutableStateOf(
+                                                        false
+                                                    )
+                                                }
                                                 screenModel.favorite.collectAsState().value?.let {
                                                     favoriteChecked = when (it) {
                                                         is Resource.Success -> {
@@ -244,17 +274,20 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
                                                     favoriteChecked = favoriteChecked,
                                                     updateFavorite = {
                                                         screenModel.getFavorite(
-                                                            userId = (email ?: ""), recipeId = recipe.id
+                                                            userId = (email ?: ""),
+                                                            recipeId = recipe.id
                                                         )
                                                     },
                                                     addFavorite = {
                                                         screenModel.addFavorite(
-                                                            userId = (email ?: ""), recipeId = recipe.id
+                                                            userId = (email ?: ""),
+                                                            recipeId = recipe.id
                                                         )
                                                     },
                                                     removeFavorite = {
                                                         screenModel.deleteFavorite(
-                                                            userId = (email ?: ""), recipeId = recipe.id
+                                                            userId = (email ?: ""),
+                                                            recipeId = recipe.id
                                                         )
                                                     },
                                                     comments = commentString,
@@ -276,9 +309,11 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
                                 }
 
                             }
+
                             is Resource.Loading -> {
                                 Resource.Loading
                             }
+
                             is Resource.Failure -> {
                                 Napier.i { it.exception.message.toString() }
                             }
