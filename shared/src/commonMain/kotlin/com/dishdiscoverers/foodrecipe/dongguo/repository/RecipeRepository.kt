@@ -8,6 +8,9 @@ const val MEAL_URL = "https://www.themealdb.com/api/json/v1/1/"
 
 /**
  * Interface for accessing recipe-related data.
+ *
+ * @author dongguo
+ * @date 2023/07/03
  */
 interface RecipeRepository {
     /**

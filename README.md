@@ -55,4 +55,5 @@
 - Registered user creates and shares her own recipe
 - Add pictures by phone camera in the comments
 - Food recipe nutrition calculated by ingredients
-- Food recipe rating computing by user favorite recipes data
+- Food recipe rating computing by user favorite recipes data, and user positive / negative comments
+- Search or Generate recipe picture (call AI api)

@@ -12,6 +12,9 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.json.getRecipesFromTheM
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.RedirectResponseException
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -52,7 +55,23 @@ object RecipeServiceTheMealSingleton {
     suspend fun getRecipe(recipeId: String): Resource<Recipe> {
         val urlString = "${THE_MEAL_API_SERVER}lookup.php?i=$recipeId"
         return try {
-            Resource.Success(getRecipesFromTheMealJson(clientSingleton.get(urlString).body()).first())
+            Resource.Success(
+                getRecipesFromTheMealJson(
+                    clientSingleton.get(urlString).body()
+                ).first()
+            )
+        } catch (e: RedirectResponseException) {
+            // 3xx - responses
+            Napier.e { "Error: ${e.response.status.description}" }
+            Resource.Failure(e)
+        } catch (e: ClientRequestException) {
+            // 4xx - responses
+            Napier.e { "Error: ${e.response.status.description}" }
+            Resource.Failure(e)
+        } catch (e: ServerResponseException) {
+            // 5xx - response
+            Napier.e { "Error: ${e.response.status.description}" }
+            Resource.Failure(e)
         } catch (e: Exception) {
             Resource.Failure(e)
         }
