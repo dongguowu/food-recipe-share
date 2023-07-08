@@ -1,13 +1,12 @@
 package com.dishdiscoverers.foodrecipe.dongguo
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,42 +53,49 @@ class ContactUsScreen(val email: String? = "dongguo@wu.com") : Screen, Coroutine
             )
         }
 
-        var message by remember { mutableStateOf(email ?: "") }
+        var message by remember { mutableStateOf("") }
+        var subject by remember { mutableStateOf("") }
+        var content by remember { mutableStateOf("") }
 
 
         // Layout - Scaffold
-        Scaffold(
-            topBar = { Text(message) },
-            bottomBar = {
-                MyBottomBar(email)
-            },
+        Scaffold(topBar = { Text(message) }, bottomBar = {
+            MyBottomBar(email)
+        },
 
             content = { paddingValues ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Button(onClick = {
-                            Napier.i { "button clicked" }
-                            launch {
-                                EmailService.sendEmail(
-                                    to = "david.dong.guo@gmail.com",
-                                    subject = " test",
-                                    body = "no body"
-                                )
-                            }
+                    TextField(
+                        value = subject,
+                        onValueChange = {
+                            subject = it
+                        }
+                    )
+                    TextField(
+                        value = content,
+                        onValueChange = {
+                            content = it
+                        }
+                    )
 
-                        }) {
-                            Text(
-                                "send email", fontSize = 12.sp
+                    Button(onClick = {
+                        Napier.i { "button clicked" }
+                        launch {
+                            EmailService.sendEmail(
+                                subject = subject, body = content
                             )
                         }
-                    }
 
+                    }) {
+                        Text(
+                            "send email via sendgrid.net", fontSize = 12.sp
+                        )
+                    }
                 }
-            },
-        )
+            })
     }
 }
 
