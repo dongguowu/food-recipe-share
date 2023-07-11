@@ -41,17 +41,13 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
-import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
+import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
-
-import com.dishdiscoverers.foodrecipe.garett.layout.MyTopBar
-import com.dishdiscoverers.foodrecipe.garett.router.Route
-import com.dishdiscoverers.foodrecipe.garett.router.screenRouter
+import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
 import com.lduboscq.appkickstarter.ui.Image
 
-class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") :
-    Screen {
+class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes") : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
     @Composable
@@ -62,7 +58,8 @@ class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes"
             RecipeScreenModel(
                 apiRepository = RecipeRepositoryTheMealAPI(),
                 authRepository = AuthRepository(),
-                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository())
+                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository()),
+                favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),
             )
         }
         val state by screenModel.state.collectAsState()
@@ -74,7 +71,7 @@ class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes"
         var recipeList: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
             recipeList =
-                (state as? RecipeScreenModel.State.Result)?.list?.toMutableList() ?: mutableListOf()
+                (state as? RecipeScreenModel.State.Result)?.recipeList?.toMutableList() ?: mutableListOf()
         }
 
 
@@ -87,7 +84,6 @@ class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes"
         // Layout - Scaffold
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
-            topBar = { MyTopBar(currentScreen = Route.Recipe(feature, title)) },
             bottomBar = { MyBottomBar() },
             content = { paddingValues ->
                 Column(
@@ -111,7 +107,7 @@ class RecipeScreen(var feature: String = "Super!", val title: String = "Recipes"
 //                                }
 //                            }
                             val list =
-                                (state as? RecipeScreenModel.State.Result)?.list?.toMutableList()
+                                (state as? RecipeScreenModel.State.Result)?.recipeList?.toMutableList()
                                     ?: mutableListOf()
 
                             if (list.isEmpty()) {
@@ -157,14 +153,11 @@ fun RecipeCard(
         } else {
             Row {
 
-                Image(
-                    url = recipe.imageUrl,
+                Image(url = recipe.imageUrl,
                     modifier = Modifier.size(width = 120.dp, height = 180.dp).padding(15.dp)
                         .clickable(onClick = {
-                            navigator.push(screenRouter(Route.Detail(string, title)))
-                        }
-                        )
-                )
+//                            navigator.push(screenRouter(Route.Detail(string, title)))
+                        }))
                 Column(
                     modifier = Modifier.padding(9.dp, 15.dp, 9.dp, 9.dp),
                 ) {
@@ -189,8 +182,7 @@ fun RecipeCard(
                                 )
                             } else {
                                 Icon(
-                                    Icons.Outlined.Favorite,
-                                    contentDescription = "Favorite icon"
+                                    Icons.Outlined.Favorite, contentDescription = "Favorite icon"
                                 )
                             }
                         }
