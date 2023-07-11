@@ -4,6 +4,7 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.FirebaseUser
 import dev.gitlive.firebase.auth.auth
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 
 
@@ -11,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
  * Repository class for handling authentication operations.
  */
 class AuthRepository {
-
     val currentUser: FirebaseUser? = null
     private val firebaseAuth: FirebaseAuth by lazy { Firebase.auth }
 
@@ -28,7 +28,8 @@ class AuthRepository {
                 Firebase.auth.createUserWithEmailAndPassword(email = email, password = password)
             return Resource.Success(result.user!!)
         } catch (e: Exception) {
-            e.printStackTrace()
+            // e.printStackTrace()
+            Napier.e(e.message.toString())
             Resource.Failure(e)
         }
     }
@@ -46,7 +47,8 @@ class AuthRepository {
                 Firebase.auth.signInWithEmailAndPassword(email = email, password = password)
             Resource.Success(result.user!!)
         } catch (e: Exception) {
-            e.printStackTrace()
+            // e.printStackTrace()
+            Napier.e(e.message.toString())
             Resource.Failure(e)
         }
     }
@@ -89,7 +91,8 @@ class AuthRepository {
                 Resource.Failure(Exception("User not found"))
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+//             e.printStackTrace()
+            Napier.e(e.message.toString())
             Resource.Failure(e)
         }
     }

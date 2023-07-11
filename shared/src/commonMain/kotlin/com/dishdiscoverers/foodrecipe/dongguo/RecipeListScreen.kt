@@ -44,12 +44,13 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
-import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPIJson
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
 import com.dishdiscoverers.foodrecipe.xiaowei.MyBottomBar
+import io.github.aakira.napier.Napier
 
 class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
 
@@ -57,10 +58,11 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
     @Composable
     override fun Content() {
 
+
         // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                apiRepository = RecipeRepositoryTheMealAPI(),
+                apiRepository = RecipeRepositoryTheMealAPIJson(),
                 authRepository = AuthRepository(),
                 commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository()),
                 favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),
@@ -81,12 +83,17 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
 
         // Load  data
         LaunchedEffect(currentCompositeKeyHash) {
-            screenModel.searchRecipeInternet("fish")
+            screenModel.debug()
+            if (email?.isEmpty() == true) {
+                screenModel.findRecipesByTitle("fish")
+            } else {
+                screenModel.getFavoriteRecipesByUserId(email!!)
+            }
         }
 
-        var list: MutableList<Recipe> = mutableListOf()
+        var recipeMutableList: MutableList<Recipe> = mutableListOf()
         if (state is RecipeScreenModel.State.Result) {
-            list =
+            recipeMutableList =
                 (state as? RecipeScreenModel.State.Result)?.recipeList?.toMutableList()
                     ?: mutableListOf()
         }
@@ -96,7 +103,7 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
         Scaffold(
             topBar = { Text(message) },
             bottomBar = {
-                MyBottomBar()
+                MyBottomBar(email)
             },
 
             content = { paddingValues ->
@@ -104,6 +111,7 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(paddingValues),
                 ) {
+
 
                     // Category
                     screenModel.categories.collectAsState().value?.let {
@@ -168,105 +176,127 @@ class RecipeListScreen(val email: String? = "dongguo@wu.com") : Screen {
                             }
                         }
                     }
+
+
+                    // Search
                     SearchRecipeByInternet(description = "Search on internet", search = {
                         queryTitle = it
-                        screenModel.searchRecipeInternet(it)
+                        screenModel.findRecipesByTitle(it)
                     }, getAll = {
-                        screenModel.getAllRecipe()
                     })
 
                     // Recipe List
-                    if (state is RecipeScreenModel.State.Result) {
-                        LazyColumn {
-                            val list =
-                                (state as? RecipeScreenModel.State.Result)?.recipeList?.toMutableList()
-                                    ?: mutableListOf()
-
-                            if (list.isEmpty()) {
-                                item {
-                                    RecipeCard(updateFavorite = { },
-                                        loadComments = { },
-                                        addComment = {},
-                                        comments = "",
-                                        recipe = null,
-                                        addFavorite = {},
-                                        removeFavorite = {})
-                                }
-                            } else {
-                                for (recipe in list) {
-                                    item {
-                                        // Favorite
-                                        screenModel.getFavorite(
-                                            userId = (email ?: ""), recipeId = recipe.id
-                                        )
-                                        var favoriteChecked by remember { mutableStateOf(false) }
-                                        screenModel.favorite.collectAsState().value?.let {
-                                            favoriteChecked = when (it) {
-                                                is Resource.Success -> {
-                                                    it.result
-                                                }
-
-                                                else -> {
-                                                    false
-                                                }
-                                            }
+                    screenModel.foodRecipes.collectAsState().value?.let {
+                        when (it) {
+                            is Resource.Success -> {
+                                LazyColumn {
+                                    if (it.result.isEmpty()) {
+                                        item {
+                                            RecipeCard(updateFavorite = { },
+                                                loadComments = { },
+                                                addComment = {},
+                                                comments = "",
+                                                recipe = null,
+                                                addFavorite = {},
+                                                removeFavorite = {})
                                         }
-
-                                        // Comments
-                                        var commentString by remember { mutableStateOf("") }
-                                        screenModel.comments.collectAsState().value?.let {
-                                            when (it) {
-                                                is Resource.Failure -> {
-                                                }
-
-                                                Resource.Loading -> {
-                                                }
-
-                                                is Resource.Success -> {
-                                                    var str = StringBuilder()
-                                                    for (item in it.result) {
-                                                        str.append("${item.userId} : ${item.text} \n")
-                                                    }
-                                                    commentString = str.toString()
-                                                }
-                                            }
-                                        }
-
-                                        RecipeCard(
-                                            recipe = recipe,
-                                            favoriteChecked = favoriteChecked,
-                                            updateFavorite = {
+                                    } else {
+                                        for (recipe in it.result) {
+                                            item {
+                                                // Favorite
                                                 screenModel.getFavorite(
                                                     userId = (email ?: ""), recipeId = recipe.id
                                                 )
-                                            },
-                                            addFavorite = {
-                                                screenModel.addFavorite(
-                                                    userId = (email ?: ""), recipeId = recipe.id
+                                                var favoriteChecked by remember {
+                                                    mutableStateOf(
+                                                        false
+                                                    )
+                                                }
+                                                screenModel.favorite.collectAsState().value?.let {
+                                                    favoriteChecked = when (it) {
+                                                        is Resource.Success -> {
+                                                            it.result
+                                                        }
+
+                                                        else -> {
+                                                            false
+                                                        }
+                                                    }
+                                                }
+
+                                                // Comments
+                                                var commentString by remember { mutableStateOf("") }
+                                                screenModel.comments.collectAsState().value?.let {
+                                                    when (it) {
+                                                        is Resource.Failure -> {
+                                                        }
+
+                                                        Resource.Loading -> {
+                                                        }
+
+                                                        is Resource.Success -> {
+                                                            var str = StringBuilder()
+                                                            for (item in it.result) {
+                                                                str.append("${item.userId} : ${item.text} \n")
+                                                            }
+                                                            commentString = str.toString()
+                                                        }
+                                                    }
+                                                }
+
+                                                RecipeCard(
+                                                    recipe = recipe,
+                                                    favoriteChecked = favoriteChecked,
+                                                    updateFavorite = {
+                                                        screenModel.getFavorite(
+                                                            userId = (email ?: ""),
+                                                            recipeId = recipe.id
+                                                        )
+                                                    },
+                                                    addFavorite = {
+                                                        screenModel.addFavorite(
+                                                            userId = (email ?: ""),
+                                                            recipeId = recipe.id
+                                                        )
+                                                    },
+                                                    removeFavorite = {
+                                                        screenModel.deleteFavorite(
+                                                            userId = (email ?: ""),
+                                                            recipeId = recipe.id
+                                                        )
+                                                    },
+                                                    comments = commentString,
+                                                    loadComments = {
+                                                        screenModel.getComments(recipe.id)
+                                                    },
+                                                    addComment = {
+                                                        screenModel.addComment(
+                                                            userId = email ?: "",
+                                                            recipeId = recipe.id,
+                                                            text = it,
+                                                            imageUrl = null
+                                                        )
+                                                    },
                                                 )
-                                            },
-                                            removeFavorite = {
-                                                screenModel.deleteFavorite(
-                                                    userId = (email ?: ""), recipeId = recipe.id
-                                                )
-                                            },
-                                            comments = commentString,
-                                            loadComments = {
-                                                screenModel.getComments(recipe.id)
-                                            },
-                                            addComment = {
-                                                screenModel.addComment(
-                                                    userId = email ?: "",
-                                                    recipeId = recipe.id,
-                                                    text = it,
-                                                    imageUrl = null
-                                                )
-                                            },
-                                        )
+                                            }
+                                        }
                                     }
                                 }
+
+                            }
+
+                            is Resource.Loading -> {
+                                Resource.Loading
+                            }
+
+                            is Resource.Failure -> {
+                                Napier.i { it.exception.message.toString() }
                             }
                         }
+                    }
+
+                    if (state is RecipeScreenModel.State.Result) {
+
                     }
                 }
             },
@@ -285,10 +315,10 @@ fun SearchRecipeByInternet(
 
     OutlinedTextField(value = text, onValueChange = {
         text = it
-        if (text.length <= 2) {
-            getAll()
-        } else {
+        if (text.length >= 3) {
             search(text)
+        } else {
+            getAll()
         }
     }, label = {
         Icon(
