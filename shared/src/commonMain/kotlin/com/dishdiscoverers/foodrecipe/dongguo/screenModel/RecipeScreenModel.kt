@@ -12,6 +12,7 @@ import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepos
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeComment
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepository
 import dev.gitlive.firebase.auth.FirebaseUser
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -100,7 +101,58 @@ class RecipeScreenModel(
         _comment.value = result
     }
 
-    // Favorite
+    // Food Recipes
+    private val _foodRecipes = MutableStateFlow<Resource<List<Recipe>>?>(null)
+    val foodRecipes: StateFlow<Resource<List<Recipe>>?> = _foodRecipes
+    fun getFavoriteRecipesByUserId(userId: String) = coroutineScope.launch {
+        _foodRecipes.value = Resource.Loading
+        when (val userFavorites = favoriteRepository.getFavoritesByUserId(userId)) {
+            is Resource.Success -> {
+                val ids = userFavorites.result.map { it.recipeId }
+                Napier.i { ids.toString() }
+                when (val recipes = apiRepository.findRecipesByIds(ids)) {
+                    is Resource.Success -> {
+                        _foodRecipes.value = recipes
+                    }
+
+                    is Resource.Loading -> {
+                        Resource.Loading
+                    }
+
+                    is Resource.Failure -> {
+                        Napier.i { recipes.exception.message.toString() }
+                    }
+                }
+            }
+
+            is Resource.Loading -> {
+                Resource.Loading
+            }
+
+            is Resource.Failure -> {
+                Napier.i { userFavorites.exception.message.toString() }
+            }
+        }
+    }
+
+    fun findRecipesByTitle(title: String) = coroutineScope.launch {
+        _foodRecipes.value = Resource.Loading
+        when (val recipes = apiRepository.findRecipesByTitle(title)) {
+            is Resource.Success -> {
+                _foodRecipes.value = recipes
+            }
+
+            is Resource.Loading -> {
+                Resource.Loading
+            }
+
+            is Resource.Failure -> {
+                Napier.i { recipes.exception.message.toString() }
+            }
+        }
+    }
+
+
     private val _favorite = MutableStateFlow<Resource<Boolean>?>(null)
     val favorite: StateFlow<Resource<Boolean>?> = _favorite
     fun getFavorite(userId: String, recipeId: String) = coroutineScope.launch {
@@ -157,33 +209,16 @@ class RecipeScreenModel(
         _signupFlow.value = null
     }
 
-
     // Recipe
-    fun getAllRecipe() {
-        coroutineScope.launch {
-            mutableState.value = State.Loading
-            mutableState.value =
-                State.Result(recipeList = apiRepository.searchRecipesByTitle("fish"))
-        }
+    private val _recipe = MutableStateFlow<Resource<Recipe>?>(null)
+    val recipe: StateFlow<Resource<Recipe>?> = _recipe
+    fun getRecipeById(recipeId: String) = coroutineScope.launch {
+        _recipe.value = Resource.Loading
+        val result = apiRepository.findRecipeById(recipeId)
+        _recipe.value = result
     }
 
-
-    fun searchRecipe(title: String) {
-        coroutineScope.launch {
-            mutableState.value = State.Loading
-            mutableState.value =
-                State.Result(recipeList = apiRepository.searchRecipesByTitle(title))
-        }
-    }
-
-    fun searchRecipeInternet(title: String) {
-        coroutineScope.launch {
-            mutableState.value = State.Loading
-            mutableState.value =
-                State.Result(recipeList = apiRepository.searchRecipesByTitle(title))
-        }
-    }
-
+    // Recipes
     fun searchRecipeByIngredient(title: String) {
         coroutineScope.launch {
             mutableState.value = State.Loading
@@ -192,7 +227,31 @@ class RecipeScreenModel(
         }
     }
 
+    fun debug() {
+//        coroutineScope.launch {
+//            var r = apiRepository.getAllIngredient()
+//            when (r) {
+//                is Resource.Success -> {
+//                    Napier.i { "------------------------------${r.result.size}------------------------------------"}
+//                    for (i in r.result) {
+//                        Napier.i { i.toString() }
+//                    }
+//                }
+//
+//                is Resource.Failure -> {
+//                    Napier.i { r.exception.message.toString() }
+//                }
+//
+//                else -> {
+//                    Napier.i { "error" }
+//                }
+//            }
+//
+//        }
+    }
+
     override fun onDispose() {
         println("ScreenModel: dispose ")
     }
+
 }
