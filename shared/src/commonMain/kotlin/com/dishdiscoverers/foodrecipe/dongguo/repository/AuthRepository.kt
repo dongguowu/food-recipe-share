@@ -1,22 +1,28 @@
 package com.dishdiscoverers.foodrecipe.dongguo.repository
 
 import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.AuthCredential
-import dev.gitlive.firebase.auth.EmailAuthProvider
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.FirebaseUser
 import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.Flow
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
+
+/**
+ * Repository class for handling authentication operations.
+ */
 class AuthRepository {
 
     val currentUser: FirebaseUser? = null
     private val firebaseAuth: FirebaseAuth by lazy { Firebase.auth }
+
+    /**
+     * Creates a new user account with the specified email and password.
+     *
+     * @param email The email of the user.
+     * @param password The password of the user.
+     * @return A resource containing the created user if successful, or an exception if failed.
+     */
     suspend fun signUp(email: String, password: String): Resource<FirebaseUser> {
-//        return Firebase.auth.createUserWithEmailAndPassword(email = username, password = password)
         return try {
             val result =
                 Firebase.auth.createUserWithEmailAndPassword(email = email, password = password)
@@ -27,8 +33,14 @@ class AuthRepository {
         }
     }
 
+    /**
+     * Signs in the user with the specified email and password.
+     *
+     * @param email The email of the user.
+     * @param password The password of the user.
+     * @return A resource containing the signed-in user if successful, or an exception if failed.
+     */
     suspend fun signIn(email: String, password: String): Resource<FirebaseUser> {
-//        return Firebase.auth.signInWithEmailAndPassword(email = username, password = password)
         return try {
             val result =
                 Firebase.auth.signInWithEmailAndPassword(email = email, password = password)
@@ -61,6 +73,12 @@ class AuthRepository {
         }
     }
 
+    /**
+     * Updates the password for the current user.
+     *
+     * @param newPassword The new password to set for the user.
+     * @return A resource indicating the result of the password update operation.
+     */
     suspend fun updatePassword(newPassword: String): Resource<Unit> {
         return try {
             val currentUser = Firebase.auth.currentUser

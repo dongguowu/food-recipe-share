@@ -3,31 +3,57 @@ package com.dishdiscoverers.foodrecipe.dongguo.repository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseUser
 import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.firestore.where
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class UserRecipeComment(
-    var id: String? = null,
-    var userId: String = "",
-    var recipeId: String = "",
-    var text: String = "",
-    var imageUrl: String = "",
-)
 
+/**
+ * Repository for managing user recipe comments.
+ */
 interface UserRecipeCommentRepository {
+
+    /**
+     * Retrieves comments for a specific recipe.
+     *
+     * @param recipeId The ID of the recipe.
+     * @return A resource containing the list of comments.
+     */
     suspend fun getCommentsByRecipeId(recipeId: String): Resource<List<UserRecipeComment>>
+
+    /**
+     * Retrieves a comment by its ID.
+     *
+     * @param id The ID of the comment.
+     * @return A resource containing the comment.
+     */
+    suspend fun getCommentById(id: String): Resource<UserRecipeComment>
+
+    /**
+     * Adds a comment to a recipe.
+     *
+     * @param userId    The ID of the user.
+     * @param recipeId  The ID of the recipe.
+     * @param text      The text of the comment.
+     * @param imageUrl  The URL of the image attached to the comment (optional).
+     * @return A resource indicating the success status of the operation.
+     */
     suspend fun addComment(
         userId: String,
         recipeId: String,
         text: String,
         imageUrl: String? = null
     ): Resource<UserRecipeComment>
+
     //TODO: update, delete
     //suspend fun getCommentsByUserId(userId : String): Resource<List<UserRecipeComment>>
-    suspend fun getCommentById(id: String): Resource<UserRecipeComment>
+
+
 }
 
+/**
+ * Firebase implementation of UserRecipeCommentRepository.
+ */
 class UserRecipeCommentRepositoryFirebase constructor(private val authRepository: AuthRepository) :
     UserRecipeCommentRepository {
 
@@ -37,9 +63,8 @@ class UserRecipeCommentRepositoryFirebase constructor(private val authRepository
     }
 
     override suspend fun getCommentsByRecipeId(recipeId: String): Resource<List<UserRecipeComment>> {
-        // Access a Cloud Firestore instance from your Activity
         val db = Firebase.firestore
-        val collection = db.collection("comments")
+        val collection = db.collection(COLLECTION_PATH_COMMENTS).where("recipeId", recipeId)
         val querySnapshot = collection.get()
         val list: MutableList<UserRecipeComment> = mutableListOf()
         for (document in querySnapshot.documents) {
@@ -65,6 +90,7 @@ class UserRecipeCommentRepositoryFirebase constructor(private val authRepository
         }
         return Resource.Failure(Exception("No related comment found."))
     }
+
     override suspend fun addComment(
         userId: String,
         recipeId: String,
@@ -93,3 +119,15 @@ class UserRecipeCommentRepositoryFirebase constructor(private val authRepository
     }
 
 }
+
+/**
+ * Represents a user's recipe comment.
+ */
+@Serializable
+data class UserRecipeComment(
+    var id: String? = null,
+    var userId: String = "",
+    var recipeId: String = "",
+    var text: String = "",
+    var imageUrl: String = "",
+)
