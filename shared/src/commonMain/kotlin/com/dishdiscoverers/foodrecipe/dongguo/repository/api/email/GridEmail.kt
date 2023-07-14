@@ -1,4 +1,4 @@
-package com.dishdiscoverers.foodrecipe.dongguo.repository.api
+package com.dishdiscoverers.foodrecipe.dongguo.repository.api.email
 
 
 import kotlinx.serialization.SerialName
