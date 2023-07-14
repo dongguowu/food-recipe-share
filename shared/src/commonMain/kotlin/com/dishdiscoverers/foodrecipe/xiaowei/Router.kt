@@ -1,7 +1,9 @@
 package com.dishdiscoverers.foodrecipe.xiaowei
 
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.Navigator
 import com.dishdiscoverers.foodrecipe.dongguo.RecipeListScreen
+import com.dishdiscoverers.foodrecipe.dongguo.repository.Recipe
 import com.dishdiscoverers.foodrecipe.garett.screen.DetailScreen
 
 sealed class AllScreens {
@@ -15,10 +17,11 @@ sealed class AllScreens {
 
     data class Edit(val email: String?) : AllScreens()
 
-    data class Detail(val recipe: String?, val title: String?) : AllScreens()
+    data class Detail(val recipe: Recipe, val title: String?) : AllScreens()
     data class Home(val email: String?) : AllScreens()
 
 }
+
 
 fun ScreenRouter(screen: AllScreens): Screen {
     return when (screen) {
@@ -36,7 +39,7 @@ fun ScreenRouter(screen: AllScreens): Screen {
             PreLoginScreen()
 
         is AllScreens.Detail ->
-            DetailScreen(screen.recipe ?: "", screen.title ?: "")
+            DetailScreen(screen.recipe, screen.title ?: "")
 
         is AllScreens.Home ->
             RecipeListScreen(screen.email ?: "")

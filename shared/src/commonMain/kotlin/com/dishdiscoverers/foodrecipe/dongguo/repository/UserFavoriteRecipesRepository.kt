@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 
 
-
 /**
  * Repository for managing user's favorite recipes.
  */
@@ -19,7 +18,7 @@ interface UserFavoriteRecipeRepository {
      * @param userId The ID of the user.
      * @return A resource containing the list of user's favorite recipes.
      */
-    suspend fun getFavoritesRecipeByUserId(userId: String): Resource<List<UserFavoriteRecipe>>
+    suspend fun getFavoritesByUserId(userId: String): Resource<List<UserFavoriteRecipe>>
 
     /**
      * Retrieves the users who have favorited a specific recipe.
@@ -27,7 +26,7 @@ interface UserFavoriteRecipeRepository {
      * @param recipeId The ID of the recipe.
      * @return A resource containing the list of users who have favorited the recipe.
      */
-    suspend fun getFavoritesRecipeByRecipeId(recipeId: String): Resource<List<UserFavoriteRecipe>>
+    suspend fun getFavoritesByRecipeId(recipeId: String): Resource<List<UserFavoriteRecipe>>
 
     /**
      * Adds a recipe to a user's favorite list.
@@ -71,7 +70,7 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
         return authRepository.authStateChanged()
     }
 
-    override suspend fun getFavoritesRecipeByUserId(userId: String): Resource<List<UserFavoriteRecipe>> {
+    override suspend fun getFavoritesByUserId(userId: String): Resource<List<UserFavoriteRecipe>> {
         val db = Firebase.firestore
         val collection =
             db.collection(COLLECTION_PATH_FAVORIATE).where(field = "userId", equalTo = userId)
@@ -80,13 +79,13 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
         for (document in querySnapshot.documents) {
             val commentsData = document.data(UserFavoriteRecipe.serializer())
             commentsData?.let {
-                list.add(it.copy(recipeId = document.id))
+                list.add(it)
             }
         }
         return Resource.Success(list.toList())
     }
 
-    override suspend fun getFavoritesRecipeByRecipeId(recipeId: String): Resource<List<UserFavoriteRecipe>> {
+    override suspend fun getFavoritesByRecipeId(recipeId: String): Resource<List<UserFavoriteRecipe>> {
         val db = Firebase.firestore
         val collection =
             db.collection(COLLECTION_PATH_FAVORIATE).where(field = "recipeId", equalTo = recipeId)
@@ -95,7 +94,8 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
         for (document in querySnapshot.documents) {
             val commentsData = document.data(UserFavoriteRecipe.serializer())
             commentsData?.let {
-                list.add(it.copy(recipeId = document.id))
+//                list.add(it.copy(recipeId = document.id))
+                list.add(it)
             }
         }
         return Resource.Success(list.toList())
@@ -107,7 +107,7 @@ class UserFavoriteRecipeRepositoryFirebase constructor(private val authRepositor
             db.collection(COLLECTION_PATH_FAVORIATE).where(field = "userId", equalTo = userId)
                 .where(field = "recipeId", equalTo = recipeId)
         val querySnapshot = collection.get()
-        if (querySnapshot != null){
+        if (querySnapshot != null) {
             return Resource.Success(true)
         }
         return Resource.Success(false)
