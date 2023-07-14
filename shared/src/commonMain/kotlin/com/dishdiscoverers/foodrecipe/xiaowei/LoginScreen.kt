@@ -49,13 +49,21 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.dishdiscoverers.foodrecipe.dongguo.repository.AuthRepository
-import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPI
+import com.dishdiscoverers.foodrecipe.dongguo.repository.RecipeRepositoryTheMealAPIJson
 import com.dishdiscoverers.foodrecipe.dongguo.repository.Resource
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserFavoriteRecipeRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.repository.UserRecipeCommentRepositoryFirebase
 import com.dishdiscoverers.foodrecipe.dongguo.screenModel.RecipeScreenModel
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 
 
 /**
@@ -71,11 +79,12 @@ class LoginScreen : Screen {
     @Composable
     override fun Content() {
 
+        // Insert repository
         val screenModel = rememberScreenModel() {
             RecipeScreenModel(
-                apiRepository = RecipeRepositoryTheMealAPI(),
+                apiRepository = RecipeRepositoryTheMealAPIJson(),
                 authRepository = AuthRepository(),
-                commentRepository = UserRecipeCommentRepositoryFirebase(authRepository = AuthRepository()),
+                commentRepository = UserRecipeCommentRepositoryFirebase(AuthRepository()),
                 favoriteRepository = UserFavoriteRecipeRepositoryFirebase(AuthRepository()),
             )
         }
