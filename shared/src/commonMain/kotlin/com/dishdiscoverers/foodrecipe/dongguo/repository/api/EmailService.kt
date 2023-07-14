@@ -1,5 +1,10 @@
 package com.dishdiscoverers.foodrecipe.dongguo.repository.api
 
+import com.dishdiscoverers.foodrecipe.dongguo.repository.api.email.Content
+import com.dishdiscoverers.foodrecipe.dongguo.repository.api.email.From
+import com.dishdiscoverers.foodrecipe.dongguo.repository.api.email.GridEmail
+import com.dishdiscoverers.foodrecipe.dongguo.repository.api.email.Personalization
+import com.dishdiscoverers.foodrecipe.dongguo.repository.api.email.To
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -20,10 +25,8 @@ import okio.IOException
 
 object EmailService {
     private val EMAIL_SERVER = "https://api.sendgrid.com/v3/mail/send"
-    private val POST_EMAIL_SERVER = "https://api.postmarkapp.com/email"
-    private val POSTMARK_API_TOKEN = "c3f7dbac-b5fa-496b-910f-08a3e4dbe9cb"
     private val SENDGRID_API_KEY =
-        "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"
+        ""
 
     private val clientSingleton = HttpClient {
         install(ContentNegotiation) {
