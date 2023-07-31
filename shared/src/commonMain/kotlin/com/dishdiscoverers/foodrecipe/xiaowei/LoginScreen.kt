@@ -186,7 +186,6 @@ class LoginScreen : Screen {
                                         contentDescription = "password icon"
                                     )
                                 },
-                                visualTransformation = PasswordVisualTransformation(),
                                 singleLine = true,
                                 colors = TextFieldDefaults.outlinedTextFieldColors(
                                     textColor = MaterialTheme.colors.onSurface,
