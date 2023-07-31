@@ -12,10 +12,10 @@ import com.dishdiscoverers.foodrecipe.xiaowei.PreLoginScreen
 @Composable
 public fun MainApp() {
 //    Navigator(PersonsListScreen()) { navigator ->
-//    Navigator(PreLoginScreen()) { navigator ->
+    Navigator(PreLoginScreen()) { navigator ->
 //    Navigator(RecipeScreen()) { navigator ->
 //    Navigator(RecipeListScreen()) { navigator ->
-        Navigator(ContactUsScreen()) { navigator ->
+//        Navigator(ContactUsScreen()) { navigator ->
         SlideTransition(navigator)
     }
 }
