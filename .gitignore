@@ -20,4 +20,5 @@ iosApp/iosApp.xcodeproj/*
 !iosApp/iosApp.xcodeproj/project.pbxproj
 shared/shared.podspec
 # androidApp/google-services.json
-sendgrid.env
+gradel.properties
+google-services.json
