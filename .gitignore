@@ -19,6 +19,7 @@ iosApp/iosApp.xcworkspace/*
 iosApp/iosApp.xcodeproj/*
 !iosApp/iosApp.xcodeproj/project.pbxproj
 shared/shared.podspec
-# androidApp/google-services.json
-gradel.properties
-google-services.json
+
+
+androidApp/google-services.json
+local.properties
