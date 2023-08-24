@@ -14,6 +14,15 @@
 - FoodRecipeShare
 - create another module, core, who does not have access to any Android code
 - New Module / java Library
+- add library navigation
+
+## Gradle plugins configure
+
+Using the plugins DSL: plugins { id("org.jetbrains.kotlin.android") version "1.9.0" }
+
+Using legacy plugin application: buildscript { repositories { maven { url = uri("https://plugins.gradle.org/m2/") } } dependencies { classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0") } }
+
+apply(plugin = "org.jetbrains.kotlin.android")
 
 ## Functionality
 
