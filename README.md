@@ -6,7 +6,14 @@
 
 ### [Xiaowei](https://github.com/xiaoqianniu/food_recipe_share)
 
-### Based on [AppKickstarter Template](https://github.com/JetBrains/compose-multiplatform-ios-android-template)
+## Log
+
+- Minimum SDK: API:30: Android 11.0(R)
+- Physical Samsung Mobile Phone, Android version 11
+- com.dishdiscoverers.foodrecipe
+- FoodRecipeShare
+- create another module, core, who does not have access to any Android code
+- New Module / java Library
 
 ## Functionality
 
