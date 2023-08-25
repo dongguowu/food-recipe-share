@@ -1,4 +1,4 @@
-package com.dishdiscoverers.core.data
+package com.dishdiscoverers.core.data.model
 
 class UserRecipeResource internal constructor(
     val id: String,
@@ -12,6 +12,6 @@ class UserRecipeResource internal constructor(
     )
 
     fun List<RecipeResource>.mapToUserRecipeResources(userData: UserData): List<UserRecipeResource> {
-        return map {UserRecipeResource(it, userData)}
+        return map { UserRecipeResource(it, userData) }
     }
 }

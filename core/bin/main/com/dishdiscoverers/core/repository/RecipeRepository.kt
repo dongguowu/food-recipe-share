@@ -1,10 +1,8 @@
 package com.dishdiscoverers.core.repository
 
-import com.dishdiscoverers.core.data.RecipeResource
+import com.dishdiscoverers.core.data.model.FoodRecipe
+import com.dishdiscoverers.core.data.utility.Resource
 
-class RecipeRepository(private val dataSource: RecipeDataSource) {
-    suspend fun addRecipe(recipeResource: RecipeResource) = dataSource.add(recipeResource)
-    suspend fun getRecipe(id: String) = dataSource.get(id)
-    suspend fun getAllRecipes() = dataSource.getAll()
-    suspend fun findRecipes(title: String) = dataSource.findRecipes(title)
+interface RecipeRepository {
+    suspend fun getsearchedRecipes(searchQuery: String) : Resource<List<FoodRecipe>>
 }

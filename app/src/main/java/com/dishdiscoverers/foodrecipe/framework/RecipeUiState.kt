@@ -1,6 +1,6 @@
 package com.dishdiscoverers.foodrecipe.framework
 
-import com.dishdiscoverers.core.data.SaveableRecipeResource
+import com.dishdiscoverers.core.data.model.SaveableRecipeResource
 
 sealed interface RecipeUiState {
     object Loading : RecipeUiState

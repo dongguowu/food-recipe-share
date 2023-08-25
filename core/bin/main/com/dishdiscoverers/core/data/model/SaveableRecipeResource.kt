@@ -1,4 +1,4 @@
-package com.dishdiscoverers.core.data
+package com.dishdiscoverers.core.data.model
 
 data class SaveableRecipeResource(
     val recipeResource: RecipeResource,
