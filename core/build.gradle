@@ -7,3 +7,22 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
+dependencies {
+    // Required -- JUnit 4 framework
+    var  jUnitVersion = "4.13.2"
+    var androidXTestVersion = "1.6.0"
+    var mockitoVersion = "4.2.0"
+    var mockitoKotlinVersion = "5.1.0"
+    var mockkVersion = "V1.13.7"
+
+     testImplementation "junit:junit:$jUnitVersion"
+    // Optional -- Robolectric environment
+    testImplementation "androidx.test:core:$androidXTestVersion"
+    // Optional -- Mockito framework
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    // Optional -- mockito-kotlin
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion"
+    // Optional -- Mockk framework
+    testImplementation "io.mockk:mockk:$mockkVersion"
+}
+
