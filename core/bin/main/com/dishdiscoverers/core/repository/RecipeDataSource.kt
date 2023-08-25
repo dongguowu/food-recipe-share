@@ -1,10 +1,10 @@
 package com.dishdiscoverers.core.repository
 
-import com.dishdiscoverers.core.data.Recipe
+import com.dishdiscoverers.core.data.RecipeResource
 
 interface RecipeDataSource {
-    suspend fun add(recipe: Recipe)
-    suspend fun get(id: String): Recipe?
-    suspend fun getAll(): List<Recipe>
-    suspend fun findRecipes(title: String): List<Recipe>
+    suspend fun add(recipeResource: RecipeResource)
+    suspend fun get(id: String): RecipeResource?
+    suspend fun getAll(): List<RecipeResource>
+    suspend fun findRecipes(title: String): List<RecipeResource>
 }

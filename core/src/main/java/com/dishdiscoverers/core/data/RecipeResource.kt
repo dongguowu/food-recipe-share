@@ -1,6 +1,6 @@
 package com.dishdiscoverers.core.data
 
-data class Recipe(
+data class RecipeResource(
     val id: String,
     val title: String,
     val servings: Int = 1,
