@@ -30,7 +30,7 @@ class TheMealRecipeRemoteDataSourceImpl(
 
 
     suspend fun searchTheMealRecipes(title: String): Response<TheMealAPIMealsResponse> {
-        return theMealAPIService.searchRecipe(title)
+        return theMealAPIService.searchRecipes(title)
     }
 
     /**
