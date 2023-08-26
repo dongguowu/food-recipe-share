@@ -6,6 +6,7 @@ import com.dishdiscoverers.core.data.repository.dataSource.RecipeRemoteDataSourc
 import com.dishdiscoverers.core.data.repository.dataSourceImpl.TheMealRecipeRemoteDataSourceImpl
 import com.dishdiscoverers.core.data.utility.Resource
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -17,7 +18,7 @@ import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class TheMealReciperemoteDataSourceTest {
+class TheMealRecipeRemoteDataSourceTest {
     private lateinit var service: TheMealAPIService
     private lateinit var server: MockWebServer
     private lateinit var dataSource: RecipeRemoteDataSource
@@ -64,7 +65,7 @@ class TheMealReciperemoteDataSourceTest {
             assertThat(recipe.id).isEqualTo("52955")
             assertThat(recipe.title).isEqualTo("Egg Drop Soup")
             assertThat(recipe.servings).isEqualTo(1)
-            assertThat(recipe.ingredients).contains("3 cups  Chicken Stock, 1/4 tsp Salt, 1/4 tsp Sugar, pinch Pepper, 1 tsp  Sesame Seed Oil, 1/3 cup Peas, 1/3 cup Mushrooms, 1 tbs Cornstarch, 2 tbs Water, 1/4 cup Spring Onions,")
+            assertWithMessage(recipe.ingredients).that(recipe.ingredients).contains("3 cups  Chicken Stock, 1/4 tsp Salt, 1/4 tsp Sugar, pinch Pepper, 1 tsp  Sesame Seed Oil, 1/3 cup Peas, 1/3 cup Mushrooms, 1 tbs Cornstarch, 2 tbs Water, 1/4 cup Spring Onions,")
             assertThat(recipe.instructions).contains("In a wok add chicken broth and wait for it to boil")
             assertThat(recipe.imageUrl).isEqualTo("https://www.themealdb.com/images/media/meals/1529446137.jpg")
         }
