@@ -15,9 +15,9 @@ sealed class Resource<out R> {
 
     /**
      * Represents a successful response with the result data.
-     * @property result The result data of the request.
+     * @property data The result data of the request.
      */
-    data class Success<out R>(val result: R) : Resource<R>()
+    data class Success<out R>(val data: R) : Resource<R>()
 
     /**
      * Represents a failure response with an exception.

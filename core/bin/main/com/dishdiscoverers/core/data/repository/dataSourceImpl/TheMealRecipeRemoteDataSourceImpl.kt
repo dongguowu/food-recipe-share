@@ -19,7 +19,8 @@ class TheMealRecipeRemoteDataSourceImpl(
             val meals = response.body()?.meals
             if (!meals.isNullOrEmpty()) {
                 val parsedRecipes = meals.mapNotNull { meal ->
-                    parseTheMealRecipe(meal)
+                    val ingredients = getIngredientsFromTheMealRecipe(meal)
+                    parseTheMealRecipe(meal, ingredients)
                 }
                 return Resource.Success(parsedRecipes)
             }
@@ -56,12 +57,6 @@ class TheMealRecipeRemoteDataSourceImpl(
         }
     }
 
-
-
-
-
-
-
     /**
      * Retrieves a string representing the food ingredients from a [TheMealRecipe] object.
      * @param recipe The [TheMealRecipe] object.
@@ -73,7 +68,7 @@ class TheMealRecipeRemoteDataSourceImpl(
             val ingredientField = getIngredientField(recipe, i)
             val measureField = getMeasureField(recipe, i)
             if (ingredientField?.isNotEmpty() == true && measureField?.isNotEmpty() == true) {
-                ingredients.append("$measureField $ingredientField; ")
+                ingredients.append("$measureField $ingredientField, ")
             }
         }
         return ingredients.toString()
