@@ -64,6 +64,7 @@ apply(plugin = "org.jetbrains.kotlin.android")
 - Material3 Theme
 - Git GitHub
 - [Napier](https://github.com/AAkira/Napier) Logger
+- [Retrofit] (https://github.com/square/retrofit )
 - [Kotlin Multiplatform Libraries](https://github.com/AAkira/Kotlin-Multiplatform-Libraries)
 - [TheMealDB](https://www.themealdb.com/api.php)
 - [CalorieNinjas](https://calorieninjas.com/api)

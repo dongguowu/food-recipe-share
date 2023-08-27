@@ -9,7 +9,7 @@ import com.dishdiscoverers.core.data.repository.dataSource.RecipeDataSource
 import retrofit2.Response
 import java.lang.Exception
 
-class TheMealRemoteRecipeDataSourceImpl(
+class RemoteRecipeDataSource(
     private val theMealAPIService: TheMealAPIService,
 ) : RecipeDataSource {
 

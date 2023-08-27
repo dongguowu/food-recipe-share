@@ -4,7 +4,7 @@ import com.dishdiscoverers.core.data.api.TheMealAPIService
 import com.dishdiscoverers.core.data.model.FoodRecipe
 import com.dishdiscoverers.core.data.repository.RecipeRepositoryDateSourceImpl
 import com.dishdiscoverers.core.data.repository.dataSource.RecipeDataSource
-import com.dishdiscoverers.core.data.repository.dataSourceImpl.TheMealRemoteRecipeDataSourceImpl
+import com.dishdiscoverers.core.data.repository.dataSourceImpl.RemoteRecipeDataSource
 import com.dishdiscoverers.core.data.utility.Resource
 import com.dishdiscoverers.core.repository.RecipeRepository
 import com.google.common.truth.Truth.assertThat
@@ -36,7 +36,7 @@ class TheMealRepositoryTest {
             .build()
             .create(TheMealAPIService::class.java)
         enqueueMockResponse("theMealAPIRecipeResponse.json")
-        dataSource = TheMealRemoteRecipeDataSourceImpl(service)
+        dataSource = RemoteRecipeDataSource(service)
         repository = RecipeRepositoryDateSourceImpl(dataSource)
     }
 
