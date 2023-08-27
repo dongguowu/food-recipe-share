@@ -13,8 +13,8 @@ class TheMealRemoteRecipeDataSourceImpl(
     private val theMealAPIService: TheMealAPIService,
 ) : RecipeDataSource {
 
-    override suspend fun searchRecipes(title: String): Resource<List<FoodRecipe>> {
-        val response = searchTheMealRecipes(title)
+    override suspend fun searchRecipes(searchQuery: String): Resource<List<FoodRecipe>> {
+        val response = searchTheMealRecipes(searchQuery)
         if (response.isSuccessful) {
             val meals = response.body()?.meals
             if (!meals.isNullOrEmpty()) {
@@ -42,7 +42,7 @@ class TheMealRemoteRecipeDataSourceImpl(
      * @return The converted Recipe object, or null if conversion fails.
      */
     fun parseTheMealRecipe(item: TheMealRecipe, ingredients: String = ""): FoodRecipe? {
-        return item?.let {
+        return item.let {
             if (it.strMeal == null || it.idMeal == null) {
                 return null
             }

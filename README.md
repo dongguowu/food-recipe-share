@@ -72,6 +72,7 @@ apply(plugin = "org.jetbrains.kotlin.android")
 - [Recommendations for Android architecture](https://developer.android.com/topic/architecture/recommendations)
 - [Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
 - [Hilt and Dagger](https://developer.android.com/training/dependency-injection/hilt-android#hilt-and-dagger)
+- [Kotlin Symbol Processing API](https://github.com/google/ksp)
 
 ## Next
 
