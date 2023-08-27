@@ -1,5 +1,6 @@
 package com.dishdiscoverers.core.data.model
 
 data class UserData(
-    val bookmarkedRecipeResources: Set<String>
+    var userId: String,
+    val bookmarkedFoodRecipes: Set<String>
 )

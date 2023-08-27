@@ -18,7 +18,6 @@ class TheMealAPIServiceTest {
     private lateinit var service: TheMealAPIService
     private lateinit var server: MockWebServer
 
-
     @Before
     fun setUp() {
         server = MockWebServer()

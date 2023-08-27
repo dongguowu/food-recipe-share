@@ -1,6 +1,6 @@
 package com.dishdiscoverers.core.data.model
 
-data class SaveableRecipeResource(
-    val recipeResource: RecipeResource,
+data class SavableFoodRecipe(
+    val foodRecipe: FoodRecipe,
     val isBookmarked: Boolean
 )

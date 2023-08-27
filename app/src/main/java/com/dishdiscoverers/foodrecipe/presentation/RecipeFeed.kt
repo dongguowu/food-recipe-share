@@ -11,21 +11,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
-import com.dishdiscoverers.core.data.model.RecipeResource
-import com.dishdiscoverers.core.data.model.SaveableRecipeResource
+import com.dishdiscoverers.core.data.model.FoodRecipe
+import com.dishdiscoverers.core.data.model.SavableFoodRecipe
 
 @Composable
 fun RecipeFeed(
-    recipeResources: List<SaveableRecipeResource>,
+    recipeResources: List<SavableFoodRecipe>,
     onToggleBookmark: (String, Boolean) -> Unit
 ) {
     LazyColumn {
         items(recipeResources) {
             RecipeResourceCard(
-                it.recipeResource,
+                it.foodRecipe,
                 isBookmarked = it.isBookmarked,
                 onToggleBookmark = {
-                    onToggleBookmark(it.recipeResource.id, !it.isBookmarked)
+                    onToggleBookmark(it.foodRecipe.id, !it.isBookmarked)
                 }
             )
         }
@@ -35,7 +35,7 @@ fun RecipeFeed(
 
 @Composable
 fun RecipeResourceCard(
-    recipeResource: RecipeResource,
+    recipeResource: FoodRecipe,
     isBookmarked: Boolean,
     onToggleBookmark: () -> Unit
 ) {
@@ -46,7 +46,7 @@ fun RecipeResourceCard(
     })
 
     if (showDetails) {
-        Text(recipeResource.ingredients)
+        recipeResource.ingredients?.let { Text(it) }
     }
 
 }
@@ -58,8 +58,8 @@ fun RecipeFeedPreview() {
 }
 
 val mockRecipeList = listOf(
-    SaveableRecipeResource(
-        RecipeResource(
+    SavableFoodRecipe(
+        FoodRecipe(
             id = "1",
             title = "Chocolate Cake",
             servings = 8,
@@ -69,8 +69,8 @@ val mockRecipeList = listOf(
         ),
         isBookmarked = true
     ),
-    SaveableRecipeResource(
-        RecipeResource(
+    SavableFoodRecipe(
+        FoodRecipe(
             id = "2",
             title = "Pasta Carbonara",
             servings = 4,
