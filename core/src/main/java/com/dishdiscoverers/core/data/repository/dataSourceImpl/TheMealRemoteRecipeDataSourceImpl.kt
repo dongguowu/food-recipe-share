@@ -5,13 +5,13 @@ import com.dishdiscoverers.core.data.model.FoodRecipe
 import com.dishdiscoverers.core.data.model.meal.TheMealAPIMealsResponse
 import com.dishdiscoverers.core.data.model.meal.TheMealRecipe
 import com.dishdiscoverers.core.data.utility.Resource
-import com.dishdiscoverers.core.data.repository.dataSource.RecipeRemoteDataSource
+import com.dishdiscoverers.core.data.repository.dataSource.RecipeDataSource
 import retrofit2.Response
 import java.lang.Exception
 
-class TheMealRecipeRemoteDataSourceImpl(
+class TheMealRemoteRecipeDataSourceImpl(
     private val theMealAPIService: TheMealAPIService,
-) : RecipeRemoteDataSource {
+) : RecipeDataSource {
 
     override suspend fun searchRecipes(title: String): Resource<List<FoodRecipe>> {
         val response = searchTheMealRecipes(title)
