@@ -65,6 +65,13 @@ apply(plugin = "org.jetbrains.kotlin.android")
 - Git GitHub
 - [Napier](https://github.com/AAkira/Napier) Logger
 - [Kotlin Multiplatform Libraries](https://github.com/AAkira/Kotlin-Multiplatform-Libraries)
+- [TheMealDB](https://www.themealdb.com/api.php)
+- [CalorieNinjas](https://calorieninjas.com/api)
+- [MockWebServer](https://github.com/square/okhttp/tree/master/mockwebserver)
+- [OkHttp](https://square.github.io/okhttp/)
+- [Recommendations for Android architecture](https://developer.android.com/topic/architecture/recommendations)
+- [Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
+- [Hilt and Dagger](https://developer.android.com/training/dependency-injection/hilt-android#hilt-and-dagger)
 
 ## Next
 
