@@ -1,4 +1,4 @@
-package com.dishdiscoverers.core.data.model.meal
+package com.dishdiscoverers.core.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
