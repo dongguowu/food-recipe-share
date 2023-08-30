@@ -1,13 +1,16 @@
 package com.dishdiscoverers.core.data.repository
 
-import com.dishdiscoverers.core.data.model.FoodRecipe
-import com.dishdiscoverers.core.data.repository.dataSource.RecipeDataSource
-import com.dishdiscoverers.core.data.utility.Resource
-import com.dishdiscoverers.core.repository.RecipeRepository
+import com.dishdiscoverers.core.domain.model.FoodRecipe
+import com.dishdiscoverers.core.data.repository.dataSource.RecipeDataSourceInterface
+import com.dishdiscoverers.core.common.Resource
+import com.dishdiscoverers.core.domain.repository.RecipeRepository
+import jakarta.inject.Inject
 
-class RecipeRepositoryDateSourceImpl(private val dataSource: RecipeDataSource) :
+
+class RecipeRepositoryDateSourceImpl @Inject constructor(private var dataSource: RecipeDataSourceInterface) :
     RecipeRepository {
-    override suspend fun getSearchedRecipes(searchQuery: String): Resource<List<FoodRecipe>> {
+
+    override suspend fun getSearchedRecipes(searchQuery: String): List<FoodRecipe> {
         return dataSource.searchRecipes(searchQuery)
     }
 }

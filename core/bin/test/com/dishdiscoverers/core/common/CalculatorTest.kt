@@ -1,4 +1,4 @@
-package com.dishdiscoverers.core.utility
+package com.dishdiscoverers.core.common
 
 import junit.framework.TestCase.assertTrue
 import org.junit.Assert

@@ -1,4 +1,4 @@
-package com.dishdiscoverers.core.data.model
+package com.dishdiscoverers.core.domain.model
 
 data class SavableFoodRecipe(
     val foodRecipe: FoodRecipe,

@@ -1,6 +1,6 @@
 package com.dishdiscoverers.core.api;
 
-import com.dishdiscoverers.core.data.api.TheMealAPIService
+import com.dishdiscoverers.core.data.remote.TheMealAPIService
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer

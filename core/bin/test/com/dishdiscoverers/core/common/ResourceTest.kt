@@ -1,7 +1,5 @@
-package com.dishdiscoverers.core.utility
+package com.dishdiscoverers.core.common
 
-import com.dishdiscoverers.core.data.utility.Resource
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request

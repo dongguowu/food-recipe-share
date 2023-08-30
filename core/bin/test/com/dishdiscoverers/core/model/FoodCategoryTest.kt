@@ -1,6 +1,6 @@
 package com.dishdiscoverers.core.model
 
-import com.dishdiscoverers.core.data.model.FoodCategory
+import com.dishdiscoverers.core.domain.model.FoodCategory
 import com.google.gson.annotations.SerializedName
 import org.junit.Assert.assertEquals
 import org.junit.Test

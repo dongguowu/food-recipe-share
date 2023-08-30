@@ -1,6 +1,6 @@
-package com.dishdiscoverers.core.data.api
+package com.dishdiscoverers.core.data.remote
 
-import com.dishdiscoverers.core.data.model.meal.TheMealAPIMealsResponse
+import com.dishdiscoverers.core.data.remote.dto.TheMealAPIMealsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

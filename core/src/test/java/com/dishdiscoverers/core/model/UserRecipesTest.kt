@@ -1,6 +1,6 @@
-import com.dishdiscoverers.core.data.model.FoodRecipe
-import com.dishdiscoverers.core.data.model.UserData
-import com.dishdiscoverers.core.data.model.UserRecipes
+import com.dishdiscoverers.core.domain.model.FoodRecipe
+import com.dishdiscoverers.core.domain.model.UserData
+import com.dishdiscoverers.core.domain.model.UserRecipes
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

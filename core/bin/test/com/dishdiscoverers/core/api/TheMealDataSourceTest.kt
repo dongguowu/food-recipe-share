@@ -1,10 +1,10 @@
 package com.dishdiscoverers.core.api
 
-import com.dishdiscoverers.core.data.api.TheMealAPIService
-import com.dishdiscoverers.core.data.model.FoodRecipe
-import com.dishdiscoverers.core.data.repository.dataSource.RecipeDataSource
-import com.dishdiscoverers.core.data.repository.dataSourceImpl.RemoteRecipeDataSource
-import com.dishdiscoverers.core.data.utility.Resource
+import com.dishdiscoverers.core.data.remote.TheMealAPIService
+import com.dishdiscoverers.core.domain.model.FoodRecipe
+import com.dishdiscoverers.core.data.repository.dataSource.RecipeDataSourceInterface
+import com.dishdiscoverers.core.data.repository.dataSource.RemoteRecipeDataSourceImpl
+import com.dishdiscoverers.core.common.Resource
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.runBlocking
@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class TheMealDataSourceTest {
     private lateinit var service: TheMealAPIService
     private lateinit var server: MockWebServer
-    private lateinit var dataSource: RecipeDataSource
+    private lateinit var dataSource: RecipeDataSourceInterface
 
 
     @Before
@@ -33,7 +33,7 @@ class TheMealDataSourceTest {
             .build()
             .create(TheMealAPIService::class.java)
         enqueueMockResponse("theMealAPIRecipeResponse.json")
-        dataSource = RemoteRecipeDataSource(service)
+        dataSource = RemoteRecipeDataSourceImpl(service)
     }
 
     private fun enqueueMockResponse(
@@ -49,14 +49,9 @@ class TheMealDataSourceTest {
     @Test
     fun searchRecipes_sentRequest_receivedExpected() {
         runBlocking {
-            var result = dataSource.searchRecipes("egg")
+            var foodRecipes = dataSource.searchRecipes("egg")
 
-            assertThat(result).isNotNull()
-            assertThat(result).isInstanceOf(Resource.Success::class.java)
 
-            // Extract the value from Resource.Success
-            val successResult = result as Resource.Success
-            val foodRecipes: List<FoodRecipe> = successResult.data // Assuming data is a List<FoodRecipe>
 
             // Perform assertions on the content of foodRecipes
             assertThat(foodRecipes).isNotEmpty() // For example, check if the list is not empty

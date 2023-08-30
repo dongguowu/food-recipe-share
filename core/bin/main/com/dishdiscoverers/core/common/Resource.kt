@@ -1,4 +1,4 @@
-package com.dishdiscoverers.core.data.utility
+package com.dishdiscoverers.core.common
 
 /**
  * This `Resource` class is a sealed class

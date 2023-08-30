@@ -1,4 +1,4 @@
-package com.dishdiscoverers.core.data.model.meal
+package com.dishdiscoverers.core.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
@@ -8,5 +8,5 @@ import com.google.gson.annotations.SerializedName
  */
 data class TheMealAPIMealsResponse(
     @SerializedName("meals")
-    val meals: List<TheMealRecipe>? = null
+    val meals: List<TheMealRecipeDto>? = null
 )

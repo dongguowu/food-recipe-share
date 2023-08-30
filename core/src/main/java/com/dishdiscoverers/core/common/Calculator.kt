@@ -1,4 +1,4 @@
-package com.dishdiscoverers.core.utility
+package com.dishdiscoverers.core.common
 
 class Calculator {
     fun evaluate(expression: String): Int {

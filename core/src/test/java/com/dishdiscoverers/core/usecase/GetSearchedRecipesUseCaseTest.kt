@@ -1,13 +1,14 @@
 package com.dishdiscoverers.core.usecase
 
-import com.dishdiscoverers.core.data.model.FoodRecipe
-import com.dishdiscoverers.core.data.utility.Resource
-import com.dishdiscoverers.core.repository.RecipeRepository
+import com.dishdiscoverers.core.domain.model.FoodRecipe
+import com.dishdiscoverers.core.common.Resource
+import com.dishdiscoverers.core.domain.repository.RecipeRepository
 import io.mockk.coEvery
 import io.mockk.mockkClass
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.flow.Flow
 import org.junit.Before
 import java.lang.Exception
 
@@ -44,44 +45,46 @@ class GetSearchedRecipesUseCaseTest {
     @Test
     fun getSearchedRecipesUseCase_executed_receivedCorrectResult() {
         runBlocking {
-            coEvery { repository.getSearchedRecipes(any())} returns Resource.Success(list)
+            coEvery { repository.getSearchedRecipes(any())} returns list
 
             var useCase = GetSearchedRecipesUseCase(repository)
             var response = useCase.execute("a string")
-            assertThat(response).isInstanceOf(Resource.Success::class.java)
-            assertThat(response is Resource<List<FoodRecipe>>)
+            assertThat(response).isInstanceOf(Flow::class.java)
+            val flowResponse = response as Flow<Resource<List<FoodRecipe>>>
 
-            var successResult = response as Resource.Success
-            var results: List<FoodRecipe> = successResult.data
+            val results = mutableListOf<FoodRecipe>()
+            flowResponse.collect { resource ->
+                when (resource) {
+                    is Resource.Success -> results.addAll(resource.data)
+                    else -> {}
+                }
+            }
+
             assertThat(results.size).isEqualTo(2)
-            var recipe = results[0]
+            val recipe = results[0]
             assertThat(recipe.title).isEqualTo(title)
         }
     }
 
     @Test
-    fun getSearchedRecipesUseCase_executed_receivedFail() {
+    fun getSearchedRecipesUseCase_executed_receivedEmptyResult() {
         runBlocking {
-            coEvery { repository.getSearchedRecipes(any())} returns Resource.Failure(Exception(title))
+            coEvery { repository.getSearchedRecipes(any())} returns emptyList()
 
             var useCase = GetSearchedRecipesUseCase(repository)
             var response = useCase.execute("a string")
-            assertThat(response).isInstanceOf(Resource.Failure::class.java)
+            assertThat(response).isInstanceOf(Flow::class.java)
+            val flowResponse = response as Flow<Resource<List<FoodRecipe>>>
 
-            var result = response as Resource.Failure
-            var exception = result.exception
-            assertThat(exception.message).isEqualTo(title)
-        }
-    }
+            val results = mutableListOf<FoodRecipe>()
+            flowResponse.collect { resource ->
+                when (resource) {
+                    is Resource.Success -> results.addAll(resource.data)
+                    else -> {}
+                }
+            }
 
-    @Test
-    fun getSearchedRecipesUseCase_executed_receivedLoading() {
-        runBlocking {
-            coEvery { repository.getSearchedRecipes(any())} returns Resource.Loading
-
-            var useCase = GetSearchedRecipesUseCase(repository)
-            var response = useCase.execute("a string")
-            assertThat(response).isInstanceOf(Resource.Loading::class.java)
+            assertThat(results.size).isEqualTo(0)
         }
     }
 }

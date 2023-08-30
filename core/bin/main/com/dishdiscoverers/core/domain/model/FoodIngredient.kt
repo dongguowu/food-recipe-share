@@ -1,4 +1,4 @@
-package com.dishdiscoverers.core.data.model
+package com.dishdiscoverers.core.domain.model
 
 import com.google.gson.annotations.SerializedName
 

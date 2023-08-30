@@ -1,12 +1,12 @@
 package com.dishdiscoverers.core.api
 
-import com.dishdiscoverers.core.data.api.TheMealAPIService
-import com.dishdiscoverers.core.data.model.FoodRecipe
+import com.dishdiscoverers.core.data.remote.TheMealAPIService
+import com.dishdiscoverers.core.domain.model.FoodRecipe
 import com.dishdiscoverers.core.data.repository.RecipeRepositoryDateSourceImpl
-import com.dishdiscoverers.core.data.repository.dataSource.RecipeDataSource
-import com.dishdiscoverers.core.data.repository.dataSourceImpl.RemoteRecipeDataSource
-import com.dishdiscoverers.core.data.utility.Resource
-import com.dishdiscoverers.core.repository.RecipeRepository
+import com.dishdiscoverers.core.data.repository.dataSource.RecipeDataSourceInterface
+import com.dishdiscoverers.core.data.repository.dataSource.RemoteRecipeDataSourceImpl
+import com.dishdiscoverers.core.common.Resource
+import com.dishdiscoverers.core.domain.repository.RecipeRepository
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.runBlocking
@@ -23,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class TheMealRepositoryTest {
     private lateinit var service: TheMealAPIService
     private lateinit var server: MockWebServer
-    private lateinit var dataSource: RecipeDataSource
+    private lateinit var dataSource: RecipeDataSourceInterface
     private lateinit var repository: RecipeRepository
 
 
@@ -36,7 +36,7 @@ class TheMealRepositoryTest {
             .build()
             .create(TheMealAPIService::class.java)
         enqueueMockResponse("theMealAPIRecipeResponse.json")
-        dataSource = RemoteRecipeDataSource(service)
+        dataSource = RemoteRecipeDataSourceImpl(service)
         repository = RecipeRepositoryDateSourceImpl(dataSource)
     }
 
@@ -53,15 +53,7 @@ class TheMealRepositoryTest {
     @Test
     fun searchRecipes_sentRequest_receivedExpected() {
         runBlocking {
-            var resource = repository.getSearchedRecipes("egg")
-
-            assertThat(resource).isNotNull()
-            assertThat(resource).isInstanceOf(Resource.Success::class.java)
-
-            // Extract the value from Resource.Success
-            val successResult = resource as Resource.Success
-            val foodRecipes: List<FoodRecipe> =
-                successResult.data // Assuming data is a List<FoodRecipe>
+            var foodRecipes = repository.getSearchedRecipes("egg")
 
             // Perform assertions on the content of foodRecipes
             assertThat(foodRecipes).isNotEmpty() // For example, check if the list is not empty

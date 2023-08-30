@@ -1,6 +1,6 @@
 package com.dishdiscoverers.core.model
 
-import com.dishdiscoverers.core.data.model.Ingredient
+import com.dishdiscoverers.core.domain.model.Ingredient
 import com.google.gson.annotations.SerializedName
 import org.junit.Assert.assertEquals
 import org.junit.Test

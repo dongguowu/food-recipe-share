@@ -1,4 +1,4 @@
-package com.dishdiscoverers.core.data.model
+package com.dishdiscoverers.core.domain.model
 
 class UserRecipes internal constructor(
     val id: String,
