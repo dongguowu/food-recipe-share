@@ -1,6 +1,6 @@
 package com.dishdiscoverers.foodrecipe.presentation.di
 
-import com.dishdiscoverers.core.repository.RecipeRepository
+import com.dishdiscoverers.core.domain.repository.RecipeRepository
 import com.dishdiscoverers.core.usecase.GetSearchedRecipesUseCase
 import dagger.Module
 import dagger.Provides

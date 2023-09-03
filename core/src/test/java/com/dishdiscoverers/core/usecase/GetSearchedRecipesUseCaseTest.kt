@@ -48,7 +48,7 @@ class GetSearchedRecipesUseCaseTest {
             coEvery { repository.getSearchedRecipes(any())} returns list
 
             var useCase = GetSearchedRecipesUseCase(repository)
-            var response = useCase.execute("a string")
+            var response = useCase("a string")
             assertThat(response).isInstanceOf(Flow::class.java)
             val flowResponse = response as Flow<Resource<List<FoodRecipe>>>
 
@@ -72,7 +72,7 @@ class GetSearchedRecipesUseCaseTest {
             coEvery { repository.getSearchedRecipes(any())} returns emptyList()
 
             var useCase = GetSearchedRecipesUseCase(repository)
-            var response = useCase.execute("a string")
+            var response = useCase("a string")
             assertThat(response).isInstanceOf(Flow::class.java)
             val flowResponse = response as Flow<Resource<List<FoodRecipe>>>
 

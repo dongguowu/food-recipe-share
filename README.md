@@ -55,7 +55,8 @@ apply(plugin = "org.jetbrains.kotlin.android")
 
 ## Technology
 
-- [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)
+- MVVM + Clean Architecture
+
 - Firebase Authentication
 - Firebase Database
 - [Ktor client](https://ktor.io/docs/create-client.html)

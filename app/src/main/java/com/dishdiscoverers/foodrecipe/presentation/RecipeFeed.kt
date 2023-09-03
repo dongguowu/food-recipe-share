@@ -11,8 +11,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
-import com.dishdiscoverers.core.data.model.FoodRecipe
-import com.dishdiscoverers.core.data.model.SavableFoodRecipe
+import com.dishdiscoverers.core.domain.model.FoodRecipe
+import com.dishdiscoverers.core.domain.model.SavableFoodRecipe
 
 @Composable
 fun RecipeFeed(

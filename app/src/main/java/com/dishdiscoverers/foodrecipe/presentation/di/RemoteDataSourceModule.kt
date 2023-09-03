@@ -1,7 +1,7 @@
 package com.dishdiscoverers.foodrecipe.presentation.di
 
-import com.dishdiscoverers.core.data.api.TheMealAPIService
-import com.dishdiscoverers.core.data.repository.dataSourceImpl.RemoteRecipeDataSource
+import com.dishdiscoverers.core.data.remote.TheMealAPIService
+import com.dishdiscoverers.core.data.repository.dataSource.RemoteRecipeDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ class RemoteDataSourceModule {
 
     @Singleton
     @Provides
-    fun provideRecipeRemoteDataSource(theMealAPIService: TheMealAPIService): RemoteRecipeDataSource {
-        return RemoteRecipeDataSource(theMealAPIService)
+    fun provideRecipeRemoteDataSource(api: TheMealAPIService): RemoteRecipeDataSourceImpl {
+        return RemoteRecipeDataSourceImpl(api)
     }
 }

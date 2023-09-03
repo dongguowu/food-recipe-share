@@ -8,11 +8,14 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 dependencies {
+    // Import the BoM for the Firebase platform
+
+    implementation platform('com.google.firebase:firebase-bom:32.2.3')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+
     // Required -- JUnit 4 framework
     var jUnitVersion = "4.13.2"
-    var androidXTestVersion = "1.5.0"
-    var mockitoVersion = "4.2.0"
-    var mockitoKotlinVersion = "5.1.0"
     var mockkVersion = "1.13.7"
 
     testImplementation "junit:junit:$jUnitVersion"
@@ -30,7 +33,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.2'
 
     implementation("com.google.inject:guice:7.0.0")
 

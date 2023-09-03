@@ -10,7 +10,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class GetSearchedRecipesUseCase @Inject constructor(private val recipeRepository: RecipeRepository) {
-    suspend fun execute(searchQuery: String): Flow<Resource<List<FoodRecipe>>> = flow {
+    operator fun invoke(searchQuery: String): Flow<Resource<List<FoodRecipe>>> = flow {
         try {
             emit(Resource.Loading)
             emit(Resource.Success(recipeRepository.getSearchedRecipes(searchQuery)))

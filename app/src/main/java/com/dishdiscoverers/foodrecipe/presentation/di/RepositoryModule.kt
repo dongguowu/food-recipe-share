@@ -1,9 +1,8 @@
 package com.dishdiscoverers.foodrecipe.presentation.di
 
-import com.dishdiscoverers.core.data.model.meal.TheMealRecipe
 import com.dishdiscoverers.core.data.repository.RecipeRepositoryDateSourceImpl
-import com.dishdiscoverers.core.data.repository.dataSourceImpl.RemoteRecipeDataSource
-import com.dishdiscoverers.core.repository.RecipeRepository
+import com.dishdiscoverers.core.data.repository.dataSource.RemoteRecipeDataSourceImpl
+import com.dishdiscoverers.core.domain.repository.RecipeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,8 +14,7 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Singleton
     @Provides
-    fun provideRecipeRepository(dataSource: RemoteRecipeDataSource): RecipeRepository{
+    fun provideRecipeRepository(dataSource: RemoteRecipeDataSourceImpl): RecipeRepository {
         return  RecipeRepositoryDateSourceImpl(dataSource)
-
     }
 }
