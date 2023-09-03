@@ -4,7 +4,7 @@ import com.dishdiscoverers.core.common.Resource
 import com.dishdiscoverers.core.data.repository.dataSource.AuthenticatorDataSourceInterface
 import com.dishdiscoverers.core.domain.model.LoggedInUser
 import com.dishdiscoverers.core.domain.repository.AuthenticatorInterface
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 open class AuthenticatorDataSourceImpl @Inject constructor(private val datasource: AuthenticatorDataSourceInterface):
     AuthenticatorInterface {
