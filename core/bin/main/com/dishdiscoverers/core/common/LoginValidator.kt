@@ -1,6 +1,6 @@
-package com.dishdiscoverers.core.data.authentication
+package com.dishdiscoverers.core.common
 
-class LoginLogic {
+class LoginValidator {
     private fun isUserNameValid(username: String?): Boolean {
         if (username == null) {
             return false

@@ -13,14 +13,14 @@ class FriebaseDataSource : AuthenticatorDataSourceInterface {
         try {
             val response = auth.signInWithEmailAndPassword(email, password).await()
             val firebaseUser = response.user
-            if (firebaseUser != null) {
+            return if (firebaseUser != null) {
                 val loggedInUser = LoggedInUser(
                     firebaseUser.uid,
                     firebaseUser.email ?: ""
                 )
-                return Resource.Success(loggedInUser)
+                Resource.Success(loggedInUser)
             } else {
-                return Resource.Failure(java.lang.Exception("Login failed: User not found"))
+                Resource.Failure(java.lang.Exception("Login failed: User not found"))
             }
         } catch (e: Exception) {
             return Resource.Failure(e)
