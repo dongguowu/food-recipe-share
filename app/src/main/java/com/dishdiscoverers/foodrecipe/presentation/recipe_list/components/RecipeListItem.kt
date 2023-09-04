@@ -22,7 +22,7 @@ fun RecipeListItem(
         .padding(20.dp),
         horizontalArrangement = Arrangement.SpaceBetween) {
         Text(
-            text = "${foodRecipe.title}. ${foodRecipe.ingredients?.subSequence(0, 100)} (${foodRecipe.instructions.subSequence(0, 150)})",
+            text = "${foodRecipe.title}. ${foodRecipe.ingredients} ${foodRecipe.instructions}",
             style = MaterialTheme.typography.labelLarge
         )
     }

@@ -15,13 +15,13 @@ import com.google.common.truth.Truth.assertThat
 
 
 class TheMealAPIServiceTest {
-    private lateinit var service: TheMealAPIService
+    private lateinit var retrofit: TheMealAPIService
     private lateinit var server: MockWebServer
 
     @Before
     fun setUp() {
         server = MockWebServer()
-        service = Retrofit.Builder()
+        retrofit = Retrofit.Builder()
             .baseUrl(server.url(""))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -42,7 +42,7 @@ class TheMealAPIServiceTest {
     fun searchRecipes_sentRequest_receivedExpected() {
         runBlocking {
             enqueueMockResponse("theMealAPIRecipeResponse.json")
-            val responseBody = service.searchRecipes("egg").body()
+            val responseBody = retrofit.searchRecipes("egg").body()
             val request = server.takeRequest()
 
             assertThat(responseBody).isNotNull()
@@ -56,7 +56,7 @@ class TheMealAPIServiceTest {
     fun searchRecipes_sentRequest_correctRecipeSize() {
         runBlocking {
             enqueueMockResponse("theMealAPIRecipeResponse.json")
-            val responseBody = service.searchRecipes("egg").body()
+            val responseBody = retrofit.searchRecipes("egg").body()
 
             val theMealRecipesList = responseBody!!.meals
             assertThat(theMealRecipesList!!.size).isEqualTo(8)
@@ -67,7 +67,7 @@ class TheMealAPIServiceTest {
     fun searchRecipes_sentRequest_correctContent() {
         runBlocking {
             enqueueMockResponse("theMealAPIRecipeResponse.json")
-            val responseBody = service.searchRecipes("egg").body()
+            val responseBody = retrofit.searchRecipes("egg").body()
 
             val theMealRecipesList = responseBody!!.meals!!
             val theMealRecipe = theMealRecipesList[0]!!
